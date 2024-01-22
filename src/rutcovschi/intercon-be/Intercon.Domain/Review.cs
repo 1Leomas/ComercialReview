@@ -1,38 +1,21 @@
-﻿namespace Intercon.Domain;
+﻿using Intercon.Domain.Enums;
 
-
-public class Business
-{
-    public int Id { get; set; }
-    public string Title { get; set; }
-    public string ShortDescription { get; set; }
-    public string FullDescription { get; set; }
-    public float RatingAvg { get; set; }
-    public string Image { get; set; } //to do: trebuie de clarificat data type
-    public string Address { get; set; }
-    public uint ReviewsCount { get; set; }
-    //public List<int, int> AllReviewsCount { get; set; }
-    public Review Reviews { get; set; }
-}
+namespace Intercon.Domain;
 
 public class Review
 {
+    public int Id { get; set; }
+
     public User Author { get; set; }
-    public string AuthorFullName {
-        get => $"{Author.FirstName} {Author.LastName}";
-        private set { }
-    }
-    public string AuthorEmail
-    {
-        get => Author.Email;
-        private set { }
-    }
-}
+    public string AuthorFullName => $"{Author.FirstName} {Author.LastName}";
+    public string AuthorEmail => Author.Email;
 
+    public float Rating { get; set; }
+    public ReviewStatus RatingStatus { get; set; }
 
-public class User
-{
-    public string FirstName { get; set; } = string.Empty;
-    public string LastName { get; set; } = string.Empty;
-    public string  Email {  get; set; } = string.Empty;
+    public string ReviewTitle { get; set; } = string.Empty;
+    public string ReviewText { get; set; } = string.Empty;
+    public DateTime CreateDate { get; set; }
+    public DateTime UpdateDate { get; set; }
+    public bool WasEdited { get; set; }
 }
