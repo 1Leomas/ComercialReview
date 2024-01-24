@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Intercon.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,10 +10,10 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services,
         IConfiguration configuration)
     {
-        //services.AddDbContext<DbContext>(options =>
-        //{ 
-        //    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-        //});
+        services.AddDbContext<InterconDbContext>(options =>
+        {
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+        });
 
         //add scoped life time for all classes and interfaces from Infrastructure module
         services.Scan(
