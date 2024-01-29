@@ -1,12 +1,11 @@
-﻿using Intercon.Domain.Enums;
+﻿using Intercon.Domain.Abstractions;
 
 namespace Intercon.Domain;
 
-public class Review
+public class Review : Entity
 {
-    public int Id { get; set; }
     public int BusinessId { get; set; }
-    public int AuthorId { get; set; }   
+    public int AuthorId { get; set; }
 
     public virtual User Author { get; set; }
     public float Rating { get; set; }

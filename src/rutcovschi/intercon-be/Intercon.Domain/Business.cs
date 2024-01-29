@@ -1,8 +1,9 @@
-﻿namespace Intercon.Domain;
+﻿using Intercon.Domain.Abstractions;
 
-public class Business
+namespace Intercon.Domain;
+
+public class Business : Entity
 {
-    public int Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public string ShortDescription { get; set; } = string.Empty;
     public string FullDescription { get; set; } = string.Empty;

@@ -1,9 +1,21 @@
-﻿namespace Intercon.Domain;
+﻿using Intercon.Domain.Abstractions;
 
-public class User
+namespace Intercon.Domain;
+
+public sealed class User : Entity
 {
-    public int Id { get; init; }
-    public string FirstName { get; init; } = string.Empty;
-    public string LastName { get; init; } = string.Empty;
-    public string Email { get; init; } = string.Empty;
+    public User(string firstName, string lastName, string password, string email, string? userName)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+        Email = email;
+        Password = password;
+        UserName = userName;
+    }
+
+    public string FirstName { get; private set; }
+    public string LastName { get; private set; }
+    public string Email { get; private set; }
+    public string Password { get; private set; }
+    public string? UserName { get; private set; } = null;
 }
