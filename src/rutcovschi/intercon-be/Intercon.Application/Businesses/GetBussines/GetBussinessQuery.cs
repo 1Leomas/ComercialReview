@@ -1,9 +1,16 @@
-﻿using Intercon.Domain.Abstractions;
+﻿using Intercon.Application.Abstractions.Messaging;
+using Intercon.Domain;
 
-namespace Intercon.Domain;
+namespace Intercon.Application.Businesses.GetBussines;
 
-public class Business : Entity
+public record GetBussinessQuery(int Id) : IQuery
 {
+}
+
+
+public record BusinessDto
+{
+    public int Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public string ShortDescription { get; set; } = string.Empty;
     public string FullDescription { get; set; } = string.Empty;

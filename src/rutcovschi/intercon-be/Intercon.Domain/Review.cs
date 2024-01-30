@@ -12,6 +12,6 @@ public class Review : Entity
     public string ReviewTitle { get; set; } = string.Empty;
     public string ReviewText { get; set; } = string.Empty;
     public DateTime CreateDate { get; set; } = DateTime.Now;
-    public DateTime UpdateDate { get; set; }
+    public DateTime? UpdateDate { get; set; } = null;
     public bool WasEdited { get; set; }
 }

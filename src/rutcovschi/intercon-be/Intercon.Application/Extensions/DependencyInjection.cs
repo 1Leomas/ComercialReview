@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Intercon.Application.Extensions;
 
@@ -11,6 +12,8 @@ public static class DependencyInjection
                 AssemblyReference.Assembly));
 
         services.AddAutoMapper(AssemblyReference.Assembly);
+
+        services.AddValidatorsFromAssembly(AssemblyReference.Assembly);
 
         return services;
     }

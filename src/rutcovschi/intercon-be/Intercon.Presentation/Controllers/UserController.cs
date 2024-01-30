@@ -1,5 +1,4 @@
 ﻿using Intercon.Application.DataTransferObjects.User;
-using Intercon.Application.Users;
 using Intercon.Application.Users.CreateUser;
 using Intercon.Application.Users.DeleteUser;
 using Intercon.Application.Users.GetUser;

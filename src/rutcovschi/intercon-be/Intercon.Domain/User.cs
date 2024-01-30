@@ -4,7 +4,7 @@ namespace Intercon.Domain;
 
 public sealed class User : Entity
 {
-    public User(string firstName, string lastName, string password, string email, string? userName)
+    public User(string firstName, string lastName, string password, string email, string? userName = null)
     {
         FirstName = firstName;
         LastName = lastName;
