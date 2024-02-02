@@ -11,4 +11,4 @@ public class ValidationException : Exception
     public IReadOnlyCollection<ValidationError> Errors { get; }
 }
 
-public record ValidationError(string ProperyName, string ErrorMessage);
+public record ValidationError(string PropertyName, string ErrorMessage);

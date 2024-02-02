@@ -28,10 +28,10 @@ public sealed class ValidationPipelineBehavior<TRequest, TResponse>
         var errors = validationFailures
             .Where(validationResult => !validationResult.IsValid)
             .SelectMany(validationResult => validationResult.Errors)
-            .Select(validaitonFailure => new CustomExceptions.ValidationError
+            .Select(validationFailure => new CustomExceptions.ValidationError
             (
-                validaitonFailure.PropertyName,
-                validaitonFailure.ErrorMessage
+                validationFailure.PropertyName.Replace("dto", ""),
+                validationFailure.ErrorMessage
             ))
             .ToList();  
 
