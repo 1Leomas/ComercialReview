@@ -16,6 +16,6 @@ public class InterconDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        builder.ApplyConfigurationsFromAssembly(typeof(InterconDbContext).Assembly);
+        //builder.ApplyConfigurationsFromAssembly(typeof(InterconDbContext).Assembly);
     }
 }

@@ -7,5 +7,5 @@ public record UserDto
     public string LastName { get; init; } = string.Empty;
     public string Email { get; init; } = string.Empty;
     public string Password { get; init; }
-    public string? UserName { get; private set; } = null;
+    public string? UserName { get; init; } = null;
 }

@@ -33,8 +33,7 @@ public class GetReviewQueryHandler(InterconDbContext context) : IQueryHandler<Ge
                 LastName = reviewFromDb.Author.LastName,
                 Email = reviewFromDb.Author.Email
             },
-            Rating = reviewFromDb.Rating,
-            ReviewTitle = reviewFromDb.ReviewTitle,
+            Grade = reviewFromDb.Grade,
             ReviewText = reviewFromDb.ReviewText,
             CreateDate = reviewFromDb.CreateDate,
             UpdateDate = reviewFromDb.UpdateDate,
@@ -50,8 +49,7 @@ public class ReviewDto
     public int AuthorId { get; set; }
 
     public virtual UserDto Author { get; set; }
-    public float Rating { get; set; }
-    public string ReviewTitle { get; set; } = string.Empty;
+    public float Grade { get; set; }
     public string ReviewText { get; set; } = string.Empty;
     public DateTime CreateDate { get; set; } = DateTime.Now;
     public DateTime? UpdateDate { get; set; }

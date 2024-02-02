@@ -1,5 +1,6 @@
 ﻿using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.User;
+using Intercon.Application.Extensions;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,12 +23,6 @@ internal sealed class GetUserQueryHandler(InterconDbContext context) : IQueryHan
             return null;
         }
 
-        return new UserDto()
-        {
-            Id = user.Id,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Email = user.Email
-        };
+        return user.ToDto();
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Intercon.Application.DataTransferObjects.User;
+﻿using Intercon.Domain;
+
+namespace Intercon.Application.DataTransferObjects.User;
 
 public record CreateUserDto
 {
@@ -8,3 +10,5 @@ public record CreateUserDto
     public string Password { get; init; }
     public string? UserName { get; init; } = null;
 }
+
+

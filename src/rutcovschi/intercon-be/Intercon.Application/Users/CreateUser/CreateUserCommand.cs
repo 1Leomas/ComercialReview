@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.User;
-using Intercon.Domain;
+using Intercon.Application.Extensions;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,17 +11,10 @@ public sealed record CreateUserCommand : ICommand<int>
 {
     public CreateUserCommand(CreateUserDto userDto) 
     {
-        FirstName = userDto.FirstName;
-        LastName = userDto.LastName;
-        Password = userDto.Password;
-        Email = userDto.Email;
+        UserDto = userDto;
     }
 
-    public string FirstName { get; }
-    public string LastName { get; }
-    public string Email { get; }
-    public string Password { get; set; }
-    public string? UserName { get; init; } = null;
+    public CreateUserDto UserDto { get; set; }
 }
 
 
@@ -33,10 +26,10 @@ public sealed class CreateUserCommandHandler : ICommandHandler<CreateUserCommand
     {
         _context = context;
     }
-                
+
     public async Task<int> Handle(CreateUserCommand command, CancellationToken cancellationToken)
     {
-        var userDb = new User(command.FirstName, command.LastName, command.Password, command.Email, command.UserName);
+        var userDb = command.UserDto.ToEntity();
 
         await _context.Users.AddAsync(userDb, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);

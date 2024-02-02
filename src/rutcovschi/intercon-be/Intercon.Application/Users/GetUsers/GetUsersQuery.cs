@@ -1,5 +1,6 @@
 ﻿using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.User;
+using Intercon.Application.Extensions;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,18 +23,7 @@ public sealed class GetUsersQueryHandler : IQueryHandler<GetUsersQuery, IEnumera
 
         var users = new List<UserDto>();
 
-        foreach (var userDb in usersDb)
-        {
-            var user = new UserDto()
-            {
-                Id = userDb.Id,
-                FirstName = userDb.FirstName,
-                LastName = userDb.LastName,
-                Email = userDb.Email
-            };
-
-            users.Add(user);
-        }
+        usersDb.ForEach(userDb => users.Add(userDb.ToDto()));
 
         return users;
     }
