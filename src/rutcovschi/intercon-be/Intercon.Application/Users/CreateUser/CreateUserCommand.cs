@@ -42,12 +42,12 @@ public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCom
 {
     public CreateUserCommandValidator(InterconDbContext context)
     {
-        RuleFor(x => x.FirstName).NotEmpty().MaximumLength(50);
-        RuleFor(x => x.LastName).NotEmpty().MaximumLength(50);
-        RuleFor(x => x.Email).NotEmpty().EmailAddress();
-        RuleFor(x => x.Password).NotEmpty().MinimumLength(8);
+        RuleFor(x => x.UserDto.FirstName).NotEmpty().MaximumLength(50);
+        RuleFor(x => x.UserDto.LastName).NotEmpty().MaximumLength(50);
+        RuleFor(x => x.UserDto.Email).NotEmpty().EmailAddress();
+        RuleFor(x => x.UserDto.Password).NotEmpty().MinimumLength(8);
 
-        RuleFor(x => x.Email).MustAsync(async (email, _) =>
+        RuleFor(x => x.UserDto.Email).MustAsync(async (email, _) =>
         {
             return await context.Users.AllAsync(x => x.Email != email);
         }).WithMessage("The email must be unique");

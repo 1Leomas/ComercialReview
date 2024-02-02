@@ -1,6 +1,7 @@
 using Intercon.Application.Extensions;
 using Intercon.Infrastructure.Extensions;
 using Intercon.Presentation.Extensions;
+using Intercon.Presentation.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthorization();
 
