@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Intercon.Application.Users.CreateUser;    
 
-public sealed record CreateUserCommand : ICommand<int>
+public sealed record CreateUserCommand : ICommand
 {
     public CreateUserCommand(CreateUserDto userDto) 
     {
@@ -18,7 +18,7 @@ public sealed record CreateUserCommand : ICommand<int>
 }
 
 
-public sealed class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, int>
+public sealed class CreateUserCommandHandler : ICommandHandler<CreateUserCommand>
 {
     private readonly InterconDbContext _context;
 
@@ -27,14 +27,12 @@ public sealed class CreateUserCommandHandler : ICommandHandler<CreateUserCommand
         _context = context;
     }
 
-    public async Task<int> Handle(CreateUserCommand command, CancellationToken cancellationToken)
+    public async Task Handle(CreateUserCommand command, CancellationToken cancellationToken)
     {
         var userDb = command.UserDto.ToEntity();
 
         await _context.Users.AddAsync(userDb, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
-
-        return userDb.Id;
     }
 }
 
