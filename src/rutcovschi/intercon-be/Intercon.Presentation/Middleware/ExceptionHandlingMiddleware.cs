@@ -55,16 +55,40 @@ public class ExceptionHandlingMiddleware
                 StatusCodes.Status400BadRequest,
                 "ValidationFailure",
                 "Validation error",
-                "One or more validation errors has occured",
+                "One or more validation errors has occurred",
                 validationException.Errors),
+            #if DEBUG
+            _ => new ExceptionDetails(
+                StatusCodes.Status500InternalServerError,
+                "ServerError",
+                "Server error",
+                "An unexpected error has occurred",
+                GetAllInheritExceptionsMessages(exception))
+            #else
             _ => new ExceptionDetails(
                 StatusCodes.Status500InternalServerError,
                 "ServerError",
                 "Server error",
                 "An unexpected error has occured",
                 null)
+            #endif
         };
     }
+
+    #if DEBUG
+    private static IEnumerable<object> GetAllInheritExceptionsMessages(Exception exception)
+    {
+        var messages = new List<object>();
+
+        while (exception != null)
+        {
+            messages.Add(exception.Message);
+            exception = exception.InnerException;
+        }
+
+        return messages;
+    }
+    #endif
 
     internal record ExceptionDetails(
         int Status,
