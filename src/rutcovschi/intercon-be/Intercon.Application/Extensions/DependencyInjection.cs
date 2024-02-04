@@ -12,6 +12,7 @@ public static class DependencyInjection
         {
             config.RegisterServicesFromAssemblies(AssemblyReference.Assembly);
             config.AddOpenBehavior(typeof(ValidationPipelineBehavior<,>));
+            config.AddOpenBehavior(typeof(LoggingPipelineBehavior<,>));
         });
 
         services.AddAutoMapper(AssemblyReference.Assembly);
