@@ -2,6 +2,7 @@
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Application.Users.CreateUser;
 using Intercon.Application.Users.DeleteUser;
+using Intercon.Application.Users.EditUser;
 using Intercon.Application.Users.GetUser;
 using Intercon.Application.Users.GetUsers;
 using MediatR;
@@ -56,9 +57,11 @@ public class UserController : BaseController
     [HttpPut]
     [ProducesResponseType(typeof(UserDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> EditUser([FromBody] UserDetailsDto userToEdit)
+    public async Task<IActionResult> EditUser([FromQuery] int id, [FromBody] EditUserDto userToEdit)
     {
-        throw new NotImplementedException();
+        await _mediator.Send(new EditUserCommand(id, userToEdit));
+
+        return Ok();
     }
 
     [HttpDelete("{id}")]
