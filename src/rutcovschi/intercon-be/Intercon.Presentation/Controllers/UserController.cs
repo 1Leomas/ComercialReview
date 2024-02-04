@@ -13,21 +13,14 @@ namespace Intercon.Presentation.Controllers;
 [Route("api/users")]
 
 [ApiController]
-public class UserController : BaseController
+public class UserController(IMediator mediator) : BaseController
 {
-    private readonly IMediator _mediator;
-
-    public UserController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-    
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(UserDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUser(int id)
     {
-        var user = await _mediator.Send(new GetUserQuery(id));
+        var user = await mediator.Send(new GetUserQuery(id));
 
         if (user == null)
         {
@@ -41,7 +34,7 @@ public class UserController : BaseController
     [ProducesResponseType(typeof(IEnumerable<UserDetailsDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUsers()
     {
-        return Ok(await _mediator.Send(new GetUsersQuery()));
+        return Ok(await mediator.Send(new GetUsersQuery()));
     }
 
     [HttpPost]
@@ -49,7 +42,7 @@ public class UserController : BaseController
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserDto userToAdd)
     {
-        await _mediator.Send(new CreateUserCommand(userToAdd));
+        await mediator.Send(new CreateUserCommand(userToAdd));
 
         return Ok();
     }
@@ -59,7 +52,7 @@ public class UserController : BaseController
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> EditUser([FromQuery] int id, [FromBody] EditUserDto userToEdit)
     {
-        await _mediator.Send(new EditUserCommand(id, userToEdit));
+        await mediator.Send(new EditUserCommand(id, userToEdit));
 
         return Ok();
     }
@@ -68,7 +61,7 @@ public class UserController : BaseController
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteUser([FromRoute] int id)
     {
-        await _mediator.Send(new DeleteUserCommand(id));
+        await mediator.Send(new DeleteUserCommand(id));
 
         return Ok();
     }
