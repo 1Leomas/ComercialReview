@@ -1,22 +1,28 @@
-﻿using FluentValidation;
-using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.User;
-using Intercon.Application.Extensions;
+using Intercon.Domain;
 using Intercon.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 
-namespace Intercon.Application.Users.CreateUser;    
+namespace Intercon.Application.Users.CreateUser;
 
 public sealed record CreateUserCommand : ICommand
 {
-    public CreateUserCommand(CreateUserDto userDto) 
+    public CreateUserCommand(CreateUserDto user)
     {
-        UserDto = userDto;
+        FirstName = user.FirstName;
+        LastName = user.LastName;
+        Email = user.Email;
+        Password = user.Password;
+        UserName = user.UserName;
     }
 
-    public CreateUserDto UserDto { get; set; }
-}
+    public string FirstName { get; init; } = string.Empty;
+    public string LastName { get; init; } = string.Empty;
+    public string Email { get; init; } = string.Empty;
+    public string Password { get; init; } = string.Empty;
+    public string? UserName { get; init; }
 
+}
 
 public sealed class CreateUserCommandHandler : ICommandHandler<CreateUserCommand>
 {
@@ -29,25 +35,16 @@ public sealed class CreateUserCommandHandler : ICommandHandler<CreateUserCommand
 
     public async Task Handle(CreateUserCommand command, CancellationToken cancellationToken)
     {
-        var userDb = command.UserDto.ToEntity();
+        var userDb = new User
+        {
+            FirstName = command.FirstName,
+            LastName = command.LastName,
+            Email = command.Email,
+            UserName = command.UserName,
+            Password = command.Password
+        };
 
         await _context.Users.AddAsync(userDb, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
-    }
-}
-
-public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
-{
-    public CreateUserCommandValidator(InterconDbContext context)
-    {
-        RuleFor(x => x.UserDto.FirstName).NotEmpty().MaximumLength(50);
-        RuleFor(x => x.UserDto.LastName).NotEmpty().MaximumLength(50);
-        RuleFor(x => x.UserDto.Email).NotEmpty().EmailAddress();
-        RuleFor(x => x.UserDto.Password).NotEmpty().MinimumLength(8);
-
-        RuleFor(x => x.UserDto.Email).MustAsync(async (email, _) =>
-        {
-            return await context.Users.AllAsync(x => x.Email != email);
-        }).WithMessage("The email must be unique");
     }
 }
