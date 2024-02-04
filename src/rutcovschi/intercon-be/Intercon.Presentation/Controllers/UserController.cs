@@ -20,9 +20,9 @@ public class UserController : BaseController
     {
         _mediator = mediator;
     }
-
+    
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(UserDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUser(int id)
     {
@@ -37,7 +37,7 @@ public class UserController : BaseController
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<UserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<UserDetailsDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUsers()
     {
         return Ok(await _mediator.Send(new GetUsersQuery()));
@@ -54,9 +54,9 @@ public class UserController : BaseController
     }
 
     [HttpPut]
-    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(UserDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> EditUser([FromBody] UserDto userToEdit)
+    public async Task<IActionResult> EditUser([FromBody] UserDetailsDto userToEdit)
     {
         throw new NotImplementedException();
     }

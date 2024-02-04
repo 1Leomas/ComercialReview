@@ -17,14 +17,6 @@ public sealed class DeleteUserCommandHandler : ICommandHandler<DeleteUserCommand
 
     public async Task Handle(DeleteUserCommand command, CancellationToken cancellationToken)
     {
-        var userToDelete = await _context.Users.FirstOrDefaultAsync(x => x.Id == command.Id, cancellationToken);
-
-        if (userToDelete == null)
-        {
-            return;
-        }
-
-        _context.Users.Remove(userToDelete);
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.Users.Where(x => x.Id == command.Id).ExecuteDeleteAsync(cancellationToken);
     }
 }

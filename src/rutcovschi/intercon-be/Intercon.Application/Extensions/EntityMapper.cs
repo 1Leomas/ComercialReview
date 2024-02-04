@@ -56,4 +56,15 @@ public static class EntityMapper
 
         return null;
     }
+
+    public static UserDetailsDto ToUserDetailsDto(this User user)
+    {
+        return new UserDetailsDto()
+        {
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+            UserName = user.UserName,
+        };
+    }
 }
