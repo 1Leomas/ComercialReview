@@ -1,10 +1,9 @@
 ﻿using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.User;
-using Intercon.Domain;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Intercon.Application.Reviews.GetReview;
+namespace Intercon.Application.ReviewsManagement.GetReview;
 
 public record GetReviewQuery(int Id) : IQuery<ReviewDto?>;
 

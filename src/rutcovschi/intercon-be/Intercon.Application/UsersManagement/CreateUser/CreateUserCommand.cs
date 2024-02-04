@@ -3,7 +3,7 @@ using Intercon.Application.DataTransferObjects.User;
 using Intercon.Domain;
 using Intercon.Infrastructure.Persistence;
 
-namespace Intercon.Application.Users.CreateUser;
+namespace Intercon.Application.UsersManagement.CreateUser;
 
 public sealed record CreateUserCommand : ICommand
 {

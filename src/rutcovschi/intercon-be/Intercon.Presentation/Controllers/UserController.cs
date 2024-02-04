@@ -5,6 +5,7 @@ using Intercon.Application.Users.DeleteUser;
 using Intercon.Application.Users.EditUser;
 using Intercon.Application.Users.GetUser;
 using Intercon.Application.Users.GetUsers;
+using Intercon.Application.UsersManagement.CreateUser;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

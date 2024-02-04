@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Intercon.Application.UsersManagement.CreateUser;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
