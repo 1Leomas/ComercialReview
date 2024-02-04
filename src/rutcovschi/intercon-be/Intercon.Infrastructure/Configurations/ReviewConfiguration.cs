@@ -1,4 +1,4 @@
-﻿using Intercon.Domain;
+﻿using Intercon.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -16,7 +16,7 @@ public class ReviewConfiguration : IEntityTypeConfiguration<Review>
         builder.HasOne(r => r.Author)
                .WithMany(u => u.Reviews)
                .HasForeignKey(r => r.AuthorId)
-               .OnDelete(DeleteBehavior.Restrict); // or DeleteBehavior.Cascade
+               .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(r => r.Business)
                .WithMany(b => b.Reviews)

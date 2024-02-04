@@ -1,4 +1,4 @@
-﻿using Intercon.Domain;
+﻿using Intercon.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,19 +8,21 @@ public class BusinessConfiguration : IEntityTypeConfiguration<Business>
 {
     public void Configure(EntityTypeBuilder<Business> builder)
     {
-        // Configure the Business entity here
         builder.HasKey(b => b.Id);
 
         builder.Property(b => b.Title).IsRequired().HasMaxLength(255);
-        builder.Property(b => b.ShortDescription).HasMaxLength(500);
-        builder.Property(b => b.FullDescription).HasMaxLength(2000);
-        builder.Property(b => b.Image).HasMaxLength(255);
-        builder.Property(b => b.Address).HasMaxLength(500);
+        builder.Property(b => b.ShortDescription).IsRequired().HasMaxLength(500);
+
+        builder.ComplexProperty(b => b.Address).IsRequired();
 
         builder.HasMany(b => b.Reviews)
                .WithOne(r => r.Business)
                .HasForeignKey(r => r.BusinessId)
-               .OnDelete(DeleteBehavior.Cascade); // or DeleteBehavior.Restrict if you don't want cascade delete
+               .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasOne(b => b.Owner)
+                .WithOne(u => u.Business)
+                .HasForeignKey<Business>(b => b.OwnerId)
+                .OnDelete(DeleteBehavior.Restrict);
     }
 }

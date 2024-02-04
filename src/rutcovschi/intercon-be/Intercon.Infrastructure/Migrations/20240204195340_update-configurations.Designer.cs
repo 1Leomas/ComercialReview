@@ -5,6 +5,7 @@ using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,9 +13,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intercon.Infrastructure.Migrations
 {
     [DbContext(typeof(InterconDbContext))]
-    partial class InterconDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240204195340_update-configurations")]
+    partial class updateconfigurations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -176,8 +179,8 @@ namespace Intercon.Infrastructure.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -195,9 +198,7 @@ namespace Intercon.Infrastructure.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("Role")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("datetime2");
@@ -232,7 +233,7 @@ namespace Intercon.Infrastructure.Migrations
                     b.HasOne("Intercon.Domain.Entities.User", "Owner")
                         .WithOne("Business")
                         .HasForeignKey("Intercon.Domain.Entities.Business", "OwnerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Logo");
