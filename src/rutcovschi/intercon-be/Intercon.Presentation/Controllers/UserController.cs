@@ -26,35 +26,21 @@ public class UserController : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUser(int id)
     {
-        try
-        {
-            var user = await _mediator.Send(new GetUserQuery(id));
+        var user = await _mediator.Send(new GetUserQuery(id));
 
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(user);
-        }
-        catch (Exception)
+        if (user == null)
         {
-            return InternalServerError();
+            return NotFound();
         }
+
+        return Ok(user);
     }
 
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<UserDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUsers()
     {
-        try
-        {
-            return Ok(await _mediator.Send(new GetUsersQuery()));
-        }
-        catch (Exception)
-        {
-            return InternalServerError();
-        }
+        return Ok(await _mediator.Send(new GetUsersQuery()));
     }
 
     [HttpPost]
@@ -62,16 +48,9 @@ public class UserController : BaseController
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserDto userToAdd)
     {
-        try
-        {
-            await _mediator.Send(new CreateUserCommand(userToAdd));
+        await _mediator.Send(new CreateUserCommand(userToAdd));
 
-            return Ok();
-        }
-        catch (Exception)
-        {
-            return InternalServerError();
-        }
+        return Ok();
     }
 
     [HttpPut]
@@ -86,15 +65,8 @@ public class UserController : BaseController
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteUser([FromRoute] int id)
     {
-        try
-        {
-            await _mediator.Send(new DeleteUserCommand(id));
+        await _mediator.Send(new DeleteUserCommand(id));
 
-            return Ok();
-        }
-        catch (Exception)
-        {
-            return InternalServerError();
-        }
+        return Ok();
     }
 }
