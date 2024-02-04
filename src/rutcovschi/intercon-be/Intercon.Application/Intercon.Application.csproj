@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DataTransferObjects\Business\" />
     <Folder Include="ReviewsManagement\CreateReview\" />
     <Folder Include="ReviewsManagement\GetReviews\" />
     <Folder Include="ReviewsManagement\DeleteReview\" />

@@ -3,11 +3,11 @@ using Intercon.Application.DataTransferObjects.User;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Intercon.Application.Users.GetUser;
+namespace Intercon.Application.UsersManagement.GetUser;
 
 public sealed record GetUserQuery(int Id) : IQuery<UserDetailsDto?>;
 
-internal sealed class GetUserQueryHandler(InterconDbContext context) : IQueryHandler<GetUserQuery, UserDetailsDto?>
+public sealed class GetUserQueryHandler(InterconDbContext context) : IQueryHandler<GetUserQuery, UserDetailsDto?>
 {
     private readonly InterconDbContext _context = context;
 

@@ -1,5 +1,5 @@
 ﻿using Intercon.Application.DataTransferObjects.User;
-using Intercon.Domain;
+using Intercon.Domain.Entities;
 
 namespace Intercon.Application.Extensions;
 

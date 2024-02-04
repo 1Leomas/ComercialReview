@@ -1,11 +1,10 @@
 ﻿using Intercon.Application.CustomExceptions;
 using Intercon.Application.DataTransferObjects.User;
-using Intercon.Application.Users.CreateUser;
-using Intercon.Application.Users.DeleteUser;
-using Intercon.Application.Users.EditUser;
-using Intercon.Application.Users.GetUser;
-using Intercon.Application.Users.GetUsers;
 using Intercon.Application.UsersManagement.CreateUser;
+using Intercon.Application.UsersManagement.DeleteUser;
+using Intercon.Application.UsersManagement.EditUser;
+using Intercon.Application.UsersManagement.GetUser;
+using Intercon.Application.UsersManagement.GetUsers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

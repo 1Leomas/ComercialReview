@@ -2,7 +2,7 @@
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Intercon.Application.Users.DeleteUser;    
+namespace Intercon.Application.UsersManagement.DeleteUser;    
 
 public sealed record DeleteUserCommand(int Id) : ICommand;
 

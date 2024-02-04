@@ -1,6 +1,7 @@
 ﻿using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.User;
-using Intercon.Domain;
+using Intercon.Domain.Entities;
+using Intercon.Domain.Enums;
 using Intercon.Infrastructure.Persistence;
 
 namespace Intercon.Application.UsersManagement.CreateUser;
@@ -41,7 +42,8 @@ public sealed class CreateUserCommandHandler : ICommandHandler<CreateUserCommand
             LastName = command.LastName,
             Email = command.Email,
             UserName = command.UserName,
-            Password = command.Password
+            Password = command.Password,
+            Role = UserRole.User
         };
 
         await _context.Users.AddAsync(userDb, cancellationToken);

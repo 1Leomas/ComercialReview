@@ -3,7 +3,7 @@ using Intercon.Application.DataTransferObjects.User;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Intercon.Application.Users.GetUsers;
+namespace Intercon.Application.UsersManagement.GetUsers;
 
 public sealed record GetUsersQuery() : IQuery<IEnumerable<UserDetailsDto>>;
 

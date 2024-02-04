@@ -13,7 +13,9 @@ public class GetReviewQueryHandler(InterconDbContext context) : IQueryHandler<Ge
 
     public async Task<ReviewDto?> Handle(GetReviewQuery request, CancellationToken cancellationToken)
     {
-        var reviewFromDb = await _context.Reviews.FirstOrDefaultAsync(x => x.Id == request.Id);
+        var reviewFromDb = await _context.Reviews
+            .Include(review => review.Author)
+            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
         if (reviewFromDb == null)
         {
@@ -34,9 +36,6 @@ public class GetReviewQueryHandler(InterconDbContext context) : IQueryHandler<Ge
             },
             Grade = reviewFromDb.Grade,
             ReviewText = reviewFromDb.ReviewText,
-            CreateDate = reviewFromDb.CreateDate,
-            UpdateDate = reviewFromDb.UpdateDate,
-            WasEdited = reviewFromDb.WasEdited
         };
     }
 }
@@ -46,11 +45,7 @@ public class ReviewDto
     public int Id { get; set; }
     public int BusinessId { get; set; }
     public int AuthorId { get; set; }
-
-    public virtual UserDto Author { get; set; }
+    public virtual UserDto Author { get; set; } = null!;
     public float Grade { get; set; }
     public string ReviewText { get; set; } = string.Empty;
-    public DateTime CreateDate { get; set; } = DateTime.Now;
-    public DateTime? UpdateDate { get; set; }
-    public bool WasEdited { get; set; }
 }

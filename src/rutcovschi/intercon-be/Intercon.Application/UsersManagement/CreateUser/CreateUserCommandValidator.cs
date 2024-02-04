@@ -1,9 +1,8 @@
 ﻿using FluentValidation;
-using Intercon.Application.UsersManagement.CreateUser;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Intercon.Application.Users.CreateUser;
+namespace Intercon.Application.UsersManagement.CreateUser;
 
 public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
 {

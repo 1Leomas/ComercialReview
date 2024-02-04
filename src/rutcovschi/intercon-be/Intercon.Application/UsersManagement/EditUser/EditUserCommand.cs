@@ -5,7 +5,7 @@ using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Intercon.Application.Users.EditUser;
+namespace Intercon.Application.UsersManagement.EditUser;
 
 public sealed record EditUserCommand : ICommand
 {
