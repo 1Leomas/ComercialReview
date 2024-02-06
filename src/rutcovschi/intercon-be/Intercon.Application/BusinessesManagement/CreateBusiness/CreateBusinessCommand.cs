@@ -36,31 +36,35 @@ public sealed record CreateBusinessCommand : ICommand
 
 public sealed class CreateBusinessCommandHandler(InterconDbContext context) : ICommandHandler<CreateBusinessCommand>
 {
-       public async Task Handle(CreateBusinessCommand command, CancellationToken cancellationToken)
+   public async Task Handle(CreateBusinessCommand command, CancellationToken cancellationToken)
+   {
+       var userExits = await context.Users.AnyAsync(x => x.Id == command.OwnerId, cancellationToken);
+       
+       if (!userExits)
        {
-           var userExits = await context.Users.AnyAsync(x => x.Id == command.OwnerId, cancellationToken);
-           
-           if (!userExits)
-           {
-               throw new Exception("User not found");
-           }
-
-           //add image to daatabase
-           
-           var businessDb = new Business
-           {
-               OwnerId = command.OwnerId,
-               Title = command.Title,
-               ShortDescription = command.ShortDescription,
-               FullDescription = command.FullDescription,
-               Logo = command.Image,
-               Address = command.Address,
-               Category = command.Category
-           };
-
-           await context.Businesses.AddAsync(businessDb, cancellationToken);
-           await context.SaveChangesAsync(cancellationToken);
+           throw new Exception("User not found");
        }
+
+       // maybe make a separate request for this
+       if (command.Image != null)
+       {
+           await context.Images.AddAsync(command.Image, cancellationToken);
+       }
+       
+       var businessDb = new Business
+       {
+           OwnerId = command.OwnerId,
+           Title = command.Title,
+           ShortDescription = command.ShortDescription,
+           FullDescription = command.FullDescription,
+           Logo = command.Image,
+           Address = command.Address,
+           Category = command.Category
+       };
+
+       await context.Businesses.AddAsync(businessDb, cancellationToken);
+       await context.SaveChangesAsync(cancellationToken);
+   }
 }
 
 public class CreateBusinessCommandValidator : AbstractValidator<CreateBusinessCommand>
