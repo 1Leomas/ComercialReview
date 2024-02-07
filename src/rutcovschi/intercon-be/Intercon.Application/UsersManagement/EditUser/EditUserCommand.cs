@@ -4,6 +4,9 @@ using Intercon.Application.DataTransferObjects.User;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System;
+using Intercon.Domain.Entities;
 
 namespace Intercon.Application.UsersManagement.EditUser;
 
@@ -40,59 +43,60 @@ public sealed class EditUserCommandHandler : ICommandHandler<EditUserCommand>
             return;
         }
 
-        if (!command.FirstName.IsNullOrEmpty() )
+        if (!command.FirstName.IsNullOrEmpty())
         {
-            if (command.FirstName!.Length > 50)
-            {
-                throw new ValidationException("Firstname length to long");
-            }
             userDb.FirstName = command.FirstName;
         }
-
         if (!command.LastName.IsNullOrEmpty())
         {
-            if (command.LastName!.Length > 50)
-            {
-                throw new ValidationException("Lastname length to long");
-            }
             userDb.LastName = command.LastName;
         }
-
         if (!command.Email.IsNullOrEmpty())
         {
-            if (!(await EmailUniqCheck(command.UserId, command.Email)))
-            {
-                throw new ValidationException("The email must be unique");
-            }
-
-            if (!ValidateEmail(command.Email))
-            {
-                throw new ValidationException("Bad email");
-            }
-
             userDb.Email = command.Email;
         }
-
         if (!command.UserName.IsNullOrEmpty())
         {
-            if (command.UserName!.Length > 50 || command.UserName!.Length < 2)
-            {
-                throw new ValidationException("Username bad length");
-            }
             userDb.UserName = command.UserName;
         }
+        else
+        {
+            userDb.UserName = null;
+        }
+
         await _context.SaveChangesAsync(cancellationToken);
     }
+}
 
-    private async Task<bool> EmailUniqCheck(int userId, string email)
+public sealed class EditUserCommandValidator : AbstractValidator<EditUserCommand>
+{
+    public EditUserCommandValidator(InterconDbContext dbContext)
     {
-        return await _context.Users.AllAsync(x => x.Id == userId || x.Email != email);
-    }
+        When(x => !string.IsNullOrEmpty(x.FirstName), () =>
+        {
+            RuleFor(x => x.FirstName).MaximumLength(50);
+        });
+        When(x => !string.IsNullOrEmpty(x.LastName), () =>
+        {
+            RuleFor(x => x.LastName).MaximumLength(50);
+        });
 
-    private static bool ValidateEmail(string email)
-    { 
-        var emailPattern = @"^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$";
+        When(x => !string.IsNullOrEmpty(x.Email), () =>
+        {
+            RuleFor(x => x.Email)
+                .EmailAddress()
+                .MustAsync(async (email, ctx) => await dbContext.Users.AllAsync(x => x.Email != email, ctx)
+                ).WithMessage("The email must be unique");
+        });
 
-        return System.Text.RegularExpressions.Regex.IsMatch(email, emailPattern);
+        When(x => !string.IsNullOrEmpty(x.UserName), () =>
+        {
+            RuleFor(x => x.UserName).Length(2, 50);
+
+            RuleFor(x => x).MustAsync(async (command, ctx) => 
+                await dbContext.Users.AllAsync(
+                    x => x.Id == command.UserId || x.UserName != command.UserName, ctx)
+            ).WithName(x => nameof(x.UserName)).WithMessage("The username must be unique");
+        });
     }
 }
