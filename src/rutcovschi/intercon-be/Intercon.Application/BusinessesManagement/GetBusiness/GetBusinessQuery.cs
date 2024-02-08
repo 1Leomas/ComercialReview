@@ -10,9 +10,11 @@ public sealed record GetBusinessQuery(int Id) : IQuery<BusinessDetailsDto?>;
 
 public sealed class GetBusinessQueryHandler(InterconDbContext context) : IQueryHandler<GetBusinessQuery, BusinessDetailsDto?>
 {
+    private readonly InterconDbContext _context = context;
+
     public async Task<BusinessDetailsDto?> Handle(GetBusinessQuery query, CancellationToken cancellationToken)
     {
-        var business = await context.Businesses
+        var business = await _context.Businesses
             .Include(business => business.Logo)
             .FirstOrDefaultAsync(x => x.Id == query.Id, cancellationToken);
 

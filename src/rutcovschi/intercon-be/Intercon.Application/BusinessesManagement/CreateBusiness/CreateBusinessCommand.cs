@@ -13,9 +13,11 @@ public sealed record CreateBusinessCommand(CreateBusinessDto business) : IComman
 
 public sealed class CreateBusinessCommandHandler(InterconDbContext context) : ICommandHandler<CreateBusinessCommand>
 {
+    private readonly InterconDbContext _context = context;
+
     public async Task Handle(CreateBusinessCommand command, CancellationToken cancellationToken)
     {
-        var userExits = await context.Users.AnyAsync(x => x.Id == command.Data.OwnerId, cancellationToken);
+        var userExits = await _context.Users.AnyAsync(x => x.Id == command.Data.OwnerId, cancellationToken);
        
         if (!userExits)
         {
@@ -25,12 +27,12 @@ public sealed class CreateBusinessCommandHandler(InterconDbContext context) : IC
         // maybe make a separate request for this
         if (command.Data.Image != null)
         {
-            await context.Images.AddAsync(command.Data.Image, cancellationToken);
+            await _context.Images.AddAsync(command.Data.Image, cancellationToken);
         }
 
         var businessDb = command.Data.ToEntity();
 
-        await context.Businesses.AddAsync(businessDb, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        await _context.Businesses.AddAsync(businessDb, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

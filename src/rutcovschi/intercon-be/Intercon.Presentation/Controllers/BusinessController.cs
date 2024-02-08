@@ -1,5 +1,7 @@
 ﻿using Intercon.Application.BusinessesManagement.CreateBusiness;
+using Intercon.Application.BusinessesManagement.EditBusiness;
 using Intercon.Application.BusinessesManagement.GetBusiness;
+using Intercon.Application.BusinessesManagement.GetBusinesses;
 using Intercon.Application.CustomExceptions;
 using Intercon.Application.DataTransferObjects.Business;
 using MediatR;
@@ -26,12 +28,12 @@ public class BusinessController(IMediator mediator) : BaseController
         return Ok(business);
     }
 
-    //[HttpGet]
-    //[ProducesResponseType(typeof(IEnumerable<BusinessDetailsDto>), StatusCodes.Status200OK)]
-    //public async Task<IActionResult> GetBusinesses()
-    //{
-    //    return Ok(await mediator.Send(new GetBusinessesQuery()));
-    //}
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<BusinessDetailsDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetBusinesses()
+    {
+        return Ok(await mediator.Send(new GetAllBusinessesQuery()));
+    }
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -43,24 +45,24 @@ public class BusinessController(IMediator mediator) : BaseController
         return Ok();
     }
 
-    //[HttpPut]
-    //[ProducesResponseType(typeof(BusinessDetailsDto), StatusCodes.Status200OK)]
-    //[ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
-    //public async Task<IActionResult> EditBusiness([FromQuery] int id, [FromBody] EditBusinessDto businessToEdit)
-    //{
-    //    await mediator.Send(new EditBusinessCommand(id, businessToEdit));
-
-    //    return Ok();
-    //}
-
-    [HttpDelete("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> DeleteBusiness(int id)
+    [HttpPut]
+    [ProducesResponseType(typeof(BusinessDetailsDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> EditBusiness([FromQuery] int id, [FromBody] EditBusinessDto businessToEdit)
     {
-        //await mediator.Send(new DeleteBusinessCommand(id));
+        await mediator.Send(new EditBusinessCommand(id, businessToEdit));
 
         return Ok();
     }
+
+    //[HttpDelete("{id}")]
+    //[ProducesResponseType(StatusCodes.Status200OK)]
+    //public async Task<IActionResult> DeleteBusiness(int id)
+    //{
+    //    await mediator.Send(new DeleteBusinessCommand(id));
+
+    //    return Ok();
+    //}
 
     [HttpGet]
     [Route("logo")]
