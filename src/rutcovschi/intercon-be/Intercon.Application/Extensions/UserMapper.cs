@@ -1,9 +1,10 @@
 ﻿using Intercon.Application.DataTransferObjects.User;
 using Intercon.Domain.Entities;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Intercon.Application.Extensions;
 
-public static class EntityMapper
+public static class UserMapper
 {
     public static User ToEntity(this UserDto user)
     {
@@ -59,12 +60,12 @@ public static class EntityMapper
 
     public static UserDetailsDto ToUserDetailsDto(this User user)
     {
-        return new UserDetailsDto()
-        {
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Email = user.Email,
-            UserName = user.UserName,
-        };
+        return new UserDetailsDto(
+            Id : user.Id,
+            FirstName : user.FirstName,
+            LastName : user.LastName,
+            Email : user.Email,
+            UserName : user.UserName
+        );
     }
 }

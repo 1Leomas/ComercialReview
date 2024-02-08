@@ -1,6 +1,7 @@
 ﻿using Intercon.Application.BusinessesManagement.CreateBusiness;
 using Intercon.Application.BusinessesManagement.GetBusiness;
 using Intercon.Application.CustomExceptions;
+using Intercon.Application.DataTransferObjects.Business;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

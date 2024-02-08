@@ -23,5 +23,4 @@ public class Business : Entity
     public virtual Image? Logo { get; set; } = null!;
     public virtual ICollection<Image> Images { get; set; } = new List<Image>();
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
-
 }

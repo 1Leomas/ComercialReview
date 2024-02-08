@@ -1,38 +1,20 @@
-﻿using FluentValidation;
-using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using System;
-using Intercon.Domain.Entities;
 
 namespace Intercon.Application.UsersManagement.EditUser;
 
-public sealed record EditUserCommand : ICommand
+public sealed record EditUserCommand(int userId, EditUserDto user) : ICommand
 {
-    public EditUserCommand(int userId, EditUserDto user)
-    {
-        UserId = userId;
-        FirstName = user.FirstName;
-        LastName = user.LastName;
-        Email = user.Email;
-        UserName = user.UserName;
-    }
-
-    public int UserId { get; init; }
-    public string FirstName { get; init; } = string.Empty;
-    public string LastName { get; init; } = string.Empty;
-    public string Email { get; init; } = string.Empty;
-    public string? UserName { get; init; }
+    public int UserId { get; set; } = userId;
+    public EditUserDto Data { get; init; } = user;
 }
 
-public sealed class EditUserCommandHandler : ICommandHandler<EditUserCommand>
+public sealed class EditUserCommandHandler(InterconDbContext context) : ICommandHandler<EditUserCommand>
 {
-    private readonly InterconDbContext _context;
-
-    public EditUserCommandHandler(InterconDbContext context) => _context = context;
+    private readonly InterconDbContext _context = context;
 
     public async Task Handle(EditUserCommand command, CancellationToken cancellationToken)
     {
@@ -43,21 +25,21 @@ public sealed class EditUserCommandHandler : ICommandHandler<EditUserCommand>
             return;
         }
 
-        if (!command.FirstName.IsNullOrEmpty())
+        if (!command.Data.FirstName.IsNullOrEmpty())
         {
-            userDb.FirstName = command.FirstName;
+            userDb.FirstName = command.Data.FirstName;
         }
-        if (!command.LastName.IsNullOrEmpty())
+        if (!command.Data.LastName.IsNullOrEmpty())
         {
-            userDb.LastName = command.LastName;
+            userDb.LastName = command.Data.LastName;
         }
-        if (!command.Email.IsNullOrEmpty())
+        if (!command.Data.Email.IsNullOrEmpty())
         {
-            userDb.Email = command.Email;
+            userDb.Email = command.Data.Email;
         }
-        if (!command.UserName.IsNullOrEmpty())
+        if (!command.Data.UserName.IsNullOrEmpty())
         {
-            userDb.UserName = command.UserName;
+            userDb.UserName = command.Data.UserName;
         }
         else
         {
@@ -65,38 +47,5 @@ public sealed class EditUserCommandHandler : ICommandHandler<EditUserCommand>
         }
 
         await _context.SaveChangesAsync(cancellationToken);
-    }
-}
-
-public sealed class EditUserCommandValidator : AbstractValidator<EditUserCommand>
-{
-    public EditUserCommandValidator(InterconDbContext dbContext)
-    {
-        When(x => !string.IsNullOrEmpty(x.FirstName), () =>
-        {
-            RuleFor(x => x.FirstName).MaximumLength(50);
-        });
-        When(x => !string.IsNullOrEmpty(x.LastName), () =>
-        {
-            RuleFor(x => x.LastName).MaximumLength(50);
-        });
-
-        When(x => !string.IsNullOrEmpty(x.Email), () =>
-        {
-            RuleFor(x => x.Email)
-                .EmailAddress()
-                .MustAsync(async (email, ctx) => await dbContext.Users.AllAsync(x => x.Email != email, ctx)
-                ).WithMessage("The email must be unique");
-        });
-
-        When(x => !string.IsNullOrEmpty(x.UserName), () =>
-        {
-            RuleFor(x => x.UserName).Length(2, 50);
-
-            RuleFor(x => x).MustAsync(async (command, ctx) => 
-                await dbContext.Users.AllAsync(
-                    x => x.Id == command.UserId || x.UserName != command.UserName, ctx)
-            ).WithName(x => nameof(x.UserName)).WithMessage("The username must be unique");
-        });
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Intercon.Application.Abstractions.Messaging;
-using Intercon.Domain.ComplexTypes;
+using Intercon.Application.DataTransferObjects.Business;
+using Intercon.Application.Extensions;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,26 +21,6 @@ public sealed class GetBusinessQueryHandler(InterconDbContext context) : IQueryH
             return null;
         }
 
-        return new BusinessDetailsDto()
-        {
-            Id = business.Id,
-            Title = business.Title,
-            ShortDescription = business.ShortDescription,
-            FullDescription = business.FullDescription,
-            Rating = business.Rating,
-            Address = business.Address,
-            ReviewsCount = business.ReviewsCount
-        };
+        return business.ToDetailsDto();
     }
-}
-
-public record BusinessDetailsDto
-{
-    public int Id { get; set; }
-    public string Title { get; set; } = string.Empty;
-    public string ShortDescription { get; set; } = string.Empty;
-    public string? FullDescription { get; set; } = string.Empty;
-    public float Rating { get; set; }
-    public Address Address { get; set; } = null!;
-    public uint ReviewsCount { get; set; }
 }

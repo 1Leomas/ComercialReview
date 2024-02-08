@@ -6,14 +6,9 @@ namespace Intercon.Application.UsersManagement.DeleteUser;
 
 public sealed record DeleteUserCommand(int Id) : ICommand;
 
-public sealed class DeleteUserCommandHandler : ICommandHandler<DeleteUserCommand>
+public sealed class DeleteUserCommandHandler(InterconDbContext context) : ICommandHandler<DeleteUserCommand>
 {
-    private readonly InterconDbContext _context;
-
-    public DeleteUserCommandHandler(InterconDbContext context)
-    {
-        _context = context;
-    }
+    private readonly InterconDbContext _context = context;
 
     public async Task Handle(DeleteUserCommand command, CancellationToken cancellationToken)
     {

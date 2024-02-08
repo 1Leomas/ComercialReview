@@ -8,29 +8,32 @@ public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCom
 {
     public CreateUserCommandValidator(InterconDbContext context)
     {
-        RuleFor(x => x.FirstName)
+        RuleFor(x => x.Data.FirstName)
             .NotEmpty()
-            .MaximumLength(50);
-        RuleFor(x => x.LastName)
+            .MaximumLength(50)
+            .WithName(x => nameof(x.Data.FirstName));
+        RuleFor(x => x.Data.LastName)
             .NotEmpty()
-            .MaximumLength(50);
-        RuleFor(x => x.Email)
+            .MaximumLength(50)
+            .WithName(x => nameof(x.Data.LastName));
+        RuleFor(x => x.Data.Email)
             .NotEmpty()
-            .EmailAddress();
-        RuleFor(x => x.Password)
+            .EmailAddress()
+            .WithName(x => nameof(x.Data.Email));
+        RuleFor(x => x.Data.Password)
             .NotEmpty()
-            .MinimumLength(8)
-            .MaximumLength(50);
-        RuleFor(x => x.UserName)
-            .MinimumLength(2)
-            .MaximumLength(50);
+            .Length(8, 50)
+            .WithName(x => nameof(x.Data.Password));
+        RuleFor(x => x.Data.UserName)
+            .Length(2, 50)
+            .WithName(x => nameof(x.Data.UserName));
 
-        RuleFor(x => x.UserName).MustAsync(async (userName, _) =>
+        RuleFor(x => x.Data.UserName).MustAsync(async (userName, _) =>
         {
             return await context.Users.AllAsync(x => x.UserName != userName);
         }).WithMessage("The username must be unique");
 
-        RuleFor(x => x.Email).MustAsync(async (email, _) =>
+        RuleFor(x => x.Data.Email).MustAsync(async (email, _) =>
         {
             return await context.Users.AllAsync(x => x.Email != email);
         }).WithMessage("The email must be unique");

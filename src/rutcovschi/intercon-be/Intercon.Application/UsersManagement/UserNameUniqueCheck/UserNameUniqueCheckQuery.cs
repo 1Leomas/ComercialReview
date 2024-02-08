@@ -1,6 +1,7 @@
 ﻿using Intercon.Application.Abstractions.Messaging;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Intercon.Application.UsersManagement.VerifyUserName;
 
@@ -12,7 +13,7 @@ public sealed class VerifyUserNameQueryHandler(InterconDbContext context) : IQue
 
     public async Task<bool> Handle(UserNameUniqueCheckQuery request, CancellationToken cancellationToken)
     {
-        if (request.UserName == null) 
+        if (request.UserName.IsNullOrEmpty()) 
         { 
             return false; 
         }
