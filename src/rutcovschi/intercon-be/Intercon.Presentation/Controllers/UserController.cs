@@ -5,6 +5,7 @@ using Intercon.Application.UsersManagement.DeleteUser;
 using Intercon.Application.UsersManagement.EditUser;
 using Intercon.Application.UsersManagement.GetUser;
 using Intercon.Application.UsersManagement.GetUsers;
+using Intercon.Application.UsersManagement.LoginUser;
 using Intercon.Application.UsersManagement.VerifyUserName;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -36,8 +37,18 @@ public class UserController(IMediator mediator) : BaseController
     {
         return Ok(await mediator.Send(new GetUsersQuery(), cancellationToken));
     }
+    
+    [HttpPost("login")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> LoginUser([FromBody] LoginUserDto userToLogin, CancellationToken cancellationToken)
+    {
+        await mediator.Send(new LoginUserCommand(userToLogin), cancellationToken);
 
-    [HttpPost]
+        return Ok();
+    }
+
+    [HttpPost("create")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserDto userToAdd, CancellationToken cancellationToken)
