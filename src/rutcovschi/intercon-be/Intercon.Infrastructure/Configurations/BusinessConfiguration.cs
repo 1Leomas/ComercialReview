@@ -15,14 +15,18 @@ public class BusinessConfiguration : IEntityTypeConfiguration<Business>
 
         builder.ComplexProperty(b => b.Address).IsRequired();
 
+        builder.HasOne(b => b.Owner)
+            .WithOne(u => u.Business)
+            .HasForeignKey<Business>(b => b.OwnerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasMany(b => b.Reviews)
                .WithOne(r => r.Business)
                .HasForeignKey(r => r.BusinessId)
                .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(b => b.Owner)
-                .WithOne(u => u.Business)
-                .HasForeignKey<Business>(b => b.OwnerId)
-                .OnDelete(DeleteBehavior.Restrict);
+        //builder.HasMany(b => b.Images)
+        //    .WithOne(i => i.Business)
+        //    .OnDelete(DeleteBehavior.Cascade);
     }
 }

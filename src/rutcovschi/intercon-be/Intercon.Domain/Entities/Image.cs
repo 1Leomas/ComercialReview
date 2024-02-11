@@ -1,8 +1,9 @@
-﻿namespace Intercon.Domain.Entities;
+﻿using Intercon.Domain.Abstractions;
 
-public class Image
+namespace Intercon.Domain.Entities;
+
+public class Image : Entity
 {
-    public int Id { get; set; }
-    public string ContentType { get; set; } = null!;
-    public byte[] Raw { get; set; } = null!;
+    //public IFileData Data { get; set; } = null!;
+    public string Data { get; set; } = null!;
 }

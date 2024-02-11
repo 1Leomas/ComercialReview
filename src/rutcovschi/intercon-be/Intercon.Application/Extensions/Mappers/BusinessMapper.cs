@@ -13,7 +13,6 @@ public static class BusinessMapper
             Title = businessDto.Title,
             ShortDescription = businessDto.ShortDescription,
             FullDescription = businessDto.FullDescription,
-            Logo = businessDto.Image,
             Address = businessDto.Address,
             Category = businessDto.Category
         };
@@ -27,6 +26,7 @@ public static class BusinessMapper
             business.ShortDescription,
             business.FullDescription,
             business.Rating,
+            business.Logo.ToDto(),
             business.Address,
             business.ReviewsCount,
             business.Category);

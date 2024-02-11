@@ -9,6 +9,11 @@ public record CreateBusinessDto(
     string Title,
     string ShortDescription,
     string? FullDescription,
-    Image? Image,
+    CreateImageDto? Logo,
     Address Address,
     BusinessCategory Category);
+
+
+public record CreateImageDto(
+    //string ContentType,
+    string Data);

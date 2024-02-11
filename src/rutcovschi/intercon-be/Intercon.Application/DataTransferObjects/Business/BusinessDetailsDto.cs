@@ -9,6 +9,7 @@ public record BusinessDetailsDto(
     string ShortDescription,
     string? FullDescription,
     float Rating,
+    CreateImageDto? Logo,
     Address Address,
     uint ReviewsCount,
     BusinessCategory Category);

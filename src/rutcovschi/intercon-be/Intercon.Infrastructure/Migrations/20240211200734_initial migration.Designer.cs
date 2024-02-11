@@ -13,8 +13,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intercon.Infrastructure.Migrations
 {
     [DbContext(typeof(InterconDbContext))]
-    [Migration("20240204195340_update-configurations")]
-    partial class updateconfigurations
+    [Migration("20240211200734_initial migration")]
+    partial class initialmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,10 +41,9 @@ namespace Intercon.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FullDescription")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("LogoId")
+                    b.Property<int?>("LogoId")
                         .HasColumnType("int");
 
                     b.Property<int>("OwnerId")
@@ -91,7 +90,9 @@ namespace Intercon.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LogoId");
+                    b.HasIndex("LogoId")
+                        .IsUnique()
+                        .HasFilter("[LogoId] IS NOT NULL");
 
                     b.HasIndex("OwnerId")
                         .IsUnique();
@@ -107,22 +108,27 @@ namespace Intercon.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("BusinessId")
+                    b.Property<int>("BusinessId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ContentType")
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Raw")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("Raw")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                    b.Property<DateTime>("UpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("WasEdited")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BusinessId");
 
-                    b.ToTable("Image");
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("Intercon.Domain.Entities.Review", b =>
@@ -179,8 +185,8 @@ namespace Intercon.Infrastructure.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -198,7 +204,9 @@ namespace Intercon.Infrastructure.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("Role")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("datetime2");
@@ -225,15 +233,14 @@ namespace Intercon.Infrastructure.Migrations
             modelBuilder.Entity("Intercon.Domain.Entities.Business", b =>
                 {
                     b.HasOne("Intercon.Domain.Entities.Image", "Logo")
-                        .WithMany()
-                        .HasForeignKey("LogoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithOne()
+                        .HasForeignKey("Intercon.Domain.Entities.Business", "LogoId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Intercon.Domain.Entities.User", "Owner")
                         .WithOne("Business")
                         .HasForeignKey("Intercon.Domain.Entities.Business", "OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Logo");
@@ -243,9 +250,13 @@ namespace Intercon.Infrastructure.Migrations
 
             modelBuilder.Entity("Intercon.Domain.Entities.Image", b =>
                 {
-                    b.HasOne("Intercon.Domain.Entities.Business", null)
+                    b.HasOne("Intercon.Domain.Entities.Business", "Business")
                         .WithMany("Images")
-                        .HasForeignKey("BusinessId");
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Business");
                 });
 
             modelBuilder.Entity("Intercon.Domain.Entities.Review", b =>
