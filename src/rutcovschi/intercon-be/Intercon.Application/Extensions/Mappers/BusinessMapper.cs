@@ -1,7 +1,7 @@
 ﻿using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Domain.Entities;
 
-namespace Intercon.Application.Extensions;
+namespace Intercon.Application.Extensions.Mappers;
 
 public static class BusinessMapper
 {

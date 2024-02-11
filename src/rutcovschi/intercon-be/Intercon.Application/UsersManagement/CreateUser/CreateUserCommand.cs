@@ -1,14 +1,12 @@
 ﻿using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Application.Extensions;
+using Intercon.Application.Extensions.Mappers;
 using Intercon.Infrastructure.Persistence;
 
 namespace Intercon.Application.UsersManagement.CreateUser;
 
-public sealed record CreateUserCommand(CreateUserDto userToCreate) : ICommand
-{
-    public CreateUserDto Data { get; init; } = userToCreate;
-}
+public sealed record CreateUserCommand(CreateUserDto Data) : ICommand;
 
 public sealed class CreateUserCommandHandler(InterconDbContext context) : ICommandHandler<CreateUserCommand>
 {

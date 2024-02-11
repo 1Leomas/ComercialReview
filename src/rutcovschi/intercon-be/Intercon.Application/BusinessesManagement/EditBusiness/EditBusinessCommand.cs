@@ -10,11 +10,7 @@ public record EditBusinessDto(
     string Title,
     string ShortDescription);
 
-public sealed record EditBusinessCommand(int businessId, EditBusinessDto business) : ICommand
-{
-    public int BusinessId { get; init; } = businessId;
-    public EditBusinessDto Data { get; init; } = business;
-}
+public sealed record EditBusinessCommand(int BusinessId, EditBusinessDto Data) : ICommand;
 
 public sealed class EditBusinessCommandHandler(InterconDbContext context) : ICommandHandler<EditBusinessCommand>
 {

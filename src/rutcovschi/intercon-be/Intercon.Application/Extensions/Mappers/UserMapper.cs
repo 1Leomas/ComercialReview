@@ -2,7 +2,7 @@
 using Intercon.Domain.Entities;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
-namespace Intercon.Application.Extensions;
+namespace Intercon.Application.Extensions.Mappers;
 
 public static class UserMapper
 {
@@ -61,11 +61,11 @@ public static class UserMapper
     public static UserDetailsDto ToUserDetailsDto(this User user)
     {
         return new UserDetailsDto(
-            Id : user.Id,
-            FirstName : user.FirstName,
-            LastName : user.LastName,
-            Email : user.Email,
-            UserName : user.UserName
+            Id: user.Id,
+            FirstName: user.FirstName,
+            LastName: user.LastName,
+            Email: user.Email,
+            UserName: user.UserName
         );
     }
 }

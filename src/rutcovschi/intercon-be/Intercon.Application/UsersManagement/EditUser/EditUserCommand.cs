@@ -6,11 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Intercon.Application.UsersManagement.EditUser;
 
-public sealed record EditUserCommand(int userId, EditUserDto user) : ICommand
-{
-    public int UserId { get; set; } = userId;
-    public EditUserDto Data { get; init; } = user;
-}
+public sealed record EditUserCommand(int UserId, EditUserDto Data) : ICommand;
 
 public sealed class EditUserCommandHandler(InterconDbContext context) : ICommandHandler<EditUserCommand>
 {

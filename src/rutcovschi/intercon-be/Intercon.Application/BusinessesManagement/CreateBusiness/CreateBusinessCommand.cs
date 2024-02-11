@@ -1,15 +1,13 @@
 ﻿using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Application.Extensions;
+using Intercon.Application.Extensions.Mappers;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace Intercon.Application.BusinessesManagement.CreateBusiness;
 
-public sealed record CreateBusinessCommand(CreateBusinessDto business) : ICommand
-{
-    public CreateBusinessDto Data { get; init; } = business;
-}
+public sealed record CreateBusinessCommand(CreateBusinessDto Data) : ICommand;
 
 public sealed class CreateBusinessCommandHandler(InterconDbContext context) : ICommandHandler<CreateBusinessCommand>
 {

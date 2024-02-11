@@ -1,6 +1,6 @@
 ﻿using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.User;
-using Intercon.Application.Extensions;
+using Intercon.Application.Extensions.Mappers;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
