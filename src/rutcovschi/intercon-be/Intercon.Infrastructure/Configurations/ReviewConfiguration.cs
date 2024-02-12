@@ -8,7 +8,7 @@ public class ReviewConfiguration : IEntityTypeConfiguration<Review>
 {
     public void Configure(EntityTypeBuilder<Review> builder)
     {
-        builder.HasKey(r => r.Id);
+        builder.HasKey(r => new { r.BusinessId, r.AuthorId });
 
         builder.Property(r => r.Grade).IsRequired();
         builder.Property(r => r.ReviewText).HasMaxLength(1000);
@@ -22,8 +22,5 @@ public class ReviewConfiguration : IEntityTypeConfiguration<Review>
                .WithMany(b => b.Reviews)
                .HasForeignKey(r => r.BusinessId)
                .OnDelete(DeleteBehavior.Restrict);
-
-        // Unique constraint: One user can write only one review for a business
-        builder.HasIndex(r => new { r.AuthorId, r.BusinessId }).IsUnique();
     }
 }
