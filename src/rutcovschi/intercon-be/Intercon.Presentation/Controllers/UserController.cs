@@ -16,12 +16,14 @@ namespace Intercon.Presentation.Controllers;
 [ApiController]
 public class UserController(IMediator mediator) : BaseController
 {
+    private readonly IMediator _mediator = mediator;
+
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(UserDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUser([FromRoute] int id, CancellationToken cancellationToken)
     {
-        var user = await mediator.Send(new GetUserQuery(id), cancellationToken);
+        var user = await _mediator.Send(new GetUserQuery(id), cancellationToken);
 
         if (user == null)
         {
@@ -35,7 +37,7 @@ public class UserController(IMediator mediator) : BaseController
     [ProducesResponseType(typeof(IEnumerable<UserDetailsDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUsers(CancellationToken cancellationToken)
     {
-        return Ok(await mediator.Send(new GetUsersQuery(), cancellationToken));
+        return Ok(await _mediator.Send(new GetUsersQuery(), cancellationToken));
     }
     
     [HttpPost("login")]
@@ -43,7 +45,7 @@ public class UserController(IMediator mediator) : BaseController
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> LoginUser([FromBody] LoginUserDto userToLogin, CancellationToken cancellationToken)
     {
-        await mediator.Send(new LoginUserCommand(userToLogin), cancellationToken);
+        await _mediator.Send(new LoginUserCommand(userToLogin), cancellationToken);
 
         return Ok();
     }
@@ -53,7 +55,7 @@ public class UserController(IMediator mediator) : BaseController
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserDto userToAdd, CancellationToken cancellationToken)
     {
-        await mediator.Send(new CreateUserCommand(userToAdd), cancellationToken);
+        await _mediator.Send(new CreateUserCommand(userToAdd), cancellationToken);
 
         return Ok();
     }
@@ -63,7 +65,7 @@ public class UserController(IMediator mediator) : BaseController
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> EditUser([FromRoute] int id, [FromBody] EditUserDto userToEdit, CancellationToken cancellationToken)
     {
-        await mediator.Send(new EditUserCommand(id, userToEdit), cancellationToken);
+        await _mediator.Send(new EditUserCommand(id, userToEdit), cancellationToken);
 
         return Ok();
     }
@@ -72,7 +74,7 @@ public class UserController(IMediator mediator) : BaseController
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteUser([FromRoute] int id, CancellationToken cancellationToken)
     {
-        await mediator.Send(new DeleteUserCommand(id), cancellationToken);
+        await _mediator.Send(new DeleteUserCommand(id), cancellationToken);
 
         return Ok();
     }
@@ -82,7 +84,7 @@ public class UserController(IMediator mediator) : BaseController
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UserNameUniqueCheck([FromQuery(Name = "nameToCheck")] string userName, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new UserNameUniqueCheckQuery(userName), cancellationToken);
+        var result = await _mediator.Send(new UserNameUniqueCheckQuery(userName), cancellationToken);
 
         return result ? Ok() : BadRequest();
     }
