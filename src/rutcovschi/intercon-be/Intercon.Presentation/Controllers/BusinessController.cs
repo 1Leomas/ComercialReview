@@ -9,14 +9,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Intercon.Presentation.Controllers;
 
-[Route("api/business")]
+[Route("api/businesses")]
 [ApiController]
 public class BusinessController(IMediator mediator) : BaseController
 {
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(BusinessDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetBusiness(int id)
+    public async Task<IActionResult> GetBusiness([FromRoute] int id)
     {
         var business = await mediator.Send(new GetBusinessQuery(id));
 
@@ -45,10 +45,10 @@ public class BusinessController(IMediator mediator) : BaseController
         return Ok();
     }
 
-    [HttpPut]
+    [HttpPut("{id}")]
     [ProducesResponseType(typeof(BusinessDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> EditBusiness([FromQuery] int id, [FromBody] EditBusinessDto businessToEdit)
+    public async Task<IActionResult> EditBusiness([FromRoute] int id, [FromBody] EditBusinessDto businessToEdit)
     {
         await mediator.Send(new EditBusinessCommand(id, businessToEdit));
 
