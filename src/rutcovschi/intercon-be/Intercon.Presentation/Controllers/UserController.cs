@@ -19,7 +19,7 @@ public class UserController(IMediator mediator) : BaseController
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(UserDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetUser(int id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetUser([FromRoute] int id, CancellationToken cancellationToken)
     {
         var user = await mediator.Send(new GetUserQuery(id), cancellationToken);
 
@@ -58,10 +58,10 @@ public class UserController(IMediator mediator) : BaseController
         return Ok();
     }
 
-    [HttpPut]
+    [HttpPut("{id}")]
     [ProducesResponseType(typeof(UserDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> EditUser([FromQuery] int id, [FromBody] EditUserDto userToEdit, CancellationToken cancellationToken)
+    public async Task<IActionResult> EditUser([FromRoute] int id, [FromBody] EditUserDto userToEdit, CancellationToken cancellationToken)
     {
         await mediator.Send(new EditUserCommand(id, userToEdit), cancellationToken);
 

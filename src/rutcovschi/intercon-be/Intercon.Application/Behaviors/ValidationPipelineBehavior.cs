@@ -26,12 +26,12 @@ public sealed class ValidationPipelineBehavior<TRequest, TResponse>
             _validators.Select(validator => validator.ValidateAsync(context, cancellationToken)));
 
         var errors = validationFailures
-            .Where(validationResult => !validationResult.IsValid)
-            .SelectMany(validationResult => validationResult.Errors)
-            .Select(validationFailure => new CustomExceptions.ValidationError
+            .Where(result => !result.IsValid)
+            .SelectMany(result => result.Errors)
+            .Select(failure => new CustomExceptions.ValidationError
             (
-                validationFailure.PropertyName.Replace("dto", ""),
-                validationFailure.ErrorMessage
+                failure.PropertyName.Split(".").Last(),
+                failure.ErrorMessage
             ))
             .ToList();  
 
