@@ -37,10 +37,6 @@ public sealed class EditUserCommandHandler(InterconDbContext context) : ICommand
         {
             userDb.UserName = command.Data.UserName;
         }
-        else
-        {
-            userDb.UserName = null;
-        }
 
         await _context.SaveChangesAsync(cancellationToken);
     }

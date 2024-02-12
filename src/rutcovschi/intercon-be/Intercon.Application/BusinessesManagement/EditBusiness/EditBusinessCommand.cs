@@ -44,6 +44,8 @@ public class EditBusinessCommandValidator : AbstractValidator<EditBusinessComman
 {
     public EditBusinessCommandValidator()
     {
+        RuleFor(x => x.BusinessId).NotEmpty();
+
         When(x => !string.IsNullOrEmpty(x.Data.Title), () =>
         {
             RuleFor(x => x.Data.Title)
