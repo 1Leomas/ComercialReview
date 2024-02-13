@@ -61,7 +61,7 @@ public class UserController(IMediator mediator) : BaseController
     }
 
     [HttpPut("{id}")]
-    [ProducesResponseType(typeof(UserDetailsDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> EditUser([FromRoute] int id, [FromBody] EditUserDto userToEdit, CancellationToken cancellationToken)
     {
