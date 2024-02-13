@@ -18,20 +18,7 @@ internal sealed class CreateReviewCommandHandler(InterconDbContext context) : IC
 
     public async Task Handle(CreateReviewCommand command, CancellationToken cancellationToken)
     {
-        if (await _context.Businesses.AllAsync(x => x.Id != command.BusinessId, cancellationToken)
-            || await _context.Users.AllAsync(x => x.Id != command.Data.AuthorId, cancellationToken))
-        {
-            return;
-        }
-
-        var s = new string[]{ "3:3", "4:2" };
-
-        s.Select(x => {
-            var a = int.Parse(x.Split(':').First());
-            var b = int.Parse(x.Split(':').Last());
-            return a > b ? 3 : a < b ? 0 : 1;
-        }).Sum();
-
+        var business = await _context.Businesses.FindAsync(command.BusinessId, cancellationToken);
 
         var review = new Review
         {
@@ -40,6 +27,14 @@ internal sealed class CreateReviewCommandHandler(InterconDbContext context) : IC
             Grade = command.Data.Grade,
             ReviewText = command.Data.ReviewText
         };
+
+        var reviews = _context.Reviews.Where(x => x.BusinessId == command.BusinessId);
+
+        var reviewsCount = (uint)(reviews.Count() + 1);
+        float reviewsSum = reviews.Select(x => x.Grade).Sum() + command.Data.Grade;
+
+        business!.ReviewsCount = reviewsCount;
+        business.Rating = reviewsSum / reviewsCount;
 
         await _context.Reviews.AddAsync(review, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
@@ -64,6 +59,7 @@ public sealed class CreateUserCommandValidator : AbstractValidator<CreateReviewC
                 var exists = await context.Reviews.AnyAsync(x => x.BusinessId == data.BusinessId && x.AuthorId == data.AuthorId);
                 return !exists;
             })
+            .WithName(x => nameof(x.Data.AuthorId))
             .WithMessage("The user already wrote a review");
 
         RuleFor(x => x.Data.Grade)

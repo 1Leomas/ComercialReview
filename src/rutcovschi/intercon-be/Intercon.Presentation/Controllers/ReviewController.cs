@@ -47,7 +47,7 @@ public class ReviewController(IMediator mediator) : BaseController
         return Ok(await _mediator.Send(new GetBusinessReviewsQuery(businessId), cancellationToken));
     }
 
-    [HttpPost("api/businesses/{businessId}/reviews/{userId}")]
+    [HttpPost("api/businesses/{businessId}/reviews")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateReview([FromRoute] int businessId, [FromBody] CreateReviewDto reviewToAdd, CancellationToken cancellationToken)
