@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ReviewsManagement\GetReviews\**" />
+    <EmbeddedResource Remove="ReviewsManagement\GetReviews\**" />
+    <None Remove="ReviewsManagement\GetReviews\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="FluentValidation" Version="11.9.0" />
@@ -21,8 +27,6 @@
 
   <ItemGroup>
     <Folder Include="DataTransferObjects\Review\" />
-    <Folder Include="ReviewsManagement\GetReviews\" />
-    <Folder Include="ReviewsManagement\DeleteReview\" />
   </ItemGroup>
 
 </Project>

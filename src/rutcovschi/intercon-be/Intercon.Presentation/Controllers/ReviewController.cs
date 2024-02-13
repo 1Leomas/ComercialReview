@@ -1,5 +1,7 @@
 ﻿using Intercon.Application.CustomExceptions;
 using Intercon.Application.ReviewsManagement.CreateReview;
+using Intercon.Application.ReviewsManagement.DeleteReview;
+using Intercon.Application.ReviewsManagement.EditReview;
 using Intercon.Application.ReviewsManagement.GetAllReviews;
 using Intercon.Application.ReviewsManagement.GetBusinessReviews;
 using Intercon.Application.ReviewsManagement.GetReviewDetails;
@@ -14,15 +16,10 @@ public class ReviewController(IMediator mediator) : BaseController
     private readonly IMediator _mediator = mediator;
 
     [HttpGet("api/reviews")]
-
-    [ProducesResponseType(typeof(ReviewDetailsDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(IEnumerable<ReviewShortDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllReviews(CancellationToken cancellationToken)
     {
-        var reviews = await _mediator.Send(new GetAllReviewsQuery(), cancellationToken);
-
-
-        return Ok(reviews);
+        return Ok(await _mediator.Send(new GetAllReviewsQuery(), cancellationToken));
     }
 
     [HttpGet("api/businesses/{businessId}/reviews/{userId}")]
@@ -57,22 +54,22 @@ public class ReviewController(IMediator mediator) : BaseController
         return Ok();
     }
 
-    //[HttpPut("{id}")]
-    //[ProducesResponseType(typeof(ReviewDetailsDto), StatusCodes.Status200OK)]
-    //[ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
-    //public async Task<IActionResult> EditReview([FromRoute] int id, [FromBody] EditReviewDto reviewToEdit)
-    //{
-    //    await mediator.Send(new EditReviewCommand(id, reviewToEdit));
+    [HttpPut("api/businesses/{businessId}/reviews")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> EditReview([FromRoute] int businessId, [FromBody] EditReviewDto reviewToEdit, CancellationToken cancellationToken)
+    {
+        await mediator.Send(new EditReviewCommand(businessId, reviewToEdit), cancellationToken);
 
-    //    return Ok();
-    //}
+        return Ok();
+    }
 
-    //[HttpDelete("{id}")]
-    //[ProducesResponseType(StatusCodes.Status200OK)]
-    //public async Task<IActionResult> DeleteReview(int id)
-    //{
-    //    await mediator.Send(new DeleteReviewCommand(id));
+    [HttpDelete("api/businesses/{businessId}/reviews/{userId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> DeleteReview([FromRoute] int businessId, [FromRoute] int userId, CancellationToken cancellationToken)
+    {
+        await mediator.Send(new DeleteReviewCommand(businessId, userId), cancellationToken);
 
-    //    return Ok();
-    //}
+        return Ok();
+    }
 }

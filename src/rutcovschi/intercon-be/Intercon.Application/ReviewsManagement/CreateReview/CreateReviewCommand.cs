@@ -1,10 +1,7 @@
 ﻿using FluentValidation;
 using Intercon.Application.Abstractions.Messaging;
-using Intercon.Application.Extensions.Mappers;
-using Intercon.Application.UsersManagement.CreateUser;
 using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Intercon.Application.ReviewsManagement.CreateReview;
@@ -41,9 +38,9 @@ internal sealed class CreateReviewCommandHandler(InterconDbContext context) : IC
     }
 }
 
-public sealed class CreateUserCommandValidator : AbstractValidator<CreateReviewCommand>
+public sealed class CreateReviewCommandCommandValidator : AbstractValidator<CreateReviewCommand>
 {
-    public CreateUserCommandValidator(InterconDbContext context)
+    public CreateReviewCommandCommandValidator(InterconDbContext context)
     {
         RuleFor(x => x.BusinessId)
             .NotEmpty()
