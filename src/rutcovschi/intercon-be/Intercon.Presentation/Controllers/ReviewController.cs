@@ -19,7 +19,7 @@ public class ReviewController(IMediator mediator) : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAllReviews(CancellationToken cancellationToken)
     {
-        var reviews = await mediator.Send(new GetAllReviewsQuery(), cancellationToken);
+        var reviews = await _mediator.Send(new GetAllReviewsQuery(), cancellationToken);
 
 
         return Ok(reviews);
@@ -30,7 +30,7 @@ public class ReviewController(IMediator mediator) : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetReview([FromRoute] int businessId, [FromRoute] int userId, CancellationToken cancellationToken)
     {
-        var review = await mediator.Send(new GetReviewDetailsQuery(businessId, userId), cancellationToken);
+        var review = await _mediator.Send(new GetReviewDetailsQuery(businessId, userId), cancellationToken);
 
         if (review == null)
         {
@@ -44,15 +44,15 @@ public class ReviewController(IMediator mediator) : BaseController
     [ProducesResponseType(typeof(IEnumerable<ReviewDetailsDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetBusinessReviews([FromRoute] int businessId, CancellationToken cancellationToken)
     {
-        return Ok(await mediator.Send(new GetBusinessReviewsQuery(businessId), cancellationToken));
+        return Ok(await _mediator.Send(new GetBusinessReviewsQuery(businessId), cancellationToken));
     }
 
     [HttpPost("api/businesses/{businessId}/reviews/{userId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateReview([FromRoute] int businessId, [FromRoute] int userId, [FromBody] CreateReviewDto reviewToAdd, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateReview([FromRoute] int businessId, [FromBody] CreateReviewDto reviewToAdd, CancellationToken cancellationToken)
     {
-        await _mediator.Send(new CreateReviewCommand(businessId,  userId, reviewToAdd), cancellationToken);
+        await _mediator.Send(new CreateReviewCommand(businessId, reviewToAdd), cancellationToken);
 
         return Ok();
     }

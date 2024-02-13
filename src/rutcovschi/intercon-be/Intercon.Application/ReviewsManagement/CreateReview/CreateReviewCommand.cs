@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Intercon.Application.ReviewsManagement.CreateReview;
 
-public sealed record CreateReviewDto(int Grade, string? ReviewText);
-public sealed record CreateReviewCommand(int BusinessId, int AuthorId, CreateReviewDto Data) : ICommand;
+public sealed record CreateReviewDto(int AuthorId, int Grade, string? ReviewText);
+public sealed record CreateReviewCommand(int BusinessId, CreateReviewDto Data) : ICommand;
 
 internal sealed class CreateReviewCommandHandler(InterconDbContext context) : ICommandHandler<CreateReviewCommand>
 {
@@ -19,15 +19,24 @@ internal sealed class CreateReviewCommandHandler(InterconDbContext context) : IC
     public async Task Handle(CreateReviewCommand command, CancellationToken cancellationToken)
     {
         if (await _context.Businesses.AllAsync(x => x.Id != command.BusinessId, cancellationToken)
-            || await _context.Users.AllAsync(x => x.Id != command.AuthorId, cancellationToken))
+            || await _context.Users.AllAsync(x => x.Id != command.Data.AuthorId, cancellationToken))
         {
             return;
         }
 
+        var s = new string[]{ "3:3", "4:2" };
+
+        s.Select(x => {
+            var a = int.Parse(x.Split(':').First());
+            var b = int.Parse(x.Split(':').Last());
+            return a > b ? 3 : a < b ? 0 : 1;
+        }).Sum();
+
+
         var review = new Review
         {
             BusinessId = command.BusinessId,
-            AuthorId = command.AuthorId,
+            AuthorId = command.Data.AuthorId,
             Grade = command.Data.Grade,
             ReviewText = command.Data.ReviewText
         };
@@ -45,11 +54,11 @@ public sealed class CreateUserCommandValidator : AbstractValidator<CreateReviewC
             .NotEmpty()
             .WithName(x => nameof(x.BusinessId));
 
-        RuleFor(x => x.AuthorId)
+        RuleFor(x => x.Data.AuthorId)
             .NotEmpty()
-            .WithName(x => nameof(x.AuthorId));
+            .WithName(x => nameof(x.Data.AuthorId));
 
-        RuleFor(x => new {x.BusinessId, x.AuthorId})
+        RuleFor(x => new {x.BusinessId, x.Data.AuthorId })
             .MustAsync(async (data, _) =>
             {
                 var exists = await context.Reviews.AnyAsync(x => x.BusinessId == data.BusinessId && x.AuthorId == data.AuthorId);
