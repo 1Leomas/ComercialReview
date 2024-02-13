@@ -14,7 +14,9 @@ namespace Intercon.Infrastructure.Migrations
 {
     [DbContext(typeof(InterconDbContext))]
     [Migration("20240212192242_update review key")]
+#pragma warning disable CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
     partial class updatereviewkey
+#pragma warning restore CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
