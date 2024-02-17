@@ -1,4 +1,4 @@
-﻿using Intercon.Application.CustomExceptions;
+using Intercon.Application.CustomExceptions;
 using Intercon.Application.ReviewsManagement.CreateReview;
 using Intercon.Application.ReviewsManagement.DeleteReview;
 using Intercon.Application.ReviewsManagement.EditReview;

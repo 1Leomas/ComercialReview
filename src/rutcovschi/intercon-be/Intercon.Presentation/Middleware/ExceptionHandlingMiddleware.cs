@@ -22,7 +22,7 @@ public class ExceptionHandlingMiddleware
         {
             await _next(context);
         }
-        catch (Exception exception)
+        catch (Exception? exception)
         {
             _logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
 
@@ -47,7 +47,7 @@ public class ExceptionHandlingMiddleware
         }
     }
 
-    private static ExceptionDetails GetExceptionDetails(Exception exception)
+    private static ExceptionDetails GetExceptionDetails(Exception? exception)
     {
         return exception switch
         {
@@ -76,7 +76,7 @@ public class ExceptionHandlingMiddleware
     }
 
     #if DEBUG
-    private static IEnumerable<object> GetAllInheritExceptionsMessages(Exception exception)
+    private static IEnumerable<object> GetAllInheritExceptionsMessages(Exception? exception)
     {
         var messages = new List<object>();
 

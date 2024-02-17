@@ -1,4 +1,4 @@
-﻿using Intercon.Application.BusinessesManagement.CreateBusiness;
+using Intercon.Application.BusinessesManagement.CreateBusiness;
 using Intercon.Application.BusinessesManagement.EditBusiness;
 using Intercon.Application.BusinessesManagement.GetBusiness;
 using Intercon.Application.BusinessesManagement.GetBusinesses;
@@ -66,9 +66,8 @@ public class BusinessController(IMediator mediator) : BaseController
     //    return Ok();
     //}
 
-    [HttpGet]
-    [Route("logo")]
-    public async Task<IActionResult> GetBusinessLogo([FromQuery(Name = "logo_id")] int businessId, CancellationToken cancellationToken)
+    [HttpGet("{id}/logo")]
+    public async Task<IActionResult> GetBusinessLogo([FromRoute] int id, CancellationToken cancellationToken)
     {
         return Ok();
     }
