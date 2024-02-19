@@ -25,9 +25,6 @@ public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCom
             .NotEmpty()
             .Length(8, 50)
             .WithName(x => nameof(x.Data.Password));
-        RuleFor(x => x.Data.Avatar)
-            .NotEmpty()
-            .WithName(x => nameof(x.Data.Avatar));
 
         When(x => !x.Data.UserName.IsNullOrEmpty(), () =>
         {
@@ -45,5 +42,14 @@ public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCom
         {
             return await context.Users.AllAsync(x => x.Email != email);
         }).WithMessage("The email must be unique");
+
+        When(x => x.Data.Avatar is not null, () =>
+        {
+            RuleFor(x => x.Data.Avatar!.Data)
+                .NotEmpty()
+                .WithName(x => nameof(x.Data.Avatar)) //this doesnt work
+                .WithMessage("Bad avatar");
+
+        });
     }
 }
