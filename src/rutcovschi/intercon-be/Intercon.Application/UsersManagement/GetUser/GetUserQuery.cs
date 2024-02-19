@@ -14,9 +14,9 @@ public sealed class GetUserQueryHandler(InterconDbContext context) : IQueryHandl
 
     public async Task<UserDetailsDto?> Handle(GetUserQuery query, CancellationToken cancellationToken)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(x =>
-            x.Id == query.Id,
-            cancellationToken);
+        var user = await _context.Users
+            .Include(x => x.Avatar)
+            .FirstOrDefaultAsync(x => x.Id == query.Id, cancellationToken);
 
         if (user == null)
         {

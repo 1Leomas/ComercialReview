@@ -6,4 +6,5 @@ public record EditUserDto
     public string LastName { get; init; } = string.Empty;
     public string Email { get; init; } = string.Empty;
     public string? UserName { get; init; } = null;
+    public ImageDto? Avatar { get; init; } = null;
 }

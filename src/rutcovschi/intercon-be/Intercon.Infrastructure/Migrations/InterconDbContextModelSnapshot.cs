@@ -165,6 +165,9 @@ namespace Intercon.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("AvatarId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
@@ -205,6 +208,8 @@ namespace Intercon.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AvatarId");
+
                     b.HasIndex("Email")
                         .IsUnique();
 
@@ -219,7 +224,8 @@ namespace Intercon.Infrastructure.Migrations
                 {
                     b.HasOne("Intercon.Domain.Entities.Image", "Logo")
                         .WithMany()
-                        .HasForeignKey("LogoId");
+                        .HasForeignKey("LogoId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Intercon.Domain.Entities.User", "Owner")
                         .WithOne("Business")
@@ -256,6 +262,16 @@ namespace Intercon.Infrastructure.Migrations
                     b.Navigation("Author");
 
                     b.Navigation("Business");
+                });
+
+            modelBuilder.Entity("Intercon.Domain.Entities.User", b =>
+                {
+                    b.HasOne("Intercon.Domain.Entities.Image", "Avatar")
+                        .WithMany()
+                        .HasForeignKey("AvatarId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Avatar");
                 });
 
             modelBuilder.Entity("Intercon.Domain.Entities.Business", b =>

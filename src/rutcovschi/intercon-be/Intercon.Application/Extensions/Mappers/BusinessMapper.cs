@@ -26,7 +26,7 @@ public static class BusinessMapper
             business.ShortDescription,
             business.FullDescription,
             business.Rating,
-            business.Logo.ToDto(),
+            business.Logo?.ToCreateImageDto(),
             business.Address,
             business.ReviewsCount,
             business.Category);

@@ -59,7 +59,7 @@ public class ReviewController(IMediator mediator) : BaseController
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> EditReview([FromRoute] int businessId, [FromBody] EditReviewDto reviewToEdit, CancellationToken cancellationToken)
     {
-        await mediator.Send(new EditReviewCommand(businessId, reviewToEdit), cancellationToken);
+        await _mediator.Send(new EditReviewCommand(businessId, reviewToEdit), cancellationToken);
 
         return Ok();
     }
@@ -68,7 +68,7 @@ public class ReviewController(IMediator mediator) : BaseController
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteReview([FromRoute] int businessId, [FromRoute] int userId, CancellationToken cancellationToken)
     {
-        await mediator.Send(new DeleteReviewCommand(businessId, userId), cancellationToken);
+        await _mediator.Send(new DeleteReviewCommand(businessId, userId), cancellationToken);
 
         return Ok();
     }

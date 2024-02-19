@@ -44,7 +44,17 @@ public sealed class EditUserCommandValidator : AbstractValidator<EditUserCommand
             RuleFor(x => x)
                 .MustAsync(async (command, ctx) => await dbContext.Users.AllAsync(
                     x => x.Id == command.UserId || x.UserName != command.Data.UserName, ctx))
-                .WithName(x => nameof(x.Data.UserName)).WithMessage("The username must be unique");
+                .WithName(x => nameof(x.Data.UserName))
+                .WithMessage("The username must be unique");
+        });
+
+        When(x => x.Data.Avatar is not null, () => 
+        { 
+            RuleFor(x => x.Data.Avatar!.Data)
+            .NotEmpty()
+            .WithName(x => nameof(x.Data.Avatar)) //this dont work
+            .WithMessage("Bad avatar");
+
         });
     }
 }

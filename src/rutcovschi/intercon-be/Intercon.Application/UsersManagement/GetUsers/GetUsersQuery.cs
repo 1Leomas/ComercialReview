@@ -1,6 +1,7 @@
 ﻿using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Application.Extensions.Mappers;
+using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +15,7 @@ public sealed class GetUsersQueryHandler(InterconDbContext context) : IQueryHand
     
     public async Task<IEnumerable<UserDetailsDto>> Handle(GetUsersQuery query, CancellationToken cancellationToken)
     {
-        var usersDb = await _context.Users.OrderBy(x => x.Id).ToListAsync(cancellationToken);
+        var usersDb = await _context.Users.Include(x => x.Avatar).OrderBy(x => x.Id).ToListAsync(cancellationToken);
 
         var users = new List<UserDetailsDto>();
 

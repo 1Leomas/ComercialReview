@@ -8,54 +8,39 @@ public static class UserMapper
 {
     public static User ToEntity(this UserDto user)
     {
-        if (user != null)
+        return new User()
         {
-            return new User()
-            {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                Password = user.Password,
-                UserName = user.UserName,
-            };
-        }
-
-        return null;
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+            Password = user.Password,
+            UserName = user.UserName,
+        };
     }
 
     public static UserDto ToDto(this User user)
     {
-        if (user != null)
+        return new UserDto()
         {
-            return new UserDto()
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                Password = user.Password,
-                UserName = user.UserName,
-            };
-        }
-
-        return null;
+            Id = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+            Password = user.Password,
+            UserName = user.UserName,
+        };
     }
 
     public static User ToEntity(this CreateUserDto user)
     {
-        if (user != null)
+        return new User()
         {
-            return new User()
-            {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                Password = user.Password,
-                UserName = user.UserName,
-            };
-        }
-
-        return null;
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+            Password = user.Password,
+            UserName = user.UserName,
+        };
     }
 
     public static UserDetailsDto ToUserDetailsDto(this User user)
@@ -65,7 +50,8 @@ public static class UserMapper
             FirstName: user.FirstName,
             LastName: user.LastName,
             Email: user.Email,
-            UserName: user.UserName
+            UserName: user.UserName,
+            Avatar: user.Avatar?.ToDto()
         );
     }
 }

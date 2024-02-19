@@ -5,4 +5,5 @@ public record UserDetailsDto(
     string FirstName,
     string LastName,
     string Email,
-    string? UserName);
+    string? UserName,
+    ImageDto? Avatar);

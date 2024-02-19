@@ -1,4 +1,5 @@
-﻿using Intercon.Application.DataTransferObjects.Business;
+﻿using Intercon.Application.DataTransferObjects;
+using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Domain.Entities;
 
 namespace Intercon.Application.Extensions.Mappers;
@@ -14,16 +15,13 @@ public static class ImageMapper
         };
     }
 
-    public static CreateImageDto ToDto(this Image? image)
+    public static CreateImageDto ToCreateImageDto(this Image image)
     {
-        if (image is null)
-        {
-            return null!;
-        }
+        return new CreateImageDto(image.Data);
+    }
 
-        return new CreateImageDto(
-            //image.ContentType,
-            image.Data
-        );
+    public static ImageDto ToDto(this Image image)
+    {
+        return new ImageDto(image.Data);
     }
 }

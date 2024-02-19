@@ -1,4 +1,6 @@
-﻿namespace Intercon.Application.DataTransferObjects.User;
+﻿using Intercon.Application.DataTransferObjects.Business;
+
+namespace Intercon.Application.DataTransferObjects.User;
 
 public record CreateUserDto
 {
@@ -7,4 +9,5 @@ public record CreateUserDto
     public string Email { get; init; } = string.Empty;
     public string Password { get; init; } = string.Empty;
     public string? UserName { get; init; } = null;
+    public CreateImageDto? Avatar { get; init; } = null;
 }

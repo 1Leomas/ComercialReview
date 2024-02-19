@@ -20,7 +20,7 @@ public class Business : Entity
     public int? LogoId { get; set; }
 
     public virtual User Owner { get; set; } = null!;
-    public virtual Image? Logo { get; set; } = null!;
+    public virtual Image? Logo { get; set; } = null;
     public virtual ICollection<Image> Images { get; set; } = new List<Image>();
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 }

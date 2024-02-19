@@ -13,8 +13,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intercon.Infrastructure.Migrations
 {
     [DbContext(typeof(InterconDbContext))]
-    [Migration("20240211211654_logo relation2")]
-    partial class logorelation2
+    [Migration("20240219132557_Initial migration")]
+    partial class Initialmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -112,7 +112,7 @@ namespace Intercon.Infrastructure.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Raw")
+                    b.Property<string>("Data")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -131,16 +131,10 @@ namespace Intercon.Infrastructure.Migrations
 
             modelBuilder.Entity("Intercon.Domain.Entities.Review", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("BusinessId")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AuthorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BusinessId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")
@@ -150,7 +144,6 @@ namespace Intercon.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ReviewText")
-                        .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
@@ -160,12 +153,9 @@ namespace Intercon.Infrastructure.Migrations
                     b.Property<bool>("WasEdited")
                         .HasColumnType("bit");
 
-                    b.HasKey("Id");
+                    b.HasKey("BusinessId", "AuthorId");
 
-                    b.HasIndex("BusinessId");
-
-                    b.HasIndex("AuthorId", "BusinessId")
-                        .IsUnique();
+                    b.HasIndex("AuthorId");
 
                     b.ToTable("Reviews");
                 });
@@ -177,6 +167,9 @@ namespace Intercon.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AvatarId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
@@ -218,6 +211,8 @@ namespace Intercon.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AvatarId");
+
                     b.HasIndex("Email")
                         .IsUnique();
 
@@ -232,7 +227,8 @@ namespace Intercon.Infrastructure.Migrations
                 {
                     b.HasOne("Intercon.Domain.Entities.Image", "Logo")
                         .WithMany()
-                        .HasForeignKey("LogoId");
+                        .HasForeignKey("LogoId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Intercon.Domain.Entities.User", "Owner")
                         .WithOne("Business")
@@ -269,6 +265,16 @@ namespace Intercon.Infrastructure.Migrations
                     b.Navigation("Author");
 
                     b.Navigation("Business");
+                });
+
+            modelBuilder.Entity("Intercon.Domain.Entities.User", b =>
+                {
+                    b.HasOne("Intercon.Domain.Entities.Image", "Avatar")
+                        .WithMany()
+                        .HasForeignKey("AvatarId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Avatar");
                 });
 
             modelBuilder.Entity("Intercon.Domain.Entities.Business", b =>

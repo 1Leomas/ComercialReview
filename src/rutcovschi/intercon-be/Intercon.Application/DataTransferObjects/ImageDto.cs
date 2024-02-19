@@ -1,3 +1,3 @@
 ﻿namespace Intercon.Application.DataTransferObjects;
 
-public record ImageDto(int Id, string ContentType, byte[] Raw);
+public record ImageDto(string Data);

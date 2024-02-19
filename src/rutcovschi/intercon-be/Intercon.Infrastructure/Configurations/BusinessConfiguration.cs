@@ -25,8 +25,9 @@ public class BusinessConfiguration : IEntityTypeConfiguration<Business>
                .HasForeignKey(r => r.BusinessId)
                .OnDelete(DeleteBehavior.Cascade);
 
-        //builder.HasMany(b => b.Images)
-        //    .WithOne(i => i.Business)
-        //    .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(u => u.Logo)
+            .WithMany()
+            .HasForeignKey(u => u.LogoId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

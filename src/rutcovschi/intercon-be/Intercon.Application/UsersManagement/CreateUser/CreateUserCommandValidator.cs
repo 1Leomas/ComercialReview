@@ -25,7 +25,10 @@ public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCom
             .NotEmpty()
             .Length(8, 50)
             .WithName(x => nameof(x.Data.Password));
-        
+        RuleFor(x => x.Data.Avatar)
+            .NotEmpty()
+            .WithName(x => nameof(x.Data.Avatar));
+
         When(x => !x.Data.UserName.IsNullOrEmpty(), () =>
         {
             RuleFor(x => x.Data.UserName)

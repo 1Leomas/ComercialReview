@@ -6,34 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Intercon.Infrastructure.Migrations
 {
     /// <inheritdoc />
-#pragma warning disable CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
-    public partial class initialmigration : Migration
-#pragma warning restore CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
+    public partial class Initialmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Role = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    WasEdited = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Businesses",
                 columns: table => new
@@ -58,12 +35,6 @@ namespace Intercon.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Businesses", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Businesses_Users_OwnerId",
-                        column: x => x.OwnerId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -72,8 +43,8 @@ namespace Intercon.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Raw = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BusinessId = table.Column<int>(type: "int", nullable: false),
+                    Data = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BusinessId = table.Column<int>(type: "int", nullable: true),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     WasEdited = table.Column<bool>(type: "bit", nullable: false)
@@ -85,27 +56,52 @@ namespace Intercon.Infrastructure.Migrations
                         name: "FK_Images_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "Reviews",
+                name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Grade = table.Column<int>(type: "int", nullable: false),
-                    ReviewText = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    BusinessId = table.Column<int>(type: "int", nullable: false),
-                    AuthorId = table.Column<int>(type: "int", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Role = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    AvatarId = table.Column<int>(type: "int", nullable: true),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     WasEdited = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reviews", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Users_Images_AvatarId",
+                        column: x => x.AvatarId,
+                        principalTable: "Images",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Reviews",
+                columns: table => new
+                {
+                    BusinessId = table.Column<int>(type: "int", nullable: false),
+                    AuthorId = table.Column<int>(type: "int", nullable: false),
+                    Grade = table.Column<int>(type: "int", nullable: false),
+                    ReviewText = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    WasEdited = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reviews", x => new { x.BusinessId, x.AuthorId });
                     table.ForeignKey(
                         name: "FK_Reviews_Businesses_BusinessId",
                         column: x => x.BusinessId,
@@ -123,9 +119,7 @@ namespace Intercon.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Businesses_LogoId",
                 table: "Businesses",
-                column: "LogoId",
-                unique: true,
-                filter: "[LogoId] IS NOT NULL");
+                column: "LogoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Businesses_OwnerId",
@@ -139,15 +133,14 @@ namespace Intercon.Infrastructure.Migrations
                 column: "BusinessId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reviews_AuthorId_BusinessId",
+                name: "IX_Reviews_AuthorId",
                 table: "Reviews",
-                columns: new[] { "AuthorId", "BusinessId" },
-                unique: true);
+                column: "AuthorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reviews_BusinessId",
-                table: "Reviews",
-                column: "BusinessId");
+                name: "IX_Users_AvatarId",
+                table: "Users",
+                column: "AvatarId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
@@ -168,6 +161,14 @@ namespace Intercon.Infrastructure.Migrations
                 column: "LogoId",
                 principalTable: "Images",
                 principalColumn: "Id",
+                onDelete: ReferentialAction.SetNull);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Businesses_Users_OwnerId",
+                table: "Businesses",
+                column: "OwnerId",
+                principalTable: "Users",
+                principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
         }
 
@@ -177,6 +178,10 @@ namespace Intercon.Infrastructure.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_Businesses_Images_LogoId",
                 table: "Businesses");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Users_Images_AvatarId",
+                table: "Users");
 
             migrationBuilder.DropTable(
                 name: "Reviews");

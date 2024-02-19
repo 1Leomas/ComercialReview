@@ -12,6 +12,14 @@ public sealed class DeleteUserCommandHandler(InterconDbContext context) : IComma
 
     public async Task Handle(DeleteUserCommand command, CancellationToken cancellationToken)
     {
-        await _context.Users.Where(x => x.Id == command.Id).ExecuteDeleteAsync(cancellationToken);
+        var userDb = await _context.Users.FirstOrDefaultAsync(x => x.Id == command.Id);
+
+        if (userDb == null) 
+        { 
+            return; 
+        }
+
+        await _context.Images.Where(x => x.Id == userDb.AvatarId).ExecuteDeleteAsync(cancellationToken);
+        await _context.Users.Where(x => x.Id == userDb.Id).ExecuteDeleteAsync(cancellationToken);
     }
 }
