@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
 using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.DataTransferObjects;
+using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -10,19 +12,21 @@ public record EditBusinessDto(
     string Title,
     string ShortDescription);
 
-public sealed record EditBusinessCommand(int BusinessId, EditBusinessDto Data) : ICommand;
+public sealed record EditBusinessCommand(int BusinessId, EditBusinessDto Data) : ICommand<BusinessDetailsDto?>;
 
-public sealed class EditBusinessCommandHandler(InterconDbContext context) : ICommandHandler<EditBusinessCommand>
+public sealed class EditBusinessCommandHandler(InterconDbContext context) : ICommandHandler<EditBusinessCommand, BusinessDetailsDto?>
 {
     private readonly InterconDbContext _context = context;
 
-    public async Task Handle(EditBusinessCommand command, CancellationToken cancellationToken)
+    public async Task<BusinessDetailsDto?> Handle(EditBusinessCommand command, CancellationToken cancellationToken)
     {
-        var businessDb = await _context.Businesses.FirstOrDefaultAsync(b => b.Id == command.BusinessId, cancellationToken);
+        var businessDb = await _context.Businesses
+            .Include(x => x.Logo)
+            .FirstOrDefaultAsync(b => b.Id == command.BusinessId, cancellationToken);
 
         if(businessDb is null)
         {
-            return;
+            return null;
         }
 
         if(!command.Data.Title.IsNullOrEmpty())
@@ -37,6 +41,18 @@ public sealed class EditBusinessCommandHandler(InterconDbContext context) : ICom
         //de adaugat si restu
 
         await _context.SaveChangesAsync(cancellationToken);
+
+        return new BusinessDetailsDto(
+            Id: businessDb.Id,
+            Title: businessDb.Title,
+            ShortDescription: businessDb.ShortDescription,
+            FullDescription: businessDb.FullDescription,
+            Rating: businessDb.Rating,
+            Logo: businessDb.LogoId.HasValue ? new ImageDto(Data: businessDb.Logo!.Data) : null,
+            Address: businessDb.Address,
+            ReviewsCount: businessDb.ReviewsCount,
+            Category: businessDb.Category
+        );
     }
 }
 

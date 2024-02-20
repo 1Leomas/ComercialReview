@@ -38,13 +38,13 @@ public class BusinessController(IMediator mediator) : BaseController
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BusinessDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateBusiness([FromBody] CreateBusinessDto businessToAdd, CancellationToken cancellationToken)
     {
-        await _mediator.Send(new CreateBusinessCommand(businessToAdd), cancellationToken);
+        var createdBusiness = await _mediator.Send(new CreateBusinessCommand(businessToAdd), cancellationToken);
 
-        return Ok();
+        return Ok(createdBusiness);
     }
 
     [HttpPut("{id}")]
@@ -52,9 +52,9 @@ public class BusinessController(IMediator mediator) : BaseController
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> EditBusiness([FromRoute] int id, [FromBody] EditBusinessDto businessToEdit, CancellationToken cancellationToken)
     {
-        await _mediator.Send(new EditBusinessCommand(id, businessToEdit), cancellationToken);
+        var updatedBusiness = await _mediator.Send(new EditBusinessCommand(id, businessToEdit), cancellationToken);
 
-        return Ok();
+        return Ok(updatedBusiness);
     }
 
     //[HttpDelete("{id}")]

@@ -1,4 +1,5 @@
 ﻿using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.DataTransferObjects;
 using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Application.Extensions.Mappers;
 using Intercon.Domain.Entities;
@@ -7,13 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Intercon.Application.BusinessesManagement.CreateBusiness;
 
-public sealed record CreateBusinessCommand(CreateBusinessDto Data) : ICommand;
+public sealed record CreateBusinessCommand(CreateBusinessDto Data) : ICommand<BusinessDetailsDto>;
 
-public sealed class CreateBusinessCommandHandler(InterconDbContext context) : ICommandHandler<CreateBusinessCommand>
+public sealed class CreateBusinessCommandHandler(InterconDbContext context) : ICommandHandler<CreateBusinessCommand, BusinessDetailsDto>
 {
     private readonly InterconDbContext _context = context;
 
-    public async Task Handle(CreateBusinessCommand command, CancellationToken cancellationToken)
+    public async Task<BusinessDetailsDto> Handle(CreateBusinessCommand command, CancellationToken cancellationToken)
     {
         var userExits = await _context.Users.AnyAsync(x => x.Id == command.Data.OwnerId, cancellationToken);
        
@@ -25,9 +26,10 @@ public sealed class CreateBusinessCommandHandler(InterconDbContext context) : IC
         var businessDb = command.Data.ToEntity();
 
         // maybe make a separate request for this
+        Image? image = null;
         if (command.Data.Logo != null)
         {
-            var image = new Image()
+            image = new Image()
             {
                 Data = command.Data.Logo.Data
             };
@@ -41,5 +43,17 @@ public sealed class CreateBusinessCommandHandler(InterconDbContext context) : IC
         await _context.Businesses.AddAsync(businessDb, cancellationToken);
 
         await _context.SaveChangesAsync(cancellationToken);
+
+        return new BusinessDetailsDto(
+            Id: businessDb.Id,
+            Title: businessDb.Title,
+            ShortDescription: businessDb.ShortDescription,
+            FullDescription: businessDb.FullDescription,
+            Rating: businessDb.Rating,
+            Logo: businessDb.LogoId.HasValue ? new ImageDto(Data: image!.Data) : null,
+            Address: businessDb.Address,
+            ReviewsCount: businessDb.ReviewsCount,
+            Category: businessDb.Category
+        );
     }
 }
