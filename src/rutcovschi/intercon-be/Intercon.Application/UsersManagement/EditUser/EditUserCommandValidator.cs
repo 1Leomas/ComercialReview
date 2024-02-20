@@ -10,6 +10,10 @@ public sealed class EditUserCommandValidator : AbstractValidator<EditUserCommand
     {
         RuleFor(x => x.UserId).NotEmpty();
 
+        RuleFor(x => x.UserId)
+            .MustAsync(async (userId, ctx) => await dbContext.Users.AnyAsync(x => x.Id == userId, ctx))
+            .WithMessage("The user doesn't exists");
+
         When(x => !string.IsNullOrEmpty(x.Data.FirstName), () =>
         {
             RuleFor(x => x.Data.FirstName)

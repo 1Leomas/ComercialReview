@@ -42,9 +42,15 @@ public sealed class EditBusinessCommandHandler(InterconDbContext context) : ICom
 
 public class EditBusinessCommandValidator : AbstractValidator<EditBusinessCommand>
 {
-    public EditBusinessCommandValidator()
+    public EditBusinessCommandValidator(InterconDbContext dbContext)
     {
         RuleFor(x => x.BusinessId).NotEmpty();
+
+        RuleFor(x => x.BusinessId)
+            .MustAsync(async (businessId, ctx) =>
+            {
+                return await dbContext.Businesses.AnyAsync(x => x.Id == businessId, ctx);
+            });
 
         When(x => !string.IsNullOrEmpty(x.Data.Title), () =>
         {
