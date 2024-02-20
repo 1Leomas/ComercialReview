@@ -46,14 +46,28 @@ public sealed class CreateReviewCommandCommandValidator : AbstractValidator<Crea
             .NotEmpty()
             .WithName(x => nameof(x.BusinessId));
 
+        RuleFor(x => x.BusinessId)
+            .MustAsync(async (businessId, ctx) =>
+            {
+                return await context.Businesses.AnyAsync(x => x.Id == businessId, ctx);
+            })
+            .WithMessage("The business doesn't exists");
+
         RuleFor(x => x.Data.AuthorId)
             .NotEmpty()
             .WithName(x => nameof(x.Data.AuthorId));
 
-        RuleFor(x => new {x.BusinessId, x.Data.AuthorId })
-            .MustAsync(async (data, _) =>
+        RuleFor(x => x.Data.AuthorId)
+            .MustAsync(async (authorId, ctx) =>
             {
-                var exists = await context.Reviews.AnyAsync(x => x.BusinessId == data.BusinessId && x.AuthorId == data.AuthorId);
+                return await context.Users.AnyAsync(x => x.Id == authorId, ctx);
+            })
+            .WithMessage("The author doesn't exists");
+
+        RuleFor(x => new {x.BusinessId, x.Data.AuthorId })
+            .MustAsync(async (data, ctx) =>
+            {
+                var exists = await context.Reviews.AnyAsync(x => x.BusinessId == data.BusinessId && x.AuthorId == data.AuthorId, ctx);
                 return !exists;
             })
             .WithName(x => nameof(x.Data.AuthorId))
