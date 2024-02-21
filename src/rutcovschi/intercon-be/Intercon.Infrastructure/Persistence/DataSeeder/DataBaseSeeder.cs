@@ -8,19 +8,56 @@ namespace Intercon.Infrastructure.Persistence.DataSeeder;
 
 public static class DataBaseSeeder
 {
-    public static void Seed(InterconDbContext context)
+    public static void Seed(string connectionString)
     {
-        context.Database.EnsureCreated();
+        var options = new DbContextOptionsBuilder<InterconDbContext>()
+            .UseSqlServer(connectionString)
+            .Options;
 
-        InitializeEntity(context, context.Images, AddImages);
-        InitializeEntity(context, context.Users, AddUsers);
-        InitializeEntity(context, context.Businesses, AddBusinesses);
-        InitializeEntity(context, context.Reviews, AddReviews);
+        using (var context = new InterconDbContext(options))
+        {
+            var dataBaseCreated = context.Database.EnsureCreated();
+
+            InitializeEntity(context, context.Images, AddImages);
+            InitializeEntity(context, context.Users, AddUsers);
+            InitializeEntity(context, context.Businesses, AddBusinesses);
+            InitializeEntity(context, context.Reviews, AddReviews);
+
+            if (dataBaseCreated)
+            {
+                CalculateBusinessRatings(context);
+            }
+        }
+    }
+
+    private static void CalculateBusinessRatings(InterconDbContext context)
+    {
+        var businesses = context.Businesses.Include(b => b.Reviews).ToList();
+
+        foreach (var business in businesses)
+        {
+            if (business.Reviews.Any())
+            {
+                var reviewsCount = (uint)(business.Reviews.Count());
+
+                float reviewsSum = business.Reviews.Select(x => x.Grade).Sum();
+
+                business.ReviewsCount = reviewsCount;
+                business.Rating = reviewsSum / reviewsCount;
+            }
+        }
+
+        context.SaveChanges();
     }
 
     private static void InitializeEntity<TEntity>(InterconDbContext context, DbSet<TEntity> entity, Func<List<TEntity>> seedAction) 
         where TEntity : class
     {
+        if (context.Set<TEntity>().Any())
+        {
+            return; // Database has been seeded
+        }
+
         var entityType = typeof(InterconDbContext)
             .GetProperties()
             .FirstOrDefault(p => p.PropertyType == typeof(DbSet<TEntity>));
@@ -41,14 +78,7 @@ public static class DataBaseSeeder
                 context.Database.ExecuteSqlRaw($"SET IDENTITY_INSERT {tableName} ON");
             }
 
-            if (context.Set<TEntity>().Any())
-            {
-                return; // Database has been seeded
-            }
-            else 
-            {
-                entity.AddRange(seedAction());
-            }
+            entity.AddRange(seedAction());
 
             context.SaveChanges();
 

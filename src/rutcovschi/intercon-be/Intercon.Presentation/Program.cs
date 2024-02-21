@@ -1,6 +1,5 @@
 using Intercon.Application.Extensions;
 using Intercon.Infrastructure.Extensions;
-using Intercon.Infrastructure.Persistence;
 using Intercon.Infrastructure.Persistence.DataSeeder;
 using Intercon.Presentation.Extensions;
 using Intercon.Presentation.Middleware;
@@ -10,19 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddInfrastructure(builder.Configuration)
-.AddApplication()
-.AddPresentation();
+    .AddApplication()
+    .AddPresentation();
 
 var app = builder.Build();
 
-var options = new DbContextOptionsBuilder<InterconDbContext>()
-    .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-    .Options;
-
-using (var context = new InterconDbContext(options))
-{
-    DataBaseSeeder.Seed(context);
-}
+DataBaseSeeder.Seed(builder.Configuration.GetConnectionString("DefaultConnection"));
 
 if (app.Environment.IsDevelopment())
 {
