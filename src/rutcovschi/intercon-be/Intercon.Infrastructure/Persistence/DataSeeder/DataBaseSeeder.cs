@@ -2,6 +2,7 @@
 using Intercon.Domain.Entities;
 using Intercon.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Intercon.Infrastructure.Persistence.DataSeeder;
 
@@ -29,48 +30,47 @@ public static class DataBaseSeeder
             throw new ArgumentException($"DbSet<{typeof(TEntity).Name}> not found in InterconDbContext.");
         }
 
-        var entityName = entityType.Name;
+        var tableName = entityType.Name;
 
         using (var transaction = context.Database.BeginTransaction())
         {
-            if (TableHasIdentityColumn(context ,entity))
+            bool hasIdentity = HasIdentity<TEntity>(context);
+
+            if (hasIdentity)
             {
-                context.Database.ExecuteSqlRaw($"SET IDENTITY_INSERT {entityName} ON");
+                context.Database.ExecuteSqlRaw($"SET IDENTITY_INSERT {tableName} ON");
             }
 
-            // Check if there are any Country or State or City already in the database
-            if (entity.Any())
+            if (context.Set<TEntity>().Any())
             {
-                // Database has been seeded
-                return;
+                return; // Database has been seeded
             }
-            else //Here, you need to Implement the Custom Logic to Seed the Master data
+            else 
             {
                 entity.AddRange(seedAction());
             }
 
             context.SaveChanges();
 
-            if (TableHasIdentityColumn(context, entity))
+            if (hasIdentity)
             {
-                context.Database.ExecuteSqlRaw($"SET IDENTITY_INSERT {entityName} OFF");
+                context.Database.ExecuteSqlRaw($"SET IDENTITY_INSERT {tableName} OFF");
             }
 
             transaction.Commit();
         }
     }
 
-    private static bool TableHasIdentityColumn<TEntity>(InterconDbContext context, DbSet<TEntity> entity) where TEntity : class
+    private static bool HasIdentity<TEntity>(InterconDbContext context) where TEntity : class
     {
-        var tableName = context.Model.FindEntityType(typeof(TEntity)).GetTableName();
+        var efEntity = context.Model.FindEntityType(typeof(TEntity));
+        var efProperties = efEntity.GetProperties();
 
-        var sqlQuery = $@"
-        SELECT COUNT(*) 
-        FROM INFORMATION_SCHEMA.COLUMNS 
-        WHERE TABLE_NAME = '{tableName}' 
-        AND COLUMNPROPERTY(object_id(TABLE_NAME), COLUMN_NAME, 'IsIdentity') = 1";
+        var hasIdentity = efProperties.Any(p => (SqlServerValueGenerationStrategy)
+            p.FindAnnotation("SqlServer:ValueGenerationStrategy").Value
+            == SqlServerValueGenerationStrategy.IdentityColumn);
 
-        return context.Database.ExecuteSqlRaw(sqlQuery) > 0;
+        return hasIdentity;
     }
 
     private static List<User> AddUsers()
