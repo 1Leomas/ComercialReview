@@ -92,7 +92,7 @@ namespace Intercon.Infrastructure.Migrations
                     b.HasIndex("OwnerId")
                         .IsUnique();
 
-                    b.ToTable("Businesses");
+                    b.ToTable("Businesses", (string)null);
                 });
 
             modelBuilder.Entity("Intercon.Domain.Entities.Image", b =>
@@ -123,7 +123,7 @@ namespace Intercon.Infrastructure.Migrations
 
                     b.HasIndex("BusinessId");
 
-                    b.ToTable("Images");
+                    b.ToTable("Images", (string)null);
                 });
 
             modelBuilder.Entity("Intercon.Domain.Entities.Review", b =>
@@ -154,7 +154,7 @@ namespace Intercon.Infrastructure.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("Intercon.Domain.Entities.User", b =>
@@ -217,7 +217,7 @@ namespace Intercon.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[UserName] IS NOT NULL");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Intercon.Domain.Entities.Business", b =>
