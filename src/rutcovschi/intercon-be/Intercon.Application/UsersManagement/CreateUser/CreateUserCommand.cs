@@ -1,18 +1,43 @@
-﻿using Intercon.Application.Abstractions.Messaging;
+﻿using Azure.Core;
+using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Identity;
 
 namespace Intercon.Application.UsersManagement.CreateUser;
 
 public sealed record CreateUserCommand(CreateUserDto Data) : ICommand;
 
-public sealed class CreateUserCommandHandler(InterconDbContext context) : ICommandHandler<CreateUserCommand>
+public sealed class CreateUserCommandHandler(
+    InterconDbContext context, 
+    UserManager<ApplicationUser> userManager) : ICommandHandler<CreateUserCommand>
 {
     private readonly InterconDbContext _context = context;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
 
     public async Task Handle(CreateUserCommand command, CancellationToken cancellationToken)
     {
+        //if (!ModelState.IsValid)
+        //{
+        //    return BadRequest(ModelState);
+        //}
+
+        var result = await _userManager.CreateAsync(
+            new ApplicationUser 
+            { 
+                UserName = command.Data.UserName,
+                Email = command.Data.Email, 
+                Role = command.Data.Role 
+            }, 
+            command.Data.Password
+        );
+
+        if (!result.Succeeded)
+        {
+            throw new Exception("Can not register ApplicationUser");
+        }
+
         Image? avatar = null;
 
         if (command.Data.Avatar is not null)
@@ -41,7 +66,7 @@ public sealed class CreateUserCommandHandler(InterconDbContext context) : IComma
             AvatarId = avatar?.Id
         };
 
-        await _context.Users.AddAsync(userDb, cancellationToken);
+        await _context.UsersOld.AddAsync(userDb, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
     }
 }

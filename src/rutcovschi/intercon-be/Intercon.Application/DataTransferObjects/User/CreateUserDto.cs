@@ -1,4 +1,5 @@
 ﻿using Intercon.Application.DataTransferObjects.Business;
+using Intercon.Domain.Enums;
 
 namespace Intercon.Application.DataTransferObjects.User;
 
@@ -10,4 +11,6 @@ public record CreateUserDto
     public string Password { get; init; } = string.Empty;
     public string? UserName { get; init; } = null;
     public CreateImageDto? Avatar { get; init; } = null;
+
+    public Role Role { get; init; }
 }

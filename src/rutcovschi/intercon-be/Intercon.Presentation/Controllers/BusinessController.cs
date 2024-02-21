@@ -5,6 +5,7 @@ using Intercon.Application.BusinessesManagement.GetBusinesses;
 using Intercon.Application.CustomExceptions;
 using Intercon.Application.DataTransferObjects.Business;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Intercon.Presentation.Controllers;
@@ -37,11 +38,17 @@ public class BusinessController(IMediator mediator) : BaseController
         return Ok(await _mediator.Send(new GetAllBusinessesQuery(), cancellationToken));
     }
 
+    [Authorize(Roles = "SuperAdmin")]
     [HttpPost]
     [ProducesResponseType(typeof(BusinessDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateBusiness([FromBody] CreateBusinessDto businessToAdd, CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         var createdBusiness = await _mediator.Send(new CreateBusinessCommand(businessToAdd), cancellationToken);
 
         return Ok(createdBusiness);

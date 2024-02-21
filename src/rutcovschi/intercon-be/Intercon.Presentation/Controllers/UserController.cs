@@ -41,13 +41,13 @@ public class UserController(IMediator mediator) : BaseController
     }
     
     [HttpPost("login")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(UserLoginResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> LoginUser([FromBody] LoginUserDto userToLogin, CancellationToken cancellationToken)
     {
-        await _mediator.Send(new LoginUserCommand(userToLogin), cancellationToken);
+        var response = await _mediator.Send(new LoginUserCommand(userToLogin), cancellationToken);
 
-        return Ok();
+        return Ok(response);
     }
 
     [HttpPost("create")]

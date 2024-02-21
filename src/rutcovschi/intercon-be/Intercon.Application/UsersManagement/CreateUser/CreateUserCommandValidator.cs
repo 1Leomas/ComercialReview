@@ -34,13 +34,13 @@ public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCom
 
             RuleFor(x => x.Data.UserName).MustAsync(async (userName, _) =>
             {
-                return await context.Users.AllAsync(x => x.UserName != userName);
+                return await context.UsersOld.AllAsync(x => x.UserName != userName);
             }).WithMessage("The username must be unique");
         });
 
         RuleFor(x => x.Data.Email).MustAsync(async (email, _) =>
         {
-            return await context.Users.AllAsync(x => x.Email != email);
+            return await context.UsersOld.AllAsync(x => x.Email != email);
         }).WithMessage("The email must be unique");
 
         When(x => x.Data.Avatar is not null, () =>

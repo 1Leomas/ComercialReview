@@ -19,7 +19,7 @@ public static class DataBaseSeeder
             var dataBaseCreated = context.Database.EnsureCreated();
 
             InitializeEntity(context, context.Images, AddImages);
-            InitializeEntity(context, context.Users, AddUsers);
+            InitializeEntity(context, context.UsersOld, AddUsers);
             InitializeEntity(context, context.Businesses, AddBusinesses);
             InitializeEntity(context, context.Reviews, AddReviews);
 
@@ -115,7 +115,7 @@ public static class DataBaseSeeder
                 Email = "admin@mail.com",
                 Password = "admin",
                 UserName = "Admin",
-                Role = UserRole.SuperAdmin
+                Role = Role.SuperAdmin
             },
             new User
             {
@@ -125,7 +125,7 @@ public static class DataBaseSeeder
                 Email = "ion.tuc@mail.com",
                 Password = "Password",
                 UserName = "ioneltuc",
-                Role = UserRole.User
+                Role = Role.User
             },
             new User
             {
@@ -135,7 +135,7 @@ public static class DataBaseSeeder
                 Email = "danu.global@mail.com",
                 Password = "cs2top123",
                 UserName = "442God",
-                Role = UserRole.User
+                Role = Role.User
             },
             new User
             {
@@ -145,7 +145,7 @@ public static class DataBaseSeeder
                 Email = "victor.tuc@mail.com",
                 Password = "victorTuc",
                 UserName = "ViTuc",
-                Role = UserRole.User
+                Role = Role.User
             }
         };
     }

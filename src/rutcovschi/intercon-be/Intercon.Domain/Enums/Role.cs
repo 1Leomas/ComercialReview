@@ -1,6 +1,6 @@
 ﻿namespace Intercon.Domain.Enums;
 
-public enum UserRole
+public enum Role
 {
     User,
     Admin,

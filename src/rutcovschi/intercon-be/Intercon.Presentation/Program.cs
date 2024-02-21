@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddInfrastructure(builder.Configuration)
     .AddApplication()
-    .AddPresentation();
+    .AddPresentation(builder.Configuration);
 
 var app = builder.Build();
 
@@ -26,9 +26,11 @@ app.UseHttpsRedirection();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-app.UseAuthorization();
+app.UseAuthentication();
 
 app.UseRouting();
+
+app.UseAuthorization();
 
 app.UseCors("AllowAll");
 

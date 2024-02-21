@@ -60,7 +60,7 @@ public sealed class CreateReviewCommandCommandValidator : AbstractValidator<Crea
         RuleFor(x => x.Data.AuthorId)
             .MustAsync(async (authorId, ctx) =>
             {
-                return await context.Users.AnyAsync(x => x.Id == authorId, ctx);
+                return await context.UsersOld.AnyAsync(x => x.Id == authorId, ctx);
             })
             .WithMessage("The author doesn't exists");
 

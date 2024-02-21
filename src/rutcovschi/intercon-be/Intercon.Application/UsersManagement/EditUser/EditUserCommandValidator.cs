@@ -11,7 +11,7 @@ public sealed class EditUserCommandValidator : AbstractValidator<EditUserCommand
         RuleFor(x => x.UserId).NotEmpty();
 
         RuleFor(x => x.UserId)
-            .MustAsync(async (userId, ctx) => await dbContext.Users.AnyAsync(x => x.Id == userId, ctx))
+            .MustAsync(async (userId, ctx) => await dbContext.UsersOld.AnyAsync(x => x.Id == userId, ctx))
             .WithMessage("The user doesn't exists");
 
         When(x => !string.IsNullOrEmpty(x.Data.FirstName), () =>
@@ -33,7 +33,7 @@ public sealed class EditUserCommandValidator : AbstractValidator<EditUserCommand
                 .EmailAddress();
 
             RuleFor(x => x)
-                .MustAsync(async (command, ctx) => await dbContext.Users
+                .MustAsync(async (command, ctx) => await dbContext.UsersOld
                     .AllAsync(x => x.Id == command.UserId || x.Email != command.Data.Email, ctx))
                 .WithMessage("The email must be unique")
                 .WithName(x => nameof(x.Data.Email));
@@ -46,7 +46,7 @@ public sealed class EditUserCommandValidator : AbstractValidator<EditUserCommand
                 .WithName(x => nameof(x.Data.UserName));
 
             RuleFor(x => x)
-                .MustAsync(async (command, ctx) => await dbContext.Users.AllAsync(
+                .MustAsync(async (command, ctx) => await dbContext.UsersOld.AllAsync(
                     x => x.Id == command.UserId || x.UserName != command.Data.UserName, ctx))
                 .WithName(x => nameof(x.Data.UserName))
                 .WithMessage("The username must be unique");

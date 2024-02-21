@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Intercon.Application.Abstractions;
 using Intercon.Application.Behaviors;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,7 +16,9 @@ public static class DependencyInjection
             config.AddOpenBehavior(typeof(LoggingPipelineBehavior<,>));
         });
 
-        services.AddAutoMapper(AssemblyReference.Assembly);
+        //services.AddAutoMapper(AssemblyReference.Assembly);
+
+        services.AddScoped<ITokenService, JwtTokenService>();
 
         services.AddValidatorsFromAssembly(AssemblyReference.Assembly);
 
