@@ -12,4 +12,5 @@ public enum BusinessCategory
     Clothing,
     Electronics,
     Furniture,
+    FastFood,
 }
