@@ -65,7 +65,7 @@ public static class DependencyInjection
         // Specify identity requirements
         // Must be added before .AddAuthentication otherwise a 404 is thrown on authorized endpoints
         services
-            .AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
+            .AddIdentity<User, IdentityRole<int>>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false;
                 options.User.RequireUniqueEmail = true;

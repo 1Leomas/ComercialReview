@@ -12,7 +12,7 @@ namespace Intercon.Application.Abstractions;
 
 public interface ITokenService
 {
-    string CreateToken(ApplicationUser user);
+    string CreateToken(User user);
 }
 
 public class JwtTokenService(ILogger<JwtTokenService> logger) : ITokenService
@@ -20,7 +20,7 @@ public class JwtTokenService(ILogger<JwtTokenService> logger) : ITokenService
     private const int ExpirationMinutes = 30;
     private readonly ILogger<JwtTokenService> _logger = logger;
 
-    public string CreateToken(ApplicationUser user)
+    public string CreateToken(User user)
     {
         var expiration = DateTime.UtcNow.AddMinutes(ExpirationMinutes);
         var token = CreateJwtToken(
@@ -44,7 +44,7 @@ public class JwtTokenService(ILogger<JwtTokenService> logger) : ITokenService
             signingCredentials: credentials
         );
 
-    private List<Claim> CreateClaims(ApplicationUser user)
+    private List<Claim> CreateClaims(User user)
     {
         try
         {

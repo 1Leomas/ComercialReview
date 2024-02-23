@@ -15,11 +15,11 @@ public sealed record LoginUserCommand(LoginUserDto Data) : ICommand<UserLoginRes
 
 public sealed class LoginUserCommandHandler(
     InterconDbContext context,
-    UserManager<ApplicationUser> userManager,
+    UserManager<User> userManager,
     ITokenService tokenService) : ICommandHandler<LoginUserCommand, UserLoginResponse>
 {
     private readonly InterconDbContext _context = context;
-    private readonly UserManager<ApplicationUser> _userManager = userManager;
+    private readonly UserManager<User> _userManager = userManager;
     private readonly ITokenService _tokenService = tokenService;
 
     public async Task<UserLoginResponse> Handle(LoginUserCommand command, CancellationToken cancellationToken)
@@ -29,12 +29,9 @@ public sealed class LoginUserCommandHandler(
         //    return BadRequest(ModelState);
         //}
 
-        var managedUser = await _userManager.FindByEmailAsync(command.Data.Email);
+        var managedUser = await _userManager.FindByEmailAsync(command.Data.Email) 
+                          ?? throw new InvalidOperationException("Bad credentials");
 
-        if (managedUser == null)
-        {
-            throw new InvalidOperationException("Bad credentials");
-        }
 
         var isPasswordValid = await _userManager.CheckPasswordAsync(managedUser, command.Data.Password!);
 
@@ -51,7 +48,7 @@ public sealed class LoginUserCommandHandler(
         }
 
         var accessToken = _tokenService.CreateToken(userInDb);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
 
         return new UserLoginResponse(accessToken);
 

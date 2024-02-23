@@ -13,7 +13,7 @@ public static class UserMapper
             FirstName = user.FirstName,
             LastName = user.LastName,
             Email = user.Email,
-            Password = user.Password,
+            //Password = user.Password,
             UserName = user.UserName,
         };
     }
@@ -26,7 +26,7 @@ public static class UserMapper
             FirstName = user.FirstName,
             LastName = user.LastName,
             Email = user.Email,
-            Password = user.Password,
+            //Password = user.Password,
             UserName = user.UserName,
         };
     }
@@ -38,7 +38,7 @@ public static class UserMapper
             FirstName = user.FirstName,
             LastName = user.LastName,
             Email = user.Email,
-            Password = user.Password,
+            //Password = user.Password,
             UserName = user.UserName,
         };
     }

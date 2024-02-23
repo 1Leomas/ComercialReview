@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
@@ -11,10 +10,10 @@ public sealed record CreateUserCommand(CreateUserDto Data) : ICommand;
 
 public sealed class CreateUserCommandHandler(
     InterconDbContext context, 
-    UserManager<ApplicationUser> userManager) : ICommandHandler<CreateUserCommand>
+    UserManager<User> userManager) : ICommandHandler<CreateUserCommand>
 {
     private readonly InterconDbContext _context = context;
-    private readonly UserManager<ApplicationUser> _userManager = userManager;
+    private readonly UserManager<User> _userManager = userManager;
 
     public async Task Handle(CreateUserCommand command, CancellationToken cancellationToken)
     {
@@ -22,23 +21,6 @@ public sealed class CreateUserCommandHandler(
         //{
         //    return BadRequest(ModelState);
         //}
-
-        var result = await _userManager.CreateAsync(
-            new ApplicationUser 
-            { 
-                FirstName = command.Data.FirstName,
-                LastName = command.Data.LastName,
-                UserName = command.Data.Email,
-                Email = command.Data.Email, 
-                Role = command.Data.Role 
-            }, 
-            command.Data.Password
-        );
-
-        if (!result.Succeeded)
-        {
-            throw new Exception("Can not register ApplicationUser");
-        }
 
         Image? avatar = null;
 
@@ -58,18 +40,24 @@ public sealed class CreateUserCommandHandler(
             }
         }
 
-        var userDb = new User()
-        {
-            FirstName = command.Data.FirstName,
-            LastName = command.Data.LastName,
-            Email = command.Data.Email,
-            Password = command.Data.Password,
-            UserName = command.Data.UserName,
-            Role = command.Data.Role,
-            AvatarId = avatar?.Id
-        };
+        var result = await _userManager.CreateAsync(
+            new User 
+            { 
+                FirstName = command.Data.FirstName,
+                LastName = command.Data.LastName,
+                Email = command.Data.Email,
+                UserName = command.Data.UserName ?? command.Data.Email,
+                Role = command.Data.Role,
+                AvatarId = avatar?.Id
+            }, 
+            command.Data.Password
+        );
 
-        await _context.UsersOld.AddAsync(userDb, cancellationToken);
+        if (!result.Succeeded)
+        {
+            throw new Exception("Can not register ApplicationUser");
+        }
+
         await _context.SaveChangesAsync(cancellationToken);
     }
 }

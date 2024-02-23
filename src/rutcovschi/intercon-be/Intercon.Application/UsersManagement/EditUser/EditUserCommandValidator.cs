@@ -8,11 +8,14 @@ public sealed class EditUserCommandValidator : AbstractValidator<EditUserCommand
 {
     public EditUserCommandValidator(InterconDbContext dbContext)
     {
-        RuleFor(x => x.UserId).NotEmpty();
-
         RuleFor(x => x.UserId)
-            .MustAsync(async (userId, ctx) => await dbContext.UsersOld.AnyAsync(x => x.Id == userId, ctx))
-            .WithMessage("The user doesn't exists");
+            .NotEmpty()
+            .DependentRules(() =>
+            {
+                RuleFor(x => x.UserId)
+                    .MustAsync(async (userId, ctx) => await dbContext.UsersOld.AnyAsync(x => x.Id == userId, ctx))
+                    .WithMessage("The user doesn't exists");
+            });
 
         When(x => !string.IsNullOrEmpty(x.Data.FirstName), () =>
         {
