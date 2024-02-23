@@ -5,6 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
+using Intercon.Domain.Enums;
 using Microsoft.Extensions.Configuration;
 
 namespace Intercon.Application.Abstractions;
@@ -25,8 +26,8 @@ public class JwtTokenService(ILogger<JwtTokenService> logger) : ITokenService
         var token = CreateJwtToken(
             CreateClaims(user),
             CreateSigningCredentials(),
-            expiration
-        );
+            expiration);
+
         var tokenHandler = new JwtSecurityTokenHandler();
 
         _logger.LogInformation("JWT Token created");
@@ -35,8 +36,7 @@ public class JwtTokenService(ILogger<JwtTokenService> logger) : ITokenService
     }
 
     private JwtSecurityToken CreateJwtToken(List<Claim> claims, SigningCredentials credentials,
-        DateTime expiration) =>
-        new(
+        DateTime expiration) => new(
             new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("JwtTokenSettings")["ValidIssuer"],
             new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("JwtTokenSettings")["ValidAudience"],
             claims,
@@ -46,17 +46,15 @@ public class JwtTokenService(ILogger<JwtTokenService> logger) : ITokenService
 
     private List<Claim> CreateClaims(ApplicationUser user)
     {
-        var jwtSub = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("JwtTokenSettings")["JwtRegisteredClaimNamesSub"];
-
         try
         {
             var claims = new List<Claim>
             {
-                new Claim("Id", user.Id.ToString()),
-                new Claim(nameof(user.FirstName), user.FirstName),
-                new Claim(nameof(user.LastName), user.LastName),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, ((int)user.Role).ToString())
+                new(JwtClaimType.UserId, user.Id.ToString()),
+                new(JwtClaimType.Email, user.Email),
+                new(JwtClaimType.FirstName, user.FirstName),
+                new(JwtClaimType.LastName, user.LastName),
+                new(JwtClaimType.Role, ((int)user.Role).ToString())
             };
 
             return claims;
@@ -73,9 +71,7 @@ public class JwtTokenService(ILogger<JwtTokenService> logger) : ITokenService
         var symmetricSecurityKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("JwtTokenSettings")["SymmetricSecurityKey"];
 
         return new SigningCredentials(
-            new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(symmetricSecurityKey)
-            ),
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(symmetricSecurityKey)),
             SecurityAlgorithms.HmacSha256
         );
     }

@@ -14,10 +14,9 @@ builder.Services
 
 var app = builder.Build();
 
-DataBaseSeeder.Seed(builder.Configuration.GetConnectionString("DefaultConnection"));
-
 if (app.Environment.IsDevelopment())
 {
+    DataBaseSeeder.Seed(builder.Configuration.GetConnectionString("DefaultConnection"));
     app.UseSwagger();
     app.UseSwaggerUI();
 }
