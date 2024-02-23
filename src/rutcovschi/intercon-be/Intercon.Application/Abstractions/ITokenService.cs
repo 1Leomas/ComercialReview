@@ -52,13 +52,11 @@ public class JwtTokenService(ILogger<JwtTokenService> logger) : ITokenService
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, jwtSub),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim("Id", user.Id.ToString()),
+                new Claim(nameof(user.FirstName), user.FirstName),
+                new Claim(nameof(user.LastName), user.LastName),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
+                new Claim(ClaimTypes.Role, ((int)user.Role).ToString())
             };
 
             return claims;

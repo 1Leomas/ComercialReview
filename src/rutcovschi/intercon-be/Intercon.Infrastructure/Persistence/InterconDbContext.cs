@@ -1,11 +1,12 @@
 ﻿using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Intercon.Infrastructure.Persistence;
 
-public class InterconDbContext : IdentityDbContext<ApplicationUser>
+public class InterconDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>
 {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public InterconDbContext(DbContextOptions<InterconDbContext> options) : base(options) { }

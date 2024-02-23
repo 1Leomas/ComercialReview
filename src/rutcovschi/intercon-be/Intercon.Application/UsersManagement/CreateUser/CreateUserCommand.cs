@@ -26,7 +26,9 @@ public sealed class CreateUserCommandHandler(
         var result = await _userManager.CreateAsync(
             new ApplicationUser 
             { 
-                UserName = command.Data.UserName,
+                FirstName = command.Data.FirstName,
+                LastName = command.Data.LastName,
+                UserName = command.Data.Email,
                 Email = command.Data.Email, 
                 Role = command.Data.Role 
             }, 
@@ -63,6 +65,7 @@ public sealed class CreateUserCommandHandler(
             Email = command.Data.Email,
             Password = command.Data.Password,
             UserName = command.Data.UserName,
+            Role = command.Data.Role,
             AvatarId = avatar?.Id
         };
 

@@ -4,6 +4,7 @@ using Intercon.Application.BusinessesManagement.GetBusiness;
 using Intercon.Application.BusinessesManagement.GetBusinesses;
 using Intercon.Application.CustomExceptions;
 using Intercon.Application.DataTransferObjects.Business;
+using Intercon.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -38,7 +39,7 @@ public class BusinessController(IMediator mediator) : BaseController
         return Ok(await _mediator.Send(new GetAllBusinessesQuery(), cancellationToken));
     }
 
-    [Authorize(Roles = "SuperAdmin")]
+    [Authorize(Roles = "2")]
     [HttpPost]
     [ProducesResponseType(typeof(BusinessDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]

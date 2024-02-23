@@ -65,7 +65,7 @@ public static class DependencyInjection
         // Specify identity requirements
         // Must be added before .AddAuthentication otherwise a 404 is thrown on authorized endpoints
         services
-            .AddIdentity<ApplicationUser, IdentityRole>(options =>
+            .AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false;
                 options.User.RequireUniqueEmail = true;
@@ -74,8 +74,8 @@ public static class DependencyInjection
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
             })
-            .AddRoles<IdentityRole>()
-            .AddEntityFrameworkStores<InterconDbContext>();
+                .AddRoles<IdentityRole<int>>()
+                .AddEntityFrameworkStores<InterconDbContext>();
 
         // These will eventually be moved to a secrets file, but for alpha development appsettings is fine
         var validIssuer = configuration.GetValue<string>("JwtTokenSettings:ValidIssuer");
