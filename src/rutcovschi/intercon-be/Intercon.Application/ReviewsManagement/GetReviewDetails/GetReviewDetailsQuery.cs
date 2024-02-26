@@ -11,7 +11,11 @@ public record ReviewDetailsDto(
     int AuthorId,
     ReviewAuthorDto Author,
     float Grade,
-    string? ReviewText);
+    string? ReviewText,
+    DateTime CreateDate,
+    DateTime UpdateDate,
+    bool WasEdited
+);
 
 public sealed record GetReviewDetailsQuery(int BusinessId, int AuthorId) : IQuery<ReviewDetailsDto?>;
 

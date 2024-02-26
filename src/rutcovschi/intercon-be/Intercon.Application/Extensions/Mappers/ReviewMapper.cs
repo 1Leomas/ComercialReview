@@ -1,5 +1,4 @@
 ﻿using Intercon.Application.DataTransferObjects.User;
-using Intercon.Application.ReviewsManagement.CreateReview;
 using Intercon.Application.ReviewsManagement.GetAllReviews;
 using Intercon.Application.ReviewsManagement.GetReviewDetails;
 using Intercon.Domain.Entities;
@@ -27,7 +26,10 @@ public static class ReviewMapper
                 UserName : review.Author.UserName,
                 Avatar: review.Author.Avatar?.Data),
             Grade : review.Grade,
-            ReviewText : review.ReviewText);
+            ReviewText : review.ReviewText,
+            CreateDate :review.CreateDate,
+            UpdateDate : review.UpdateDate,
+            WasEdited : review.WasEdited);
     }
 
     public static ReviewShortDto ToShortDto(this Review review) => new(
