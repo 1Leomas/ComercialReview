@@ -1,11 +1,11 @@
 ﻿using Intercon.Application.CustomExceptions;
 using Intercon.Application.DataTransferObjects.User;
-using Intercon.Application.UsersManagement.CreateUser;
 using Intercon.Application.UsersManagement.DeleteUser;
 using Intercon.Application.UsersManagement.EditUser;
 using Intercon.Application.UsersManagement.GetUser;
 using Intercon.Application.UsersManagement.GetUsers;
 using Intercon.Application.UsersManagement.LoginUser;
+using Intercon.Application.UsersManagement.RegisterUser;
 using Intercon.Application.UsersManagement.VerifyUserName;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -50,12 +50,12 @@ public class UserController(IMediator mediator) : BaseController
         return Ok(response);
     }
 
-    [HttpPost("create")]
+    [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateUser([FromBody] CreateUserDto userToAdd, CancellationToken cancellationToken)
+    public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto userToAdd, CancellationToken cancellationToken)
     {
-        await _mediator.Send(new CreateUserCommand(userToAdd), cancellationToken);
+        await _mediator.Send(new RegisterUserCommand(userToAdd), cancellationToken);
 
         return Ok();
     }

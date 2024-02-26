@@ -4,18 +4,18 @@ using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 
-namespace Intercon.Application.UsersManagement.CreateUser;
+namespace Intercon.Application.UsersManagement.RegisterUser;
 
-public sealed record CreateUserCommand(CreateUserDto Data) : ICommand;
+public sealed record RegisterUserCommand(RegisterUserDto Data) : ICommand;
 
-public sealed class CreateUserCommandHandler(
+public sealed class RegisterUserCommandHandler(
     InterconDbContext context, 
-    UserManager<User> userManager) : ICommandHandler<CreateUserCommand>
+    UserManager<User> userManager) : ICommandHandler<RegisterUserCommand>
 {
     private readonly InterconDbContext _context = context;
     private readonly UserManager<User> _userManager = userManager;
 
-    public async Task Handle(CreateUserCommand command, CancellationToken cancellationToken)
+    public async Task Handle(RegisterUserCommand command, CancellationToken cancellationToken)
     {
         //if (!ModelState.IsValid)
         //{
@@ -41,7 +41,7 @@ public sealed class CreateUserCommandHandler(
         }
 
         var result = await _userManager.CreateAsync(
-            new User 
+            new User
             { 
                 FirstName = command.Data.FirstName,
                 LastName = command.Data.LastName,

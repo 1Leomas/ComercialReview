@@ -31,7 +31,7 @@ public static class UserMapper
         };
     }
 
-    public static User ToEntity(this CreateUserDto user)
+    public static User ToEntity(this RegisterUserDto user)
     {
         return new User()
         {

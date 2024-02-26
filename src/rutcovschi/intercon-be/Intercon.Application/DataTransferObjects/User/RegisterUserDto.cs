@@ -3,7 +3,7 @@ using Intercon.Domain.Enums;
 
 namespace Intercon.Application.DataTransferObjects.User;
 
-public record CreateUserDto
+public record RegisterUserDto
 {
     public string FirstName { get; init; } = string.Empty;
     public string LastName { get; init; } = string.Empty;

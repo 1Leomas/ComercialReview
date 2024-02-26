@@ -3,11 +3,11 @@ using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Intercon.Application.UsersManagement.CreateUser;
+namespace Intercon.Application.UsersManagement.RegisterUser;
 
-public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
+public sealed class RegisterUserCommandValidator : AbstractValidator<RegisterUserCommand>
 {
-    public CreateUserCommandValidator(InterconDbContext context)
+    public RegisterUserCommandValidator(InterconDbContext context)
     {
         RuleFor(x => x.Data.FirstName)
             .NotEmpty()
