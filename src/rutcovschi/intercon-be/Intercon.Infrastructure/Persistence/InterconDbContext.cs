@@ -1,5 +1,6 @@
 ﻿using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Extensions;
+using Intercon.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +13,12 @@ public class InterconDbContext : IdentityDbContext<User, IdentityRole<int>, int>
     public InterconDbContext(DbContextOptions<InterconDbContext> options) : base(options) { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-    public DbSet<User> AspNetUsers { get; set; }
+    //public DbSet<User> AspNetUsers { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Business> Businesses { get; set; }
     public DbSet<Image> Images { get; set; }
+
+    public virtual DbSet<UserRefreshTokens> UserRefreshToken { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

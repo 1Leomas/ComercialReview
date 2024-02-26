@@ -1,13 +1,14 @@
 ﻿using FluentValidation;
+using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Intercon.Application.UsersManagement.RegisterUser;
 
 public sealed class RegisterUserCommandValidator : AbstractValidator<RegisterUserCommand>
 {
-    public RegisterUserCommandValidator(InterconDbContext context)
+    public RegisterUserCommandValidator(InterconDbContext context, UserManager<User> userManager)
     {
         RuleFor(x => x.Data.FirstName)
             .NotEmpty()
@@ -34,13 +35,15 @@ public sealed class RegisterUserCommandValidator : AbstractValidator<RegisterUse
 
             RuleFor(x => x.Data.UserName).MustAsync(async (userName, _) =>
             {
-                return await context.AspNetUsers.AllAsync(x => x.UserName != userName);
+                var user = await userManager.FindByNameAsync(userName!);
+                return user is null ? true : false;
             }).WithMessage("The username must be unique");
         });
 
         RuleFor(x => x.Data.Email).MustAsync(async (email, _) =>
         {
-            return await context.AspNetUsers.AllAsync(x => x.Email != email);
+            var user = await userManager.FindByEmailAsync(email);
+            return user is null ? true : false;
         }).WithMessage("The email must be unique");
 
         When(x => x.Data.Avatar is not null, () =>

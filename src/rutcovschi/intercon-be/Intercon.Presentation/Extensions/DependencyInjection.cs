@@ -23,7 +23,7 @@ public static class DependencyInjection
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(options =>
         {
-            options.SwaggerDoc("v1", new OpenApiInfo { Title = "Test API", Version = "v1" });
+            options.SwaggerDoc("v1", new OpenApiInfo { Title = "Intercon API", Version = "v1" });
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 In = ParameterLocation.Header,
@@ -64,16 +64,15 @@ public static class DependencyInjection
 
         // Specify identity requirements
         // Must be added before .AddAuthentication otherwise a 404 is thrown on authorized endpoints
-        services
-            .AddIdentity<User, IdentityRole<int>>(options =>
-            {
-                options.SignIn.RequireConfirmedAccount = false;
-                options.User.RequireUniqueEmail = true;
-                options.Password.RequireDigit = false;
-                options.Password.RequiredLength = 6;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-            })
+        services.AddIdentity<User, IdentityRole<int>>(options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = false;
+                    options.User.RequireUniqueEmail = true;
+                    options.Password.RequireDigit = false;
+                    options.Password.RequiredLength = 6;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                })
                 .AddRoles<IdentityRole<int>>()
                 .AddEntityFrameworkStores<InterconDbContext>();
 
@@ -103,6 +102,7 @@ public static class DependencyInjection
                     Encoding.UTF8.GetBytes(symmetricSecurityKey)
                 ),
             };
+            options.SaveToken = true;
         });
 
         return services;

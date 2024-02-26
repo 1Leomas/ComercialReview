@@ -3,6 +3,7 @@ using Intercon.Domain.Entities;
 using Intercon.Domain.Enums;
 using Intercon.Infrastructure.Persistence.DataSeeder.Seeds;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -16,19 +17,18 @@ public static class DataBaseSeeder
             .UseSqlServer(connectionString)
             .Options;
 
-        using (var context = new InterconDbContext(options))
+        using var context = new InterconDbContext(options);
+
+        var dataBaseCreated = context.Database.EnsureCreated();
+
+        InitializeEntity(context, context.Images, ImagesSeed.SeedImages);
+        //InitializeEntity(context, context.AspNetUsers, UsersSeed.SeedUsers);
+        InitializeEntity(context, context.Businesses, BusinessesSeed.SeedBusinesses);
+        InitializeEntity(context, context.Reviews, ReviewsSeed.SeedReviews);
+
+        if (dataBaseCreated)
         {
-            var dataBaseCreated = context.Database.EnsureCreated();
-
-            InitializeEntity(context, context.Images, ImagesSeed.SeedImages);
-            InitializeEntity(context, context.AspNetUsers, UsersSeed.SeedUsers);
-            InitializeEntity(context, context.Businesses, BusinessesSeed.SeedBusinesses);
-            InitializeEntity(context, context.Reviews, ReviewsSeed.SeedReviews);
-
-            if (dataBaseCreated)
-            {
-                CalculateBusinessRatings(context);
-            }
+            CalculateBusinessRatings(context);
         }
     }
 

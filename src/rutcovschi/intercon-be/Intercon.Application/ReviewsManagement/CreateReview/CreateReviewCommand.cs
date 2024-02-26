@@ -2,6 +2,7 @@
 using Intercon.Application.Abstractions.Messaging;
 using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Intercon.Application.ReviewsManagement.CreateReview;
@@ -40,7 +41,7 @@ internal sealed class CreateReviewCommandHandler(InterconDbContext context) : IC
 
 public sealed class CreateReviewCommandCommandValidator : AbstractValidator<CreateReviewCommand>
 {
-    public CreateReviewCommandCommandValidator(InterconDbContext context)
+    public CreateReviewCommandCommandValidator(InterconDbContext context, UserManager<User> userManager)
     {
         RuleFor(x => x.BusinessId)
             .NotEmpty()
@@ -60,7 +61,7 @@ public sealed class CreateReviewCommandCommandValidator : AbstractValidator<Crea
         RuleFor(x => x.Data.AuthorId)
             .MustAsync(async (authorId, ctx) =>
             {
-                return await context.AspNetUsers.AnyAsync(x => x.Id == authorId, ctx);
+                return await userManager.Users.AnyAsync(x => x.Id == authorId, ctx);
             })
             .WithMessage("The author doesn't exists");
 

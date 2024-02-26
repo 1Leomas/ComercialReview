@@ -1,19 +1,21 @@
 ﻿using FluentValidation;
+using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Intercon.Application.UsersManagement.EditUser;
 
 public sealed class EditUserCommandValidator : AbstractValidator<EditUserCommand>
 {
-    public EditUserCommandValidator(InterconDbContext dbContext)
+    public EditUserCommandValidator(InterconDbContext dbContext, UserManager<User> userManager)
     {
         RuleFor(x => x.UserId)
             .NotEmpty()
             .DependentRules(() =>
             {
                 RuleFor(x => x.UserId)
-                    .MustAsync(async (userId, ctx) => await dbContext.AspNetUsers.AnyAsync(x => x.Id == userId, ctx))
+                    .MustAsync(async (userId, ctx) => await userManager.Users.AnyAsync(x => x.Id == userId, ctx))
                     .WithMessage("The user doesn't exists");
             });
 
@@ -36,7 +38,7 @@ public sealed class EditUserCommandValidator : AbstractValidator<EditUserCommand
                 .EmailAddress();
 
             RuleFor(x => x)
-                .MustAsync(async (command, ctx) => await dbContext.AspNetUsers
+                .MustAsync(async (command, ctx) => await userManager.Users
                     .AllAsync(x => x.Id == command.UserId || x.Email != command.Data.Email, ctx))
                 .WithMessage("The email must be unique")
                 .WithName(x => nameof(x.Data.Email));
@@ -49,7 +51,7 @@ public sealed class EditUserCommandValidator : AbstractValidator<EditUserCommand
                 .WithName(x => nameof(x.Data.UserName));
 
             RuleFor(x => x)
-                .MustAsync(async (command, ctx) => await dbContext.AspNetUsers.AllAsync(
+                .MustAsync(async (command, ctx) => await userManager.Users.AllAsync(
                     x => x.Id == command.UserId || x.UserName != command.Data.UserName, ctx))
                 .WithName(x => nameof(x.Data.UserName))
                 .WithMessage("The username must be unique");

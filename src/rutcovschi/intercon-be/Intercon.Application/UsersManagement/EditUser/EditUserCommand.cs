@@ -2,6 +2,7 @@
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -9,13 +10,15 @@ namespace Intercon.Application.UsersManagement.EditUser;
 
 public sealed record EditUserCommand(int UserId, EditUserDto Data) : ICommand;
 
-public sealed class EditUserCommandHandler(InterconDbContext context) : ICommandHandler<EditUserCommand>
+public sealed class EditUserCommandHandler(InterconDbContext context, UserManager<User> userManager) : ICommandHandler<EditUserCommand>
 {
     private readonly InterconDbContext _context = context;
+    private readonly UserManager<User> _userManager = userManager;
 
     public async Task Handle(EditUserCommand command, CancellationToken cancellationToken)
     {
-        var userDb = await _context.AspNetUsers.FirstOrDefaultAsync(x => x.Id == command.UserId, cancellationToken);
+        var userDb = await userManager.Users
+            .FirstOrDefaultAsync(x => x.Id == command.UserId, cancellationToken);
 
         if (userDb == null)
         {
@@ -48,7 +51,7 @@ public sealed class EditUserCommandHandler(InterconDbContext context) : ICommand
                 Data = command.Data.Avatar.Data 
             };
 
-            await _context.Images.AddAsync(avatar);
+            await _context.Images.AddAsync(avatar, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
             userDb.AvatarId = avatar.Id;

@@ -1,5 +1,7 @@
 ﻿using Intercon.Application.Abstractions.Messaging;
+using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -7,9 +9,9 @@ namespace Intercon.Application.UsersManagement.VerifyUserName;
 
 public sealed record UserNameUniqueCheckQuery(string UserName) : IQuery<bool>;
 
-public sealed class VerifyUserNameQueryHandler(InterconDbContext context) : IQueryHandler<UserNameUniqueCheckQuery, bool>
+public sealed class VerifyUserNameQueryHandler(UserManager<User> userManager) : IQueryHandler<UserNameUniqueCheckQuery, bool>
 {
-    private readonly InterconDbContext _context = context;
+    private readonly UserManager<User> _userManager = userManager;
 
     public async Task<bool> Handle(UserNameUniqueCheckQuery request, CancellationToken cancellationToken)
     {
@@ -18,6 +20,6 @@ public sealed class VerifyUserNameQueryHandler(InterconDbContext context) : IQue
             return false; 
         }
 
-        return await _context.AspNetUsers.AllAsync(x => x.UserName != request.UserName);
+        return await _userManager.FindByNameAsync(request.UserName) is null;
     }
 }

@@ -5,8 +5,10 @@ using Intercon.Application.UsersManagement.EditUser;
 using Intercon.Application.UsersManagement.GetUser;
 using Intercon.Application.UsersManagement.GetUsers;
 using Intercon.Application.UsersManagement.LoginUser;
+using Intercon.Application.UsersManagement.RefreshToken;
 using Intercon.Application.UsersManagement.RegisterUser;
 using Intercon.Application.UsersManagement.VerifyUserName;
+using Intercon.Infrastructure.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,7 +43,7 @@ public class UserController(IMediator mediator) : BaseController
     }
     
     [HttpPost("login")]
-    [ProducesResponseType(typeof(UserLoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Tokens), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> LoginUser([FromBody] LoginUserDto userToLogin, CancellationToken cancellationToken)
     {
@@ -87,5 +89,19 @@ public class UserController(IMediator mediator) : BaseController
         var result = await _mediator.Send(new UserNameUniqueCheckQuery(userName), cancellationToken);
 
         return result ? Ok() : BadRequest();
+    }
+
+    [HttpPost("refresh-token")]
+    [ProducesResponseType(typeof(Tokens), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+
+    public async Task<IActionResult> RefreshToken([FromBody] Tokens tokens,
+        CancellationToken cancellationToken)
+    {
+        //var userEmail = HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtClaimType.Email);
+
+        var response = await _mediator.Send(new RefreshTokenCommand(tokens), cancellationToken);
+
+        return Ok(response);
     }
 }

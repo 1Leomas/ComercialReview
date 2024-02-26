@@ -1,28 +1,27 @@
-﻿using Azure.Core;
-using Intercon.Application.Abstractions;
+﻿using Intercon.Application.Abstractions;
 using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Domain.Entities;
+using Intercon.Infrastructure.Identity;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Intercon.Application.UsersManagement.LoginUser;
 
-public record UserLoginResponse(string Token);
+public record UserLoginResponse(Tokens Tokens);
 
-public sealed record LoginUserCommand(LoginUserDto Data) : ICommand<UserLoginResponse>;
+public sealed record LoginUserCommand(LoginUserDto Data) : ICommand<Tokens>;
 
 public sealed class LoginUserCommandHandler(
     InterconDbContext context,
     UserManager<User> userManager,
-    ITokenService tokenService) : ICommandHandler<LoginUserCommand, UserLoginResponse>
+    ITokenService tokenService) : ICommandHandler<LoginUserCommand, Tokens>
 {
     private readonly InterconDbContext _context = context;
     private readonly UserManager<User> _userManager = userManager;
     private readonly ITokenService _tokenService = tokenService;
 
-    public async Task<UserLoginResponse> Handle(LoginUserCommand command, CancellationToken cancellationToken)
+    public async Task<Tokens> Handle(LoginUserCommand command, CancellationToken cancellationToken)
     {
         //if (!ModelState.IsValid)
         //{
@@ -31,7 +30,6 @@ public sealed class LoginUserCommandHandler(
 
         var managedUser = await _userManager.FindByEmailAsync(command.Data.Email) 
                           ?? throw new InvalidOperationException("Bad credentials");
-
 
         var isPasswordValid = await _userManager.CheckPasswordAsync(managedUser, command.Data.Password!);
 
@@ -47,10 +45,19 @@ public sealed class LoginUserCommandHandler(
             throw new InvalidOperationException("Unauthorized");
         }
 
-        var accessToken = _tokenService.CreateToken(userInDb);
+        var tokens = _tokenService.CreateToken(userInDb);
+
+        var userRefreshToken = new UserRefreshTokens()
+        {
+            RefreshToken = tokens.RefreshToken,
+            UserEmail = userInDb.Email!
+        };
+
+        _context.UserRefreshToken.Add(userRefreshToken);
+
         await _context.SaveChangesAsync(cancellationToken);
 
-        return new UserLoginResponse(accessToken);
+        return tokens;
 
 
         //var validCredentials = await _context.UsersOld

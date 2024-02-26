@@ -4,19 +4,21 @@ using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Application.Extensions.Mappers;
 using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Intercon.Application.BusinessesManagement.CreateBusiness;
 
 public sealed record CreateBusinessCommand(CreateBusinessDto Data) : ICommand<BusinessDetailsDto>;
 
-public sealed class CreateBusinessCommandHandler(InterconDbContext context) : ICommandHandler<CreateBusinessCommand, BusinessDetailsDto>
+public sealed class CreateBusinessCommandHandler(InterconDbContext context, UserManager<User> userManager) : ICommandHandler<CreateBusinessCommand, BusinessDetailsDto>
 {
     private readonly InterconDbContext _context = context;
+    private readonly UserManager<User> _userManager = userManager;
 
     public async Task<BusinessDetailsDto> Handle(CreateBusinessCommand command, CancellationToken cancellationToken)
     {
-        var userExits = await _context.AspNetUsers.AnyAsync(x => x.Id == command.Data.OwnerId, cancellationToken);
+        var userExits = await _userManager.Users.AnyAsync(x => x.Id == command.Data.OwnerId, cancellationToken);
        
         if (!userExits)
         {
