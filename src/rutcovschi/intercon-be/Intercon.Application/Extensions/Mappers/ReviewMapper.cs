@@ -24,7 +24,8 @@ public static class ReviewMapper
             Author : new ReviewAuthorDto(
                 FirstName : review.Author.FirstName,
                 LastName : review.Author.LastName,
-                UserName : review.Author.UserName),
+                UserName : review.Author.UserName,
+                Avatar: review.Author.Avatar?.Data),
             Grade : review.Grade,
             ReviewText : review.ReviewText);
     }

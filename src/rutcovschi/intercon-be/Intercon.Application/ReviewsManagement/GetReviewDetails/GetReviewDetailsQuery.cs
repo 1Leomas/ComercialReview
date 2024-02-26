@@ -23,6 +23,7 @@ internal sealed class GetReviewDetailsHandler(InterconDbContext context) : IQuer
     {
         var reviewFromDb = await _context.Reviews
             .Include(review => review.Author)
+            .ThenInclude(user => user.Avatar)
             .FirstOrDefaultAsync(x => x.BusinessId == request.BusinessId && x.AuthorId == request.AuthorId, cancellationToken);
 
         return reviewFromDb?.ToDto();

@@ -3,5 +3,6 @@
 public record ReviewAuthorDto(
     string FirstName,
     string LastName,
-    string? UserName
+    string? UserName,
+    string? Avatar
 );

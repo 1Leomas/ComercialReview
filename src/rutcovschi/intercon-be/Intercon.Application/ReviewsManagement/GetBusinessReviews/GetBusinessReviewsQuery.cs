@@ -17,6 +17,7 @@ internal sealed class GetBusinessReviewsHandler(InterconDbContext context) : IRe
     {
         var reviews = await _context.Reviews
             .Include(review => review.Author)
+            .ThenInclude(user => user.Avatar)
             .Where(x => x.BusinessId == request.BusinessId)
             .ToListAsync(cancellationToken);
 
