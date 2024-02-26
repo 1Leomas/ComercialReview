@@ -15,7 +15,7 @@ public sealed class GetUsersQueryHandler(InterconDbContext context) : IQueryHand
     
     public async Task<IEnumerable<UserDetailsDto>> Handle(GetUsersQuery query, CancellationToken cancellationToken)
     {
-        var usersDb = await _context.UsersOld.Include(x => x.Avatar).OrderBy(x => x.Id).ToListAsync(cancellationToken);
+        var usersDb = await _context.AspNetUsers.Include(x => x.Avatar).OrderBy(x => x.Id).ToListAsync(cancellationToken);
 
         var users = new List<UserDetailsDto>();
 

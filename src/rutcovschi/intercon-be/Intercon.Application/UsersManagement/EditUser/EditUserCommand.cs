@@ -15,7 +15,7 @@ public sealed class EditUserCommandHandler(InterconDbContext context) : ICommand
 
     public async Task Handle(EditUserCommand command, CancellationToken cancellationToken)
     {
-        var userDb = await _context.UsersOld.FirstOrDefaultAsync(x => x.Id == command.UserId, cancellationToken);
+        var userDb = await _context.AspNetUsers.FirstOrDefaultAsync(x => x.Id == command.UserId, cancellationToken);
 
         if (userDb == null)
         {

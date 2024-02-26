@@ -18,6 +18,6 @@ public sealed class VerifyUserNameQueryHandler(InterconDbContext context) : IQue
             return false; 
         }
 
-        return await _context.UsersOld.AllAsync(x => x.UserName != request.UserName);
+        return await _context.AspNetUsers.AllAsync(x => x.UserName != request.UserName);
     }
 }

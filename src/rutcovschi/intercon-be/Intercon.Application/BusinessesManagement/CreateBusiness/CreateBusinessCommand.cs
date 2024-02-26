@@ -16,7 +16,7 @@ public sealed class CreateBusinessCommandHandler(InterconDbContext context) : IC
 
     public async Task<BusinessDetailsDto> Handle(CreateBusinessCommand command, CancellationToken cancellationToken)
     {
-        var userExits = await _context.UsersOld.AnyAsync(x => x.Id == command.Data.OwnerId, cancellationToken);
+        var userExits = await _context.AspNetUsers.AnyAsync(x => x.Id == command.Data.OwnerId, cancellationToken);
        
         if (!userExits)
         {
