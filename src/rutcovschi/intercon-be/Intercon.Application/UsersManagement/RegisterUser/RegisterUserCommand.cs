@@ -46,7 +46,7 @@ public sealed class RegisterUserCommandHandler(
                 FirstName = command.Data.FirstName,
                 LastName = command.Data.LastName,
                 Email = command.Data.Email,
-                UserName = command.Data.UserName ?? command.Data.Email,
+                UserName = string.IsNullOrEmpty(command.Data.UserName) ? command.Data.Email : command.Data.UserName,
                 Role = (Domain.Enums.Role)command.Data.Role,
                 AvatarId = avatar?.Id
             }, 
