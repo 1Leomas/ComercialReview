@@ -68,6 +68,8 @@ internal sealed class RefreshTokenCommandHandler(
         _context.UserRefreshToken.Remove(savedRefreshToken);
         await _context.UserRefreshToken.AddAsync(userRefreshToken, cancellationToken);
 
+        await _context.SaveChangesAsync(cancellationToken);
+        
         return newJwtToken;
     }
 }

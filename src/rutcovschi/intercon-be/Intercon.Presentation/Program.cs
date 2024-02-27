@@ -22,13 +22,13 @@ app.UseHttpsRedirection();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-app.UseAuthentication();
-
 app.UseRouting();
 
-app.UseAuthorization();
-
 app.UseCors("AllowAll");
+
+app.UseAuthentication();
+
+app.UseAuthorization();
 
 app.MapControllers();
 
