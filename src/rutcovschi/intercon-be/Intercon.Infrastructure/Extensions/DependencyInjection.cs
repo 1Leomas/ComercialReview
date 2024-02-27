@@ -1,4 +1,5 @@
 ﻿using Intercon.Infrastructure.Persistence;
+using Intercon.Infrastructure.Persistence.DataSeeder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,8 @@ public static class DependencyInjection
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
         );
+
+        services.AddScoped<DataBaseSeeder, DataBaseSeeder>();
 
         return services;
     }

@@ -16,7 +16,6 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    //DataBaseSeeder.Seed(builder.Configuration.GetConnectionString("DefaultConnection"));
     app.UseSwagger();
     app.UseSwaggerUI();
 }

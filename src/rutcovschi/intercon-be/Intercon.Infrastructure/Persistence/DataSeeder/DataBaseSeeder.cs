@@ -9,32 +9,29 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Intercon.Infrastructure.Persistence.DataSeeder;
 
-public static class DataBaseSeeder
+public class DataBaseSeeder(InterconDbContext context, UserManager<User> userManager)
 {
-    public static void Seed(string connectionString)
+    private readonly InterconDbContext _context = context;
+    private readonly UserManager<User> userManager = userManager;
+
+    public async Task Seed()
     {
-        var options = new DbContextOptionsBuilder<InterconDbContext>()
-            .UseSqlServer(connectionString)
-            .Options;
+        var dataBaseCreated = _context.Database.EnsureCreated();
 
-        using var context = new InterconDbContext(options);
-
-        var dataBaseCreated = context.Database.EnsureCreated();
-
-        InitializeEntity(context, context.Images, ImagesSeed.SeedImages);
-        //InitializeEntity(context, context.AspNetUsers, UsersSeed.SeedUsers);
-        InitializeEntity(context, context.Businesses, BusinessesSeed.SeedBusinesses);
-        InitializeEntity(context, context.Reviews, ReviewsSeed.SeedReviews);
+        await InitializeEntity(_context.Images, ImagesSeed.SeedImages);
+        await InitializeUsers();
+        await InitializeEntity(_context.Businesses, BusinessesSeed.SeedBusinesses);
+        await InitializeEntity(_context.Reviews, ReviewsSeed.SeedReviews);
 
         if (dataBaseCreated)
         {
-            CalculateBusinessRatings(context);
+            CalculateBusinessRatings();
         }
     }
 
-    private static void CalculateBusinessRatings(InterconDbContext context)
+    private void CalculateBusinessRatings()
     {
-        var businesses = context.Businesses.Include(b => b.Reviews).ToList();
+        var businesses = _context.Businesses.Include(b => b.Reviews).ToList();
 
         foreach (var business in businesses)
         {
@@ -49,14 +46,25 @@ public static class DataBaseSeeder
             }
         }
 
-        context.SaveChanges();
+        _context.SaveChanges();
     }
 
-    private static void InitializeEntity<TEntity>(InterconDbContext context, DbSet<TEntity> entity,
+    private async Task InitializeUsers()
+    {
+        var users = UsersSeed.SeedUsers();
+
+        foreach (var user in users)
+        {
+            await userManager.CreateAsync(user);
+        }
+    }
+
+    private async Task InitializeEntity<TEntity>(DbSet<TEntity> entity,
         Func<List<TEntity>> seedAction)
         where TEntity : class
     {
-        if (context.Set<TEntity>().Any())
+
+        if (await _context.Set<TEntity>().AnyAsync())
         {
             return; // Database has been seeded
         }
@@ -72,29 +80,28 @@ public static class DataBaseSeeder
 
         var tableName = entityType.Name;
 
-        using (var transaction = context.Database.BeginTransaction())
+        using var transaction = await _context.Database.BeginTransactionAsync();
+
+        bool hasIdentity = HasIdentity<TEntity>(_context);
+
+        if (hasIdentity)
         {
-            bool hasIdentity = HasIdentity<TEntity>(context);
-
-            if (hasIdentity)
-            {
-                context.Database.ExecuteSqlRaw($"SET IDENTITY_INSERT {tableName} ON");
-            }
-
-            entity.AddRange(seedAction());
-
-            context.SaveChanges();
-
-            if (hasIdentity)
-            {
-                context.Database.ExecuteSqlRaw($"SET IDENTITY_INSERT {tableName} OFF");
-            }
-
-            transaction.Commit();
+            await _context.Database.ExecuteSqlRawAsync($"SET IDENTITY_INSERT {tableName} ON");
         }
+
+        entity.AddRange(seedAction());
+
+        await _context.SaveChangesAsync();
+
+        if (hasIdentity)
+        {
+            await _context.Database.ExecuteSqlRawAsync($"SET IDENTITY_INSERT {tableName} OFF");
+        }
+
+        await transaction.CommitAsync();
     }
 
-    private static bool HasIdentity<TEntity>(InterconDbContext context) where TEntity : class
+    private bool HasIdentity<TEntity>(InterconDbContext context) where TEntity : class
     {
         var efEntity = context.Model.FindEntityType(typeof(TEntity));
         var efProperties = efEntity.GetProperties();
@@ -105,4 +112,6 @@ public static class DataBaseSeeder
 
         return hasIdentity;
     }
+
+
 }
