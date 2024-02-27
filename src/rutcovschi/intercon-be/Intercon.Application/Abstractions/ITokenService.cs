@@ -22,6 +22,7 @@ public interface ITokenService
 public class JwtTokenService(ILogger<JwtTokenService> logger) : ITokenService
 {
     private const int ExpirationMinutes = 30;
+
     private readonly ILogger<JwtTokenService> _logger = logger;
 
     public Tokens CreateToken(User user)
@@ -31,7 +32,8 @@ public class JwtTokenService(ILogger<JwtTokenService> logger) : ITokenService
         var token = CreateJwtToken(
             CreateClaims(user),
             CreateSigningCredentials(),
-            expiration);
+            expiration
+        );
 
         var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -47,14 +49,16 @@ public class JwtTokenService(ILogger<JwtTokenService> logger) : ITokenService
         };
     }
 
-    private JwtSecurityToken CreateJwtToken(List<Claim> claims, SigningCredentials credentials,
-        DateTime expiration) => new(
+    private JwtSecurityToken CreateJwtToken(List<Claim> claims, SigningCredentials credentials, DateTime expiration)
+    {
+        return new JwtSecurityToken(
             new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("JwtTokenSettings")["ValidIssuer"],
             new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("JwtTokenSettings")["ValidAudience"],
             claims,
             expires: expiration,
             signingCredentials: credentials
         );
+    }
 
     private List<Claim> CreateClaims(User user)
     {

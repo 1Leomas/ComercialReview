@@ -1,9 +1,6 @@
-﻿using Intercon.Domain.ComplexTypes;
-using Intercon.Domain.Entities;
-using Intercon.Domain.Enums;
+﻿using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence.DataSeeder.Seeds;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -12,7 +9,7 @@ namespace Intercon.Infrastructure.Persistence.DataSeeder;
 public class DataBaseSeeder(InterconDbContext context, UserManager<User> userManager)
 {
     private readonly InterconDbContext _context = context;
-    private readonly UserManager<User> userManager = userManager;
+    private readonly UserManager<User> _userManager = userManager;
 
     public async Task Seed()
     {
@@ -55,7 +52,7 @@ public class DataBaseSeeder(InterconDbContext context, UserManager<User> userMan
 
         foreach (var user in users)
         {
-            await userManager.CreateAsync(user);
+            await _userManager.CreateAsync(user);
         }
     }
 

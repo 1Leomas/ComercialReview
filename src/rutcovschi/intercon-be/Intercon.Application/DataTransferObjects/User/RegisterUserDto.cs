@@ -12,5 +12,5 @@ public record RegisterUserDto
     public string? UserName { get; init; } = null;
     public CreateImageDto? Avatar { get; init; } = null;
 
-    public Role Role { get; init; }
+    public int Role { get; init; }
 }

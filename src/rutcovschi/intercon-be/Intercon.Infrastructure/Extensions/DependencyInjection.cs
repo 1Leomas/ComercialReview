@@ -25,7 +25,7 @@ public static class DependencyInjection
                 .WithScopedLifetime()
         );
 
-        services.AddScoped<DataBaseSeeder, DataBaseSeeder>();
+        services.AddScoped<DataBaseSeeder>();
 
         return services;
     }

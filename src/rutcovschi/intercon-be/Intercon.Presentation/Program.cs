@@ -1,9 +1,7 @@
 using Intercon.Application.Extensions;
 using Intercon.Infrastructure.Extensions;
-using Intercon.Infrastructure.Persistence.DataSeeder;
 using Intercon.Presentation.Extensions;
 using Intercon.Presentation.Middleware;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 

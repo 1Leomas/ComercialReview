@@ -43,6 +43,7 @@ public class BusinessController(IMediator mediator) : BaseController
     [HttpPost]
     [ProducesResponseType(typeof(BusinessDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> CreateBusiness([FromBody] CreateBusinessDto businessToAdd, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
@@ -50,7 +51,16 @@ public class BusinessController(IMediator mediator) : BaseController
             return BadRequest(ModelState);
         }
 
-        var createdBusiness = await _mediator.Send(new CreateBusinessCommand(businessToAdd), cancellationToken);
+        var authentificatedUserIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtClaimType.UserId)?.Value;
+
+        if (authentificatedUserIdClaim is null)
+        {
+            return Unauthorized();
+        }
+
+        var userId = int.Parse(authentificatedUserIdClaim);
+
+        var createdBusiness = await _mediator.Send(new CreateBusinessCommand(userId, businessToAdd), cancellationToken);
 
         return Ok(createdBusiness);
     }

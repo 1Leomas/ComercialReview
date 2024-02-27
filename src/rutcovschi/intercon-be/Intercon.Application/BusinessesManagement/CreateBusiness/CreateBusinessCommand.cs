@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Intercon.Application.BusinessesManagement.CreateBusiness;
 
-public sealed record CreateBusinessCommand(CreateBusinessDto Data) : ICommand<BusinessDetailsDto>;
+public sealed record CreateBusinessCommand(int UserId, CreateBusinessDto Data) : ICommand<BusinessDetailsDto>;
 
 public sealed class CreateBusinessCommandHandler(InterconDbContext context, UserManager<User> userManager) : ICommandHandler<CreateBusinessCommand, BusinessDetailsDto>
 {
@@ -18,14 +18,7 @@ public sealed class CreateBusinessCommandHandler(InterconDbContext context, User
 
     public async Task<BusinessDetailsDto> Handle(CreateBusinessCommand command, CancellationToken cancellationToken)
     {
-        var userExits = await _userManager.Users.AnyAsync(x => x.Id == command.Data.OwnerId, cancellationToken);
-       
-        if (!userExits)
-        {
-            throw new Exception("User not found");
-        }
-
-        var businessDb = command.Data.ToEntity();
+        int? logoId = null;
 
         // maybe make a separate request for this
         Image? image = null;
@@ -39,8 +32,19 @@ public sealed class CreateBusinessCommandHandler(InterconDbContext context, User
             await _context.Images.AddAsync(image, cancellationToken);
             var rows = await _context.SaveChangesAsync(cancellationToken);
 
-            businessDb.LogoId = rows != 0 ? image.Id : null!;
+            logoId = rows != 0 ? image.Id : null!;
         }
+
+        var businessDb = new Business()
+        {
+            OwnerId = command.UserId,
+            Title = command.Data.Title,
+            ShortDescription = command.Data.ShortDescription,
+            FullDescription = command.Data.FullDescription,
+            Address = command.Data.Address,
+            Category = command.Data.Category,
+            LogoId = logoId
+        };
 
         await _context.Businesses.AddAsync(businessDb, cancellationToken);
 

@@ -47,7 +47,7 @@ public sealed class RegisterUserCommandHandler(
                 LastName = command.Data.LastName,
                 Email = command.Data.Email,
                 UserName = command.Data.UserName ?? command.Data.Email,
-                Role = command.Data.Role,
+                Role = (Domain.Enums.Role)command.Data.Role,
                 AvatarId = avatar?.Id
             }, 
             command.Data.Password

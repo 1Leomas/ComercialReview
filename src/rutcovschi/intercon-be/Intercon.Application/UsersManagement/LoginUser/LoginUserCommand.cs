@@ -5,6 +5,7 @@ using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Identity;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Intercon.Application.UsersManagement.LoginUser;
 
@@ -46,6 +47,16 @@ public sealed class LoginUserCommandHandler(
         }
 
         var tokens = _tokenService.CreateToken(userInDb);
+
+        var savedRefreshToken = await _context.UserRefreshToken.
+            FirstOrDefaultAsync(x =>
+                x.UserEmail == userInDb.Email &&
+                x.IsActive == true, cancellationToken);
+
+        if (savedRefreshToken is not null)
+        {
+            _context.UserRefreshToken.Remove(savedRefreshToken);
+        }
 
         var userRefreshToken = new UserRefreshTokens()
         {

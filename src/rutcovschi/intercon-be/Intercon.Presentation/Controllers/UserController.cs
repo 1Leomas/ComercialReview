@@ -8,6 +8,7 @@ using Intercon.Application.UsersManagement.LoginUser;
 using Intercon.Application.UsersManagement.RefreshToken;
 using Intercon.Application.UsersManagement.RegisterUser;
 using Intercon.Application.UsersManagement.VerifyUserName;
+using Intercon.Domain.Enums;
 using Intercon.Infrastructure.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -98,7 +99,7 @@ public class UserController(IMediator mediator) : BaseController
     public async Task<IActionResult> RefreshToken([FromBody] Tokens tokens,
         CancellationToken cancellationToken)
     {
-        //var userEmail = HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtClaimType.Email);
+        //var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtClaimType.UserId);
 
         var response = await _mediator.Send(new RefreshTokenCommand(tokens), cancellationToken);
 

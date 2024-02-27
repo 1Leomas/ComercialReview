@@ -9,7 +9,6 @@ public static class BusinessMapper
     {
         return new Business()
         {
-            OwnerId = businessDto.OwnerId,
             Title = businessDto.Title,
             ShortDescription = businessDto.ShortDescription,
             FullDescription = businessDto.FullDescription,
