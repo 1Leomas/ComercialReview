@@ -6,9 +6,10 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography;
+using Intercon.Application.Options;
 using Intercon.Infrastructure.Identity;
+using Microsoft.Extensions.Options;
 
 namespace Intercon.Application.Abstractions;
 
@@ -19,15 +20,15 @@ public interface ITokenService
     ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
 }
 
-public class JwtTokenService(ILogger<JwtTokenService> logger) : ITokenService
+public class JwtTokenService(IOptions<JwtTokenSettings> jwtTokenSettings, ILogger<JwtTokenService> logger) : ITokenService
 {
-    private const int ExpirationMinutes = 30;
-
     private readonly ILogger<JwtTokenService> _logger = logger;
+    private readonly JwtTokenSettings _jwtTokenSettings = jwtTokenSettings.Value;
+
 
     public Tokens CreateToken(User user)
     {
-        var expiration = DateTime.UtcNow.AddMinutes(ExpirationMinutes);
+        var expiration = DateTime.UtcNow.AddMinutes(_jwtTokenSettings.ExpirationTimeInMinutes);
 
         var token = CreateJwtToken(
             CreateClaims(user),
@@ -52,8 +53,8 @@ public class JwtTokenService(ILogger<JwtTokenService> logger) : ITokenService
     private JwtSecurityToken CreateJwtToken(List<Claim> claims, SigningCredentials credentials, DateTime expiration)
     {
         return new JwtSecurityToken(
-            new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("JwtTokenSettings")["ValidIssuer"],
-            new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("JwtTokenSettings")["ValidAudience"],
+            _jwtTokenSettings.ValidIssuer,
+            _jwtTokenSettings.ValidAudience,
             claims,
             expires: expiration,
             signingCredentials: credentials
@@ -84,7 +85,7 @@ public class JwtTokenService(ILogger<JwtTokenService> logger) : ITokenService
 
     private SigningCredentials CreateSigningCredentials()
     {
-        var symmetricSecurityKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("JwtTokenSettings")["SymmetricSecurityKey"];
+        var symmetricSecurityKey = _jwtTokenSettings.SymmetricSecurityKey;
 
         return new SigningCredentials(
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(symmetricSecurityKey)),
@@ -105,9 +106,7 @@ public class JwtTokenService(ILogger<JwtTokenService> logger) : ITokenService
 
     public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
     {
-        var symmetricSecurityKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("JwtTokenSettings")["SymmetricSecurityKey"];
-
-        var Key = Encoding.UTF8.GetBytes(symmetricSecurityKey);
+        var key = Encoding.UTF8.GetBytes(_jwtTokenSettings.SymmetricSecurityKey);
 
         var tokenValidationParameters = new TokenValidationParameters
         {
@@ -115,7 +114,7 @@ public class JwtTokenService(ILogger<JwtTokenService> logger) : ITokenService
             ValidateAudience = false,
             ValidateLifetime = false,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Key),
+            IssuerSigningKey = new SymmetricSecurityKey(key),
             ClockSkew = TimeSpan.Zero
         };
 

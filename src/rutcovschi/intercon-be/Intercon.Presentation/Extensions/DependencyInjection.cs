@@ -6,57 +6,28 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
+using Intercon.Application.Options;
+using Intercon.Presentation.AppSettingsOptions;
 
 namespace Intercon.Presentation.Extensions;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddPresentation(this IServiceCollection services,
+    public static IServiceCollection AddPresentation(
+        this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAppSettingsOptions(configuration);
+
         services.AddControllers().AddJsonOptions(opt =>
         {
-            // Support string to enum conversions
+            // For supporting string to enum conversions
             opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         });
 
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen(options =>
-        {
-            options.SwaggerDoc("v1", new OpenApiInfo { Title = "Intercon API", Version = "v1" });
-            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-            {
-                In = ParameterLocation.Header,
-                Description = "Please enter a valid token",
-                Name = "Authorization",
-                Type = SecuritySchemeType.Http,
-                BearerFormat = "JWT",
-                Scheme = "Bearer"
-            });
 
-            options.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type=ReferenceType.SecurityScheme,
-                            Id="Bearer"
-                        }
-                    },
-                    new string[]{}
-                }
-            });
-        });
-
-        services.AddCors(options =>
-        {
-            options.AddPolicy("AllowAll",
-                builder => builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader());
-        });
+        services.AddSwaggerConfiguration();
 
         services.AddProblemDetails();
         services.AddApiVersioning();
@@ -99,12 +70,50 @@ public static class DependencyInjection
                 ValidIssuer = validIssuer,
                 ValidAudience = validAudience,
                 IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(symmetricSecurityKey)
+                    Encoding.UTF8.GetBytes(symmetricSecurityKey!)
                 ),
             };
             options.SaveToken = true;
         });
 
         return services;
+    }
+
+    private static void AddSwaggerConfiguration(this IServiceCollection services)
+    {
+        services.AddSwaggerGen(options =>
+        {
+            options.SwaggerDoc("v1", new OpenApiInfo { Title = "Intercon API", Version = "v1" });
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                In = ParameterLocation.Header,
+                Description = "Please enter a valid token",
+                Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                BearerFormat = "JWT",
+                Scheme = "Bearer"
+            });
+
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type=ReferenceType.SecurityScheme,
+                            Id="Bearer"
+                        }
+                    },
+                    new string[]{}
+                }
+            });
+        });
+    }
+
+    private static void AddAppSettingsOptions(this IServiceCollection services, IConfiguration cfg)
+    {
+        services.Configure<JwtTokenSettings>(cfg.GetSection(nameof(JwtTokenSettings)));
+        services.Configure<SiteSettings>(cfg.GetSection(nameof(SiteSettings)));
     }
 }
