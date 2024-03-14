@@ -8,7 +8,8 @@ namespace Intercon.Application.BusinessesManagement.GetBusinesses;
 
 public sealed record GetAllBusinessesQuery : IQuery<IEnumerable<BusinessDetailsDto>>;
 
-public sealed class GetAllBusinessesQueryHandler(InterconDbContext context) : IQueryHandler<GetAllBusinessesQuery, IEnumerable<BusinessDetailsDto>>
+internal sealed class GetAllBusinessesQueryHandler(InterconDbContext context) 
+    : IQueryHandler<GetAllBusinessesQuery, IEnumerable<BusinessDetailsDto>>
 {
     private readonly InterconDbContext _context = context;
 

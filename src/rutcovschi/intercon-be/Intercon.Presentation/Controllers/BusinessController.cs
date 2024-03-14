@@ -24,12 +24,7 @@ public class BusinessController(IMediator mediator) : BaseController
     {
         var business = await _mediator.Send(new GetBusinessQuery(id), cancellationToken);
 
-        if (business == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(business);
+        return business == null ? NotFound() : Ok(business);
     }
 
     [HttpGet]
@@ -51,14 +46,14 @@ public class BusinessController(IMediator mediator) : BaseController
             return BadRequest(ModelState);
         }
 
-        var authentificatedUserIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtClaimType.UserId)?.Value;
+        var authenticatedUserIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtClaimType.UserId)?.Value;
 
-        if (authentificatedUserIdClaim is null)
+        if (authenticatedUserIdClaim is null)
         {
             return Unauthorized();
         }
 
-        var userId = int.Parse(authentificatedUserIdClaim);
+        var userId = int.Parse(authenticatedUserIdClaim);
 
         var createdBusiness = await _mediator.Send(new CreateBusinessCommand(userId, businessToAdd), cancellationToken);
 

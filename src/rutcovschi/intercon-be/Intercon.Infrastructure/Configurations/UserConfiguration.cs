@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Intercon.Domain.Entities;
 using Intercon.Domain.Enums;
-using System.Reflection.Emit;
 
 namespace Intercon.Infrastructure.Configurations;
 

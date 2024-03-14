@@ -28,12 +28,7 @@ public class UserController(IMediator mediator) : BaseController
     {
         var user = await _mediator.Send(new GetUserQuery(id), cancellationToken);
 
-        if (user == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(user);
+        return user == null ? NotFound() : Ok(user);
     }
 
     [HttpGet]
