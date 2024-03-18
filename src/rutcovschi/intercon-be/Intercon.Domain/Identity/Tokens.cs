@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Intercon.Infrastructure.Identity;
+﻿namespace Intercon.Domain.Identity;
 
 public class Tokens
 {

@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Intercon.Domain\Intercon.Domain.csproj" />
-    <ProjectReference Include="..\Intercon.Infrastructure\Intercon.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

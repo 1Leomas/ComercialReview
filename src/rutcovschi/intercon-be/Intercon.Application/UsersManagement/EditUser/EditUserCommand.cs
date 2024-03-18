@@ -1,62 +1,25 @@
-﻿using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Domain.Entities;
-using Intercon.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Intercon.Application.UsersManagement.EditUser;
 
 public sealed record EditUserCommand(int UserId, EditUserDto Data) : ICommand;
 
-public sealed class EditUserCommandHandler(InterconDbContext context, UserManager<User> userManager) : ICommandHandler<EditUserCommand>
+public sealed class EditUserCommandHandler(
+    IUserRepository userRepository) 
+    : ICommandHandler<EditUserCommand>
 {
-    private readonly InterconDbContext _context = context;
-    private readonly UserManager<User> _userManager = userManager;
-
     public async Task Handle(EditUserCommand command, CancellationToken cancellationToken)
     {
-        var userDb = await userManager.Users
-            .FirstOrDefaultAsync(x => x.Id == command.UserId, cancellationToken);
-
-        if (userDb == null)
+        await userRepository.UpdateUserAsync(new User()
         {
-            return;
-        }
-
-        if (!command.Data.FirstName.IsNullOrEmpty())
-        {
-            userDb.FirstName = command.Data.FirstName;
-        }
-        if (!command.Data.LastName.IsNullOrEmpty())
-        {
-            userDb.LastName = command.Data.LastName;
-        }
-        if (!command.Data.Email.IsNullOrEmpty())
-        {
-            userDb.Email = command.Data.Email;
-        }
-        if (!command.Data.UserName.IsNullOrEmpty())
-        {
-            userDb.UserName = command.Data.UserName;
-        }
-        if (command.Data.Avatar is not null && !command.Data.Avatar.Data.IsNullOrEmpty())
-        {
-            await _context.Images
-                .Where(x => x.Id == userDb.AvatarId)
-                .ExecuteDeleteAsync(cancellationToken);
-
-            var avatar = new Image() { 
-                Data = command.Data.Avatar.Data 
-            };
-
-            await _context.Images.AddAsync(avatar, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
-
-            userDb.AvatarId = avatar.Id;
-        }
-
-        await _context.SaveChangesAsync(cancellationToken);
+            Id = command.UserId,
+            FirstName = command.Data.FirstName,
+            LastName = command.Data.LastName,
+            Email = command.Data.Email,
+            UserName = string.IsNullOrEmpty(command.Data.UserName) ? command.Data.Email : command.Data.UserName
+        }, cancellationToken);
     }
 }

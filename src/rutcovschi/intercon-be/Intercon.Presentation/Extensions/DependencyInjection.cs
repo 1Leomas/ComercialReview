@@ -1,4 +1,4 @@
-using Intercon.Domain.Entities;
+﻿using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;

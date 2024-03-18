@@ -1,19 +1,17 @@
-﻿using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Domain.Entities;
-using Intercon.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Identity;
 
 namespace Intercon.Application.UsersManagement.RegisterUser;
 
 public sealed record RegisterUserCommand(RegisterUserDto Data) : ICommand;
 
 public sealed class RegisterUserCommandHandler(
-    InterconDbContext context, 
-    UserManager<User> userManager) : ICommandHandler<RegisterUserCommand>
+    IImageRepository imageRepository,
+    IUserRepository userRepository) 
+    : ICommandHandler<RegisterUserCommand>
 {
-    private readonly InterconDbContext _context = context;
-    private readonly UserManager<User> _userManager = userManager;
 
     public async Task Handle(RegisterUserCommand command, CancellationToken cancellationToken)
     {
@@ -22,42 +20,30 @@ public sealed class RegisterUserCommandHandler(
         //    return BadRequest(ModelState);
         //}
 
-        Image? avatar = null;
+        int? avatarId = null!;
 
         if (command.Data.Avatar is not null)
         {
-            avatar = new Image()
-            {
-                Data = command.Data.Avatar.Data
-            };
-
-            await _context.Images.AddAsync(avatar, cancellationToken);
-            var rows = await _context.SaveChangesAsync(cancellationToken);
-
-            if (rows == 0)
-            {
-                throw new Exception("Cannot add avatar");
-            }
+            avatarId = await imageRepository.AddImage(
+                new Image {Data = command.Data.Avatar.Data }, 
+                cancellationToken);
         }
 
-        var result = await _userManager.CreateAsync(
-            new User
-            { 
-                FirstName = command.Data.FirstName,
-                LastName = command.Data.LastName,
-                Email = command.Data.Email,
-                UserName = string.IsNullOrEmpty(command.Data.UserName) ? command.Data.Email : command.Data.UserName,
-                Role = (Domain.Enums.Role)command.Data.Role,
-                AvatarId = avatar?.Id
-            }, 
-            command.Data.Password
-        );
+        var newUser = new User
+        {
+            FirstName = command.Data.FirstName,
+            LastName = command.Data.LastName,
+            Email = command.Data.Email,
+            UserName = string.IsNullOrEmpty(command.Data.UserName) ? command.Data.Email : command.Data.UserName,
+            Role = (Domain.Enums.Role)command.Data.Role,
+            AvatarId = avatarId
+        };
 
-        if (!result.Succeeded)
+        var isSuccess = await userRepository.CreateUserAsync(newUser, command.Data.Password, avatarId, cancellationToken);
+
+        if (!isSuccess)
         {
             throw new Exception("Can not register ApplicationUser");
         }
-
-        await _context.SaveChangesAsync(cancellationToken);
     }
 }

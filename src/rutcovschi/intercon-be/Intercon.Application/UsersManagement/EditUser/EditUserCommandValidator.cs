@@ -1,21 +1,18 @@
 ﻿using FluentValidation;
-using Intercon.Domain.Entities;
-using Intercon.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using Intercon.Application.Abstractions;
 
 namespace Intercon.Application.UsersManagement.EditUser;
 
 public sealed class EditUserCommandValidator : AbstractValidator<EditUserCommand>
 {
-    public EditUserCommandValidator(InterconDbContext dbContext, UserManager<User> userManager)
+    public EditUserCommandValidator(IUserRepository userRepository)
     {
         RuleFor(x => x.UserId)
             .NotEmpty()
             .DependentRules(() =>
             {
                 RuleFor(x => x.UserId)
-                    .MustAsync(async (userId, ctx) => await userManager.Users.AnyAsync(x => x.Id == userId, ctx))
+                    .MustAsync(userRepository.UserExistsAsync)
                     .WithMessage("The user doesn't exists");
             });
 
@@ -37,9 +34,8 @@ public sealed class EditUserCommandValidator : AbstractValidator<EditUserCommand
             RuleFor(x => x.Data.Email)
                 .EmailAddress();
 
-            RuleFor(x => x)
-                .MustAsync(async (command, ctx) => await userManager.Users
-                    .AllAsync(x => x.Id == command.UserId || x.Email != command.Data.Email, ctx))
+            RuleFor(x => x.Data.Email)
+                .MustAsync(userRepository.UserEmailExistsAsync)
                 .WithMessage("The email must be unique")
                 .WithName(x => nameof(x.Data.Email));
         });
@@ -50,9 +46,8 @@ public sealed class EditUserCommandValidator : AbstractValidator<EditUserCommand
                 .Length(2, 50)
                 .WithName(x => nameof(x.Data.UserName));
 
-            RuleFor(x => x)
-                .MustAsync(async (command, ctx) => await userManager.Users.AllAsync(
-                    x => x.Id == command.UserId || x.UserName != command.Data.UserName, ctx))
+            RuleFor(x => x.Data.UserName)
+                .MustAsync(userRepository.UserNameIsUniqueAsync!)
                 .WithName(x => nameof(x.Data.UserName))
                 .WithMessage("The username must be unique");
         });

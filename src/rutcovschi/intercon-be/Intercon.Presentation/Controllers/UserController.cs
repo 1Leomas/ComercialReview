@@ -8,8 +8,7 @@ using Intercon.Application.UsersManagement.LoginUser;
 using Intercon.Application.UsersManagement.RefreshToken;
 using Intercon.Application.UsersManagement.RegisterUser;
 using Intercon.Application.UsersManagement.VerifyUserName;
-using Intercon.Domain.Enums;
-using Intercon.Infrastructure.Identity;
+using Intercon.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

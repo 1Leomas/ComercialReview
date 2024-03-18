@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Intercon.Application\Intercon.Application.csproj" />
     <ProjectReference Include="..\Intercon.Domain\Intercon.Domain.csproj" />
   </ItemGroup>
 
