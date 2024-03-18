@@ -1,4 +1,4 @@
-﻿using Intercon.Domain.Entities;
+using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -28,6 +28,14 @@ public static class DependencyInjection
         services.AddEndpointsApiExplorer();
 
         services.AddSwaggerConfiguration();
+
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAll",
+                builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+        });
 
         services.AddProblemDetails();
         services.AddApiVersioning();
