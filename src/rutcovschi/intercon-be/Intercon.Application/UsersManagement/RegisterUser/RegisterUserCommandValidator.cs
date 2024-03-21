@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using Intercon.Application.Abstractions;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Intercon.Application.UsersManagement.RegisterUser;
 
@@ -25,7 +24,7 @@ public sealed class RegisterUserCommandValidator : AbstractValidator<RegisterUse
             .Length(8, 50)
             .WithName(x => nameof(x.Data.Password));
 
-        When(x => !x.Data.UserName.IsNullOrEmpty(), () =>
+        When(x => !string.IsNullOrEmpty(x.Data.UserName), () =>
         {
             RuleFor(x => x.Data.UserName)
             .Length(2, 50)
@@ -37,7 +36,7 @@ public sealed class RegisterUserCommandValidator : AbstractValidator<RegisterUse
         });
 
         RuleFor(x => x.Data.Email)
-            .MustAsync(userRepository.UserEmailExistsAsync)
+            .MustAsync(async (s, token) => !(await userRepository.UserEmailExistsAsync(s, token)))
             .WithMessage("The email must be unique");
 
         When(x => x.Data.Avatar is not null, () =>

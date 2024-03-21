@@ -1,63 +1,20 @@
-﻿using FluentValidation;
+﻿using Intercon.Application.Abstractions;
 using Intercon.Application.Abstractions.Messaging;
-using Intercon.Infrastructure.Persistence;
+using Intercon.Application.Extensions.Mappers;
+using Intercon.Application.ReviewsManagement.GetReviewDetails;
 
 namespace Intercon.Application.ReviewsManagement.EditReview;
 
-public sealed record EditReviewDto(int AuthorId, int Grade, string? ReviewText);
+public sealed record EditReviewDto(int AuthorId, int? Grade, string? ReviewText);
 
-public sealed record EditReviewCommand(int BusinessId, EditReviewDto Data) : ICommand;
+public sealed record EditReviewCommand(int BusinessId, EditReviewDto Data) : ICommand<ReviewDetailsDto>;
 
-internal sealed class EditReviewCommandHandler(InterconDbContext context) : ICommandHandler<EditReviewCommand>
+internal sealed class EditReviewCommandHandler(IReviewRepository reviewRepository) : ICommandHandler<EditReviewCommand, ReviewDetailsDto>
 {
-    private readonly InterconDbContext _context = context;
-
-    public async Task Handle(EditReviewCommand command, CancellationToken cancellationToken)
+    public async Task<ReviewDetailsDto> Handle(EditReviewCommand command, CancellationToken cancellationToken)
     {
-       var review = await _context.Reviews.FindAsync(command.BusinessId, command.Data.AuthorId);
+        var updatedReviewDb = await reviewRepository.UpdateReviewAsync(command.BusinessId, command.Data, cancellationToken);
 
-        if (review == null)
-        {
-            return;
-        }
-
-        if (command.Data.Grade != 0)
-        {
-            review.Grade = command.Data.Grade;
-        }
-        if (command.Data.ReviewText != null) 
-        { 
-            review.ReviewText = command.Data.ReviewText;
-        }
-
-        await _context.SaveChangesAsync(cancellationToken);
-    }
-}
-
-public sealed class EditReviewCommandValidator : AbstractValidator<EditReviewCommand>
-{
-    public EditReviewCommandValidator(InterconDbContext context)
-    {
-        RuleFor(x => x.BusinessId)
-            .NotEmpty()
-            .WithName(x => nameof(x.BusinessId));
-
-        RuleFor(x => x.Data.AuthorId)
-            .NotEmpty()
-            .WithName(x => nameof(x.Data.AuthorId));
-
-        When(x => x.Data.Grade > 0, () =>
-        {
-            RuleFor(x => x.Data.Grade)
-            .InclusiveBetween(1, 5)
-            .WithName(x => nameof(x.Data.Grade));
-        });
-
-        When(x => x.Data.ReviewText is not null, () =>
-        {
-            RuleFor(x => x.Data.ReviewText)
-            .MaximumLength(1000)
-            .WithName(x => nameof(x.Data.ReviewText));
-        });
+        return updatedReviewDb!.ToDto();
     }
 }

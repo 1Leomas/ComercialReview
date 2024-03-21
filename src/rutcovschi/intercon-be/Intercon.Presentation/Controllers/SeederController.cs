@@ -8,8 +8,6 @@ namespace Intercon.Presentation.Controllers;
 [ApiController]
 public class SeederController(DataBaseSeeder seeder) : ControllerBase
 {
-    private readonly DataBaseSeeder _seeder = seeder;
-
     [HttpGet]
     public async Task<IActionResult> Seed()
     {

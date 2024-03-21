@@ -1,8 +1,7 @@
-﻿using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Application.Extensions.Mappers;
-using Intercon.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 namespace Intercon.Application.ReviewsManagement.GetReviewDetails;
 
@@ -19,16 +18,11 @@ public record ReviewDetailsDto(
 
 public sealed record GetReviewDetailsQuery(int BusinessId, int AuthorId) : IQuery<ReviewDetailsDto?>;
 
-internal sealed class GetReviewDetailsHandler(InterconDbContext context) : IQueryHandler<GetReviewDetailsQuery, ReviewDetailsDto?>
+internal sealed class GetReviewDetailsHandler(IReviewRepository reviewRepository) : IQueryHandler<GetReviewDetailsQuery, ReviewDetailsDto?>
 {
-    private readonly InterconDbContext _context = context;
-
     public async Task<ReviewDetailsDto?> Handle(GetReviewDetailsQuery request, CancellationToken cancellationToken)
     {
-        var reviewFromDb = await _context.Reviews
-            .Include(review => review.Author)
-            .ThenInclude(user => user.Avatar)
-            .FirstOrDefaultAsync(x => x.BusinessId == request.BusinessId && x.AuthorId == request.AuthorId, cancellationToken);
+        var reviewFromDb = await reviewRepository.GetReviewDetailsAsync(request.BusinessId, request.AuthorId, cancellationToken);
 
         return reviewFromDb?.ToDto();
     }

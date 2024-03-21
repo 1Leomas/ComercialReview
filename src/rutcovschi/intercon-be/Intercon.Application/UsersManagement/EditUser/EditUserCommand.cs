@@ -13,13 +13,9 @@ public sealed class EditUserCommandHandler(
 {
     public async Task Handle(EditUserCommand command, CancellationToken cancellationToken)
     {
-        await userRepository.UpdateUserAsync(new User()
-        {
-            Id = command.UserId,
-            FirstName = command.Data.FirstName,
-            LastName = command.Data.LastName,
-            Email = command.Data.Email,
-            UserName = string.IsNullOrEmpty(command.Data.UserName) ? command.Data.Email : command.Data.UserName
-        }, cancellationToken);
+        await userRepository.UpdateUserAsync(
+            command.UserId,
+            command.Data, 
+            cancellationToken);
     }
 }

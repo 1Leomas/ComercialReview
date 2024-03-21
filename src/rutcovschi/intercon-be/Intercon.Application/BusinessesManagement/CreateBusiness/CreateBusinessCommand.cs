@@ -1,42 +1,38 @@
-﻿using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects;
 using Intercon.Application.DataTransferObjects.Business;
-using Intercon.Application.Extensions.Mappers;
 using Intercon.Domain.Entities;
-using Intercon.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Intercon.Application.BusinessesManagement.CreateBusiness;
 
 public sealed record CreateBusinessCommand(int UserId, CreateBusinessDto Data) : ICommand<BusinessDetailsDto>;
 
-public sealed class CreateBusinessCommandHandler(InterconDbContext context, UserManager<User> userManager) : ICommandHandler<CreateBusinessCommand, BusinessDetailsDto>
+public sealed class CreateBusinessCommandHandler(
+    IImageRepository imageRepository,
+    IBusinessRepository businessRepository,
+    ILogger<CreateBusinessCommandHandler> logger) 
+    : ICommandHandler<CreateBusinessCommand, BusinessDetailsDto>
 {
-    private readonly InterconDbContext _context = context;
-    private readonly UserManager<User> _userManager = userManager;
-
     public async Task<BusinessDetailsDto> Handle(CreateBusinessCommand command, CancellationToken cancellationToken)
     {
-        int? logoId = null;
+        int? logoId = null!;
 
-        // maybe make a separate request for this
-        Image? image = null;
-        if (command.Data.Logo != null)
+        if (command.Data.Logo is not null)
         {
-            image = new Image()
+            logoId = await imageRepository.AddImage(
+                new Image { Data = command.Data.Logo.Data },
+                cancellationToken);
+
+            if (!logoId.HasValue)
             {
-                Data = command.Data.Logo.Data
-            };
-
-            await _context.Images.AddAsync(image, cancellationToken);
-            var rows = await _context.SaveChangesAsync(cancellationToken);
-
-            logoId = rows != 0 ? image.Id : null!;
+                logger.LogError("Can not add logo to business");
+            }
         }
 
-        var businessDb = new Business()
-        {
+        var businessDb = new Business(){
+
             OwnerId = command.UserId,
             Title = command.Data.Title,
             ShortDescription = command.Data.ShortDescription,
@@ -46,17 +42,15 @@ public sealed class CreateBusinessCommandHandler(InterconDbContext context, User
             LogoId = logoId
         };
 
-        await _context.Businesses.AddAsync(businessDb, cancellationToken);
-
-        await _context.SaveChangesAsync(cancellationToken);
+        var businessId = await businessRepository.CreateBusinessAsync(businessDb, cancellationToken);
 
         return new BusinessDetailsDto(
-            Id: businessDb.Id,
+            Id: businessId,
             Title: businessDb.Title,
             ShortDescription: businessDb.ShortDescription,
             FullDescription: businessDb.FullDescription,
             Rating: businessDb.Rating,
-            Logo: businessDb.LogoId.HasValue ? new ImageDto(Data: image!.Data) : null,
+            Logo: businessDb.LogoId.HasValue ? new ImageDto(Data: command.Data.Logo!.Data) : null,
             Address: businessDb.Address,
             ReviewsCount: businessDb.ReviewsCount,
             Category: businessDb.Category

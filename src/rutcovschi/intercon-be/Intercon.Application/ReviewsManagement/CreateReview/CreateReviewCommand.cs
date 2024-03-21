@@ -1,76 +1,58 @@
 ﻿using FluentValidation;
+using Intercon.Application.Abstractions;
 using Intercon.Application.Abstractions.Messaging;
-using Intercon.Domain.Entities;
-using Intercon.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Intercon.Application.ReviewsManagement.CreateReview;
 
 public sealed record CreateReviewDto(int AuthorId, int Grade, string? ReviewText);
 public sealed record CreateReviewCommand(int BusinessId, CreateReviewDto Data) : ICommand;
 
-internal sealed class CreateReviewCommandHandler(InterconDbContext context) : ICommandHandler<CreateReviewCommand>
+internal sealed class CreateReviewCommandHandler(IReviewRepository reviewRepository) : ICommandHandler<CreateReviewCommand>
 {
-    private readonly InterconDbContext _context = context;
-
     public async Task Handle(CreateReviewCommand command, CancellationToken cancellationToken)
     {
-        var business = await _context.Businesses.FindAsync(command.BusinessId, cancellationToken);
+        var result = await reviewRepository.CreateReviewAsync(
+            command.BusinessId,
+            command.Data,
+            cancellationToken);
 
-        var review = new Review
+        if (!result)
         {
-            BusinessId = command.BusinessId,
-            AuthorId = command.Data.AuthorId,
-            Grade = command.Data.Grade,
-            ReviewText = command.Data.ReviewText
-        };
-
-        var reviews = _context.Reviews.Where(x => x.BusinessId == command.BusinessId);
-
-        var reviewsCount = (uint)(reviews.Count() + 1);
-        float reviewsSum = reviews.Select(x => x.Grade).Sum() + command.Data.Grade;
-
-        business!.ReviewsCount = reviewsCount;
-        business.Rating = reviewsSum / reviewsCount;
-
-        await _context.Reviews.AddAsync(review, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
+            throw new InvalidOperationException("The review wasn't created");
+        }
     }
 }
 
 public sealed class CreateReviewCommandCommandValidator : AbstractValidator<CreateReviewCommand>
 {
-    public CreateReviewCommandCommandValidator(InterconDbContext context, UserManager<User> userManager)
+    public CreateReviewCommandCommandValidator(
+        IBusinessRepository businessRepository, 
+        IUserRepository userRepository,
+        IReviewRepository reviewRepository)
     {
         RuleFor(x => x.BusinessId)
             .NotEmpty()
-            .WithName(x => nameof(x.BusinessId));
-
-        RuleFor(x => x.BusinessId)
-            .MustAsync(async (businessId, ctx) =>
+            .WithName(x => nameof(x.BusinessId))
+            .DependentRules(() =>
             {
-                return await context.Businesses.AnyAsync(x => x.Id == businessId, ctx);
-            })
-            .WithMessage("The business doesn't exists");
+                RuleFor(x => x.BusinessId)
+                    .MustAsync(businessRepository.BusinessExistsAsync)
+                    .WithMessage("The business doesn't exists");
+            });
 
         RuleFor(x => x.Data.AuthorId)
             .NotEmpty()
-            .WithName(x => nameof(x.Data.AuthorId));
-
-        RuleFor(x => x.Data.AuthorId)
-            .MustAsync(async (authorId, ctx) =>
+            .WithName(x => nameof(x.Data.AuthorId))
+            .DependentRules(() =>
             {
-                return await userManager.Users.AnyAsync(x => x.Id == authorId, ctx);
-            })
-            .WithMessage("The author doesn't exists");
+                RuleFor(x => x.Data.AuthorId)
+                    .MustAsync(userRepository.UserExistsAsync)
+                    .WithMessage("The user doesn't exists");
+            });
 
         RuleFor(x => new {x.BusinessId, x.Data.AuthorId })
-            .MustAsync(async (data, ctx) =>
-            {
-                var exists = await context.Reviews.AnyAsync(x => x.BusinessId == data.BusinessId && x.AuthorId == data.AuthorId, ctx);
-                return !exists;
-            })
+            .MustAsync(async (data, ctx) 
+                => !(await reviewRepository.BusinessUserReviewExistsAsync(data.BusinessId, data.AuthorId, ctx)))
             .WithName(x => nameof(x.Data.AuthorId))
             .WithMessage("The user already wrote a review");
 

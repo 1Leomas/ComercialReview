@@ -7,7 +7,7 @@ using Intercon.Application.UsersManagement.GetUsers;
 using Intercon.Application.UsersManagement.LoginUser;
 using Intercon.Application.UsersManagement.RefreshToken;
 using Intercon.Application.UsersManagement.RegisterUser;
-using Intercon.Application.UsersManagement.VerifyUserName;
+using Intercon.Application.UsersManagement.UserNameUniqueCheck;
 using Intercon.Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

@@ -34,10 +34,11 @@ public sealed class EditUserCommandValidator : AbstractValidator<EditUserCommand
             RuleFor(x => x.Data.Email)
                 .EmailAddress();
 
-            RuleFor(x => x.Data.Email)
-                .MustAsync(userRepository.UserEmailExistsAsync)
-                .WithMessage("The email must be unique")
-                .WithName(x => nameof(x.Data.Email));
+            RuleFor(x => x)
+                .MustAsync(async (u, token)
+                    => await userRepository.NewUserEmailIsFreeAsync(u.UserId, u.Data.Email!, token))
+                .WithName(x => nameof(x.Data.Email))
+                .WithMessage("The email must be unique");
         });
 
         When(x => !string.IsNullOrEmpty(x.Data.UserName), () =>
@@ -46,19 +47,11 @@ public sealed class EditUserCommandValidator : AbstractValidator<EditUserCommand
                 .Length(2, 50)
                 .WithName(x => nameof(x.Data.UserName));
 
-            RuleFor(x => x.Data.UserName)
-                .MustAsync(userRepository.UserNameIsUniqueAsync!)
+            RuleFor(x => x)
+                .MustAsync(async (u, token)
+                    => await userRepository.NewUsernameIsFreeAsync(u.UserId, u.Data.UserName!, token))
                 .WithName(x => nameof(x.Data.UserName))
                 .WithMessage("The username must be unique");
-        });
-
-        When(x => x.Data.Avatar is not null, () => 
-        { 
-            RuleFor(x => x.Data.Avatar!.Data)
-            .NotEmpty()
-            .WithName(x => nameof(x.Data.Avatar)) //this dont work
-            .WithMessage("Bad avatar");
-
         });
     }
 }

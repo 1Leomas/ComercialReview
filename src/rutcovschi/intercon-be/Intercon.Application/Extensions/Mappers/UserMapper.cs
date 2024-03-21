@@ -25,7 +25,7 @@ public static class UserMapper
             Id = user.Id,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            Email = user.Email,
+            Email = user.Email!,
             //Password = user.Password,
             UserName = user.UserName,
         };
@@ -49,7 +49,7 @@ public static class UserMapper
             Id: user.Id,
             FirstName: user.FirstName,
             LastName: user.LastName,
-            Email: user.Email,
+            Email: user.Email!,
             UserName: user.UserName,
             Avatar: user.Avatar?.ToDto()
         );

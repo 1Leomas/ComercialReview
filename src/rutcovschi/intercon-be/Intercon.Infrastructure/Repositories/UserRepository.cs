@@ -1,4 +1,5 @@
 ﻿using Intercon.Application.Abstractions;
+using Intercon.Application.DataTransferObjects.User;
 using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
@@ -14,8 +15,9 @@ public class UserRepository(
     public async Task<User?> GetUserByIdAsync(int id, CancellationToken cancellationToken)
     {
         return await userManager.Users
-        .Include(x => x.Avatar)
-        .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            .AsNoTracking()
+            .Include(x => x.Avatar)
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
     public async Task<IEnumerable<User>> GetAllUsersAsync(CancellationToken cancellationToken)
@@ -46,14 +48,14 @@ public class UserRepository(
         return result.Succeeded;
     }
 
-    public async Task<bool> UpdateUserAsync(User newUserData, CancellationToken cancellationToken)
+    public async Task<User?> UpdateUserAsync(int id, EditUserDto newUserData, CancellationToken cancellationToken)
     {
         var userDb = await userManager.Users
-            .FirstOrDefaultAsync(x => x.Id == newUserData.Id, cancellationToken);
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         if (userDb == null)
         {
-            return false;
+            return null;
         }
 
         if (!string.IsNullOrEmpty(newUserData.FirstName))
@@ -75,7 +77,7 @@ public class UserRepository(
 
         await context.SaveChangesAsync(cancellationToken);
 
-        return true;
+        return userDb;
     }
 
     public async Task DeleteUserAsync(int id, CancellationToken cancellationToken)
@@ -98,11 +100,21 @@ public class UserRepository(
 
     public async Task<bool> UserNameIsUniqueAsync(string userName, CancellationToken cancellationToken)
     {
-        return await userManager.FindByNameAsync(userName) != null;
+        return await userManager.FindByNameAsync(userName) == null;
     }
 
     public async Task<bool> UserEmailExistsAsync(string userEmail, CancellationToken cancellationToken)
     {
         return await userManager.FindByEmailAsync(userEmail) != null;
+    }
+
+    public async Task<bool> NewUserEmailIsFreeAsync(int userId, string userEmail, CancellationToken cancellationToken)
+    {
+        return !(await context.Users.AnyAsync(x => x.Email == userEmail && x.Id != userId, cancellationToken));
+    }
+
+    public async Task<bool> NewUsernameIsFreeAsync(int userId, string username, CancellationToken cancellationToken)
+    {
+        return !(await context.Users.AnyAsync(x => x.UserName == username && x.Id != userId, cancellationToken));
     }
 }

@@ -1,3 +1,3 @@
 ﻿namespace Intercon.Application.DataTransferObjects;
 
-public record ImageDto(string Data);
+public record ImageDto(string? Data);

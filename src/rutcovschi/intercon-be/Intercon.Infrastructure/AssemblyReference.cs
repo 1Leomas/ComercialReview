@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Intercon.Infrastructure.Extensions;
+namespace Intercon.Infrastructure;
 
 public static class AssemblyReference
 {

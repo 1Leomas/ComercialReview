@@ -1,26 +1,24 @@
 ﻿using FluentValidation;
-using Intercon.Domain.Entities;
-using Intercon.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using Intercon.Application.Abstractions;
 
 namespace Intercon.Application.BusinessesManagement.CreateBusiness;
 
 public class CreateBusinessCommandValidator : AbstractValidator<CreateBusinessCommand>
 {
-    public CreateBusinessCommandValidator(InterconDbContext context, UserManager<User> userManager)
+    public CreateBusinessCommandValidator(IBusinessRepository businessRepository, IUserRepository userRepository)
     {
         RuleFor(x => x.UserId)
             .NotEmpty()
-            .MustAsync(async (ownerId, ctx) => await context.Businesses
-                .AllAsync(x => x.OwnerId != ownerId))
-            .WithMessage("The user already owns a business")
             .DependentRules(() =>
             {
                 RuleFor(x => x.UserId)
-                    .MustAsync(async (userId, ctx) => await userManager.Users.AnyAsync(x => x.Id == userId, ctx))
+                    .MustAsync(userRepository.UserExistsAsync)
                     .WithMessage("The user doesn't exists");
-            }); ;
+            });
+        
+        RuleFor(x => x.UserId)
+            .MustAsync(businessRepository.UserHasBusinessAsync)
+            .WithMessage("The user already owns a business");
 
         RuleFor(x => x.Data.Title)
             .NotEmpty()

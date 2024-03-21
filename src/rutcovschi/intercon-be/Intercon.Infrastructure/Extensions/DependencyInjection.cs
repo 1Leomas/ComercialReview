@@ -1,5 +1,7 @@
-﻿using Intercon.Infrastructure.Persistence;
+﻿using Intercon.Application.Abstractions;
+using Intercon.Infrastructure.Persistence;
 using Intercon.Infrastructure.Persistence.DataSeeder;
+using Intercon.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +17,8 @@ public static class DependencyInjection
         {
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
         });
+
+        //services.AddScoped<ITokenService, JwtTokenService>();
 
         //add scoped life time for all classes and interfaces from Infrastructure module
         services.Scan(

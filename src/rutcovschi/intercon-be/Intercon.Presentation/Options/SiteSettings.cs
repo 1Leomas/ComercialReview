@@ -2,6 +2,6 @@
 
 public class SiteSettings
 {
-    public string AdminEmail { get; set; }
-    public string AdminPassword { get; set; }
+    public string AdminEmail { get; set; } = string.Empty;
+    public string AdminPassword { get; set; } = string.Empty;
 }
