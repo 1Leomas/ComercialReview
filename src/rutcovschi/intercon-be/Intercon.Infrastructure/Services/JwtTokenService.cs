@@ -19,12 +19,12 @@ public class JwtTokenService(IOptions<JwtTokenSettings> jwtTokenSettings, ILogge
     private readonly JwtTokenSettings _jwtTokenSettings = jwtTokenSettings.Value;
 
 
-    public Tokens CreateTokens(User user)
+    public Tokens CreateTokens(int userId, int userRole)
     {
         var expiration = DateTime.UtcNow.AddMinutes(_jwtTokenSettings.ExpirationTimeInMinutes);
 
         var token = CreateJwtToken(
-            CreateClaims(user),
+            CreateClaims(userId, userRole),
             CreateSigningCredentials(),
             expiration
         );
@@ -43,7 +43,7 @@ public class JwtTokenService(IOptions<JwtTokenSettings> jwtTokenSettings, ILogge
         };
     }
 
-    private JwtSecurityToken CreateJwtToken(List<Claim> claims, SigningCredentials credentials, DateTime expiration)
+    private JwtSecurityToken CreateJwtToken(IEnumerable<Claim> claims, SigningCredentials credentials, DateTime expiration)
     {
         return new JwtSecurityToken(
             _jwtTokenSettings.ValidIssuer,
@@ -54,17 +54,14 @@ public class JwtTokenService(IOptions<JwtTokenSettings> jwtTokenSettings, ILogge
         );
     }
 
-    private List<Claim> CreateClaims(User user)
+    private IEnumerable<Claim> CreateClaims(int userId, int userRole)
     {
         try
         {
             var claims = new List<Claim>
             {
-                new(JwtClaimType.UserId, user.Id.ToString()),
-                new(JwtClaimType.Email, user.Email!),
-                new(JwtClaimType.FirstName, user.FirstName),
-                new(JwtClaimType.LastName, user.LastName),
-                new(JwtClaimType.Role, ((int)user.Role).ToString())
+                new(JwtClaimType.UserId, userId.ToString()),
+                new(JwtClaimType.Role, userRole.ToString())
             };
 
             return claims;
@@ -112,8 +109,11 @@ public class JwtTokenService(IOptions<JwtTokenSettings> jwtTokenSettings, ILogge
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
+        
         var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
-        JwtSecurityToken jwtSecurityToken = securityToken as JwtSecurityToken;
+        
+        var jwtSecurityToken = securityToken as JwtSecurityToken;
+
         if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
         {
             throw new SecurityTokenException("Invalid token");

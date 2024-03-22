@@ -9,11 +9,18 @@ public record UserLoginResponse(Tokens Tokens);
 
 public sealed record LoginUserCommand(LoginUserDto Data) : ICommand<Tokens>;
 
-public sealed class LoginUserCommandHandler(IIdentityService identityService) 
+public sealed class LoginUserCommandHandler(IIdentityService identityService, IUserRepository userRepository) 
     : ICommandHandler<LoginUserCommand, Tokens>
 {
     public async Task<Tokens> Handle(LoginUserCommand command, CancellationToken cancellationToken)
     {
+        var userId = await userRepository.GetUserIdByEmailAsync(command.Data.Email, cancellationToken);
+
+        if (userId == 0)
+        {
+            throw new InvalidOperationException($"User with id {userId} not found");
+        }
+
         var tokens = await identityService.LoginUserAsync(
             command.Data.Email, 
             command.Data.Password, 

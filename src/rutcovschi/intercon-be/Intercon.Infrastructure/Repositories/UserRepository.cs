@@ -117,4 +117,9 @@ public class UserRepository(
     {
         return !(await context.Users.AnyAsync(x => x.UserName == username && x.Id != userId, cancellationToken));
     }
+
+    public async Task<int> GetUserIdByEmailAsync(string email, CancellationToken cancellationToken)
+    {
+        return await context.Users.Where(x => x.Email == email).Select(x => x.Id).FirstOrDefaultAsync(cancellationToken);
+    }
 }

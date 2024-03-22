@@ -15,4 +15,5 @@ public interface IUserRepository
     Task<bool> UserEmailExistsAsync(string userEmail, CancellationToken cancellationToken);
     Task<bool> NewUserEmailIsFreeAsync(int userId, string userEmail, CancellationToken cancellationToken);
     Task<bool> NewUsernameIsFreeAsync(int userId, string userName, CancellationToken cancellationToken);
+    Task<int> GetUserIdByEmailAsync(string email, CancellationToken cancellationToken);
 }

@@ -17,7 +17,7 @@ public class InterconDbContext : IdentityDbContext<User, IdentityRole<int>, int>
     public DbSet<Business> Businesses { get; set; }
     public DbSet<Image> Images { get; set; }
 
-    public virtual DbSet<UserRefreshTokens> UserRefreshToken { get; set; }
+    public virtual DbSet<UserRefreshToken> UserRefreshToken { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

@@ -1,5 +1,6 @@
 ﻿using Intercon.Application.Abstractions;
 using Intercon.Domain.Entities;
+using Intercon.Domain.Enums;
 using Intercon.Domain.Identity;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
@@ -15,36 +16,27 @@ public class IdentityService(
 {
     public async Task<Tokens> LoginUserAsync(string email, string password, CancellationToken cancellationToken)
     {
-        var managedUser = await userManager.FindByEmailAsync(email)
+        var userDb = await userManager.FindByEmailAsync(email)
             ?? throw new InvalidOperationException("Bad credentials");
 
-        var isPasswordValid = await userManager.CheckPasswordAsync(managedUser, password);
+        var isPasswordValid = await userManager.CheckPasswordAsync(userDb, password);
 
         if (!isPasswordValid)
         {
             throw new InvalidOperationException("Bad credentials");
         }
 
-        var userInDb = context.Users.FirstOrDefault(u => u.Email == email) 
-            ?? throw new InvalidOperationException("User not found");
+        var tokens = tokenService.CreateTokens(userDb.Id, (int)userDb.Role);
+
+        await context.UserRefreshToken
+            .Where(x => x.Id == userDb.Id)
+            .ExecuteDeleteAsync(cancellationToken);
 
 
-        var tokens = tokenService.CreateTokens(userInDb);
-
-        var savedRefreshToken = await context.UserRefreshToken.
-            FirstOrDefaultAsync(x =>
-                x.UserEmail == userInDb.Email &&
-                x.IsActive == true, cancellationToken);
-
-        if (savedRefreshToken is not null)
+        var userRefreshToken = new UserRefreshToken()
         {
-            context.UserRefreshToken.Remove(savedRefreshToken);
-        }
-
-        var userRefreshToken = new UserRefreshTokens()
-        {
-            RefreshToken = tokens.RefreshToken,
-            UserEmail = userInDb.Email!
+            Token = tokens.RefreshToken,
+            UserId = userDb.Id
         };
 
         context.UserRefreshToken.Add(userRefreshToken);
@@ -58,33 +50,29 @@ public class IdentityService(
     {
         var principal = tokenService.GetPrincipalFromExpiredToken(tokens.AccessToken);
 
-        var userEmail = principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-        //var userEmail = principal.Claims.FirstOrDefault(x => x.Type == JwtClaimType.Email)?.Value;
+        var userIdClaim = principal.Claims.FirstOrDefault(x => x.Type == JwtClaimType.UserId)
+            ?? throw new InvalidOperationException("Unauthorized");
 
-        if (userEmail is null)
+        var userId = int.Parse(userIdClaim.Value);
+
+        var refreshTokenFromDb = await context.UserRefreshToken.FirstOrDefaultAsync(
+            x => x.UserId == userId && x.Token == tokens.RefreshToken && x.IsActive == true, 
+            cancellationToken);
+
+        if (refreshTokenFromDb == null)
         {
-            throw new InvalidOperationException("Unauthorized");
+            throw new InvalidOperationException("Invalid refresh token");
         }
 
-        var savedRefreshToken = await context.UserRefreshToken.FirstOrDefaultAsync(
-            x => x.UserEmail == userEmail && x.RefreshToken == tokens.RefreshToken && x.IsActive == true, 
-            cancellationToken) ?? throw new InvalidOperationException("Invalid refresh token");
+        var userRole = await context.Users
+                           .Where(x => x.Id == userId).Select(x => x.Role)
+                           .FirstOrDefaultAsync(cancellationToken);
 
-
-        var user = await userManager.FindByEmailAsync(userEmail) 
-            ?? throw new InvalidOperationException("User not found");
-
-        var newJwtToken = tokenService.CreateTokens(user) 
+        var newJwtToken = tokenService.CreateTokens(userId, (int)userRole) 
             ?? throw new InvalidOperationException("Invalid attempt to create token");
 
-        var userRefreshToken = new UserRefreshTokens()
-        {
-            RefreshToken = newJwtToken.RefreshToken,
-            UserEmail = user.Email!
-        };
 
-        context.UserRefreshToken.Remove(savedRefreshToken);
-        await context.UserRefreshToken.AddAsync(userRefreshToken, cancellationToken);
+        refreshTokenFromDb.Token = newJwtToken.RefreshToken;
 
         await context.SaveChangesAsync(cancellationToken);
 

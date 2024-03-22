@@ -6,7 +6,7 @@ namespace Intercon.Application.Abstractions;
 
 public interface ITokenService
 {
-    Tokens CreateTokens(User user);
+    Tokens CreateTokens(int userId, int userRole);
     string GenerateRefreshToken();
     ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
 }
