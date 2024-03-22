@@ -23,6 +23,7 @@ public sealed class EditBusinessCommandHandler(IBusinessRepository businessRepos
 
         return new BusinessDetailsDto(
             Id: businessDb.Id,
+            OwnerId: businessDb.OwnerId,
             Title: businessDb.Title,
             ShortDescription: businessDb.ShortDescription,
             FullDescription: businessDb.FullDescription,

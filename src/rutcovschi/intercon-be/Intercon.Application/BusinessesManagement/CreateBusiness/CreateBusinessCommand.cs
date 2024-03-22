@@ -46,6 +46,7 @@ public sealed class CreateBusinessCommandHandler(
 
         return new BusinessDetailsDto(
             Id: businessId,
+            OwnerId: command.UserId,
             Title: businessDb.Title,
             ShortDescription: businessDb.ShortDescription,
             FullDescription: businessDb.FullDescription,

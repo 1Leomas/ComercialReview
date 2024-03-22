@@ -5,6 +5,7 @@ namespace Intercon.Application.DataTransferObjects.Business;
 
 public record BusinessDetailsDto(
     int Id,
+    int OwnerId,
     string Title,
     string ShortDescription,
     string? FullDescription,

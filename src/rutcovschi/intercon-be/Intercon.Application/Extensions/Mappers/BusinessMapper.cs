@@ -21,6 +21,7 @@ public static class BusinessMapper
     {
         return new BusinessDetailsDto(
             business.Id,
+            business.OwnerId,
             business.Title,
             business.ShortDescription,
             business.FullDescription,
