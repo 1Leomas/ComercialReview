@@ -24,8 +24,6 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception? exception)
         {
-            _logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
-
             var exceptionDetails = GetExceptionDetails(exception);
 
             var problemDetails = new ProblemDetails
@@ -40,6 +38,16 @@ public class ExceptionHandlingMiddleware
             {
                 problemDetails.Extensions["errors"] = exceptionDetails.Errors;
             }
+
+            if (exception is not ValidationException)
+            {
+                _logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
+            }
+            else
+            {
+                _logger.LogError("Exception occurred: {Message}\n {problemDetails}", exception.Message, Newtonsoft.Json.JsonConvert.SerializeObject(problemDetails.Extensions["errors"]));
+            }
+
 
             context.Response.StatusCode = (int)problemDetails.Status;
 
