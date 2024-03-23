@@ -55,13 +55,13 @@ public class ReviewController(IMediator mediator) : BaseController
     }
 
     [HttpPut("api/businesses/{businessId}/reviews")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(UpdatedReviewDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> EditReview([FromRoute] int businessId, [FromBody] EditReviewDto reviewToEdit, CancellationToken cancellationToken)
     {
-        await _mediator.Send(new EditReviewCommand(businessId, reviewToEdit), cancellationToken);
+        var updatedReview = await _mediator.Send(new EditReviewCommand(businessId, reviewToEdit), cancellationToken);
 
-        return Ok();
+        return Ok(updatedReview);
     }
 
     [HttpDelete("api/businesses/{businessId}/reviews/{userId}")]

@@ -27,9 +27,7 @@ public sealed class EditReviewCommandValidator : AbstractValidator<EditReviewCom
                     .WithMessage("The user doesn't exists");
             });
 
-
-
-        When(x => x.Data.Grade > 0, () =>
+        When(x => x.Data.Grade is not null, () =>
         {
             RuleFor(x => x.Data.Grade)
                 .InclusiveBetween(1, 5)

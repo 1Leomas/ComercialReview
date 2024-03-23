@@ -76,7 +76,7 @@ public class ReviewRepository(InterconDbContext context)
             return null;
         }
 
-        if (newReviewData.Grade != null)
+        if (newReviewData.Grade is > 0 and <= 5)
         {
             review.Grade = newReviewData.Grade.Value;
         }
