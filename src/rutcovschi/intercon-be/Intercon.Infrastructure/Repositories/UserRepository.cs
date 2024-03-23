@@ -75,6 +75,9 @@ public class UserRepository(
             userDb.UserName = newUserData.UserName;
         }
 
+        userDb.UpdateDate = DateTime.Now;
+        userDb.WasEdited = true;
+
         await context.SaveChangesAsync(cancellationToken);
 
         return userDb;

@@ -69,25 +69,28 @@ public class ReviewRepository(InterconDbContext context)
 
     public async Task<Review?> UpdateReviewAsync(int businessId, EditReviewDto newReviewData, CancellationToken cancellationToken)
     {
-        var review = await context.Reviews.FindAsync(businessId, newReviewData.AuthorId);
+        var reviewDb = await context.Reviews.FindAsync(businessId, newReviewData.AuthorId);
 
-        if (review == null)
+        if (reviewDb == null)
         {
             return null;
         }
 
         if (newReviewData.Grade is > 0 and <= 5)
         {
-            review.Grade = newReviewData.Grade.Value;
+            reviewDb.Grade = newReviewData.Grade.Value;
         }
         if (newReviewData.ReviewText != null)
         {
-            review.ReviewText = newReviewData.ReviewText;
+            reviewDb.ReviewText = newReviewData.ReviewText;
         }
+
+        reviewDb.UpdateDate = DateTime.Now;
+        reviewDb.WasEdited = true;
 
         await context.SaveChangesAsync(cancellationToken);
 
-        return review;
+        return reviewDb;
     }
 
     public async Task DeleteReviewAsync(int businessId, int authorId, CancellationToken cancellationToken)

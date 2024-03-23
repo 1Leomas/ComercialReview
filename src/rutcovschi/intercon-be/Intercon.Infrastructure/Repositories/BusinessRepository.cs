@@ -72,6 +72,9 @@ public class BusinessRepository(InterconDbContext context)
             businessDb.Logo.Data = newBusinessData.Image.Data ?? businessDb.Logo.Data;
         }
 
+        businessDb.UpdateDate = DateTime.Now;
+        businessDb.WasEdited = true;
+
         await context.SaveChangesAsync(cancellationToken);
 
         return businessDb;
