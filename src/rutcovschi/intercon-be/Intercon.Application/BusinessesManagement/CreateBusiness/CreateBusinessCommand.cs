@@ -10,9 +10,9 @@ namespace Intercon.Application.BusinessesManagement.CreateBusiness;
 public sealed record CreateBusinessCommand(int UserId, CreateBusinessDto Data) : ICommand<BusinessDetailsDto>;
 
 public sealed class CreateBusinessCommandHandler(
-    IImageRepository imageRepository,
-    IBusinessRepository businessRepository,
-    ILogger<CreateBusinessCommandHandler> logger) 
+        IImageRepository imageRepository,
+        IBusinessRepository businessRepository,
+        ILogger<CreateBusinessCommandHandler> logger)
     : ICommandHandler<CreateBusinessCommand, BusinessDetailsDto>
 {
     public async Task<BusinessDetailsDto> Handle(CreateBusinessCommand command, CancellationToken cancellationToken)
@@ -25,14 +25,11 @@ public sealed class CreateBusinessCommandHandler(
                 new Image { Data = command.Data.Logo.Data },
                 cancellationToken);
 
-            if (!logoId.HasValue)
-            {
-                logger.LogError("Can not add logo to business");
-            }
+            if (!logoId.HasValue) logger.LogError("Can not add logo to business");
         }
 
-        var businessDb = new Business(){
-
+        var businessDb = new Business
+        {
             OwnerId = command.UserId,
             Title = command.Data.Title,
             ShortDescription = command.Data.ShortDescription,
@@ -45,16 +42,16 @@ public sealed class CreateBusinessCommandHandler(
         var businessId = await businessRepository.CreateBusinessAsync(businessDb, cancellationToken);
 
         return new BusinessDetailsDto(
-            Id: businessId,
-            OwnerId: command.UserId,
-            Title: businessDb.Title,
-            ShortDescription: businessDb.ShortDescription,
-            FullDescription: businessDb.FullDescription,
-            Rating: businessDb.Rating,
-            Logo: businessDb.LogoId.HasValue ? new ImageDto(Data: command.Data.Logo!.Data) : null,
-            Address: businessDb.Address,
-            ReviewsCount: businessDb.ReviewsCount,
-            Category: businessDb.Category
+            businessId,
+            command.UserId,
+            businessDb.Title,
+            businessDb.ShortDescription,
+            businessDb.FullDescription,
+            businessDb.Rating,
+            businessDb.LogoId.HasValue ? new ImageDto(command.Data.Logo!.Data) : null,
+            businessDb.Address,
+            businessDb.ReviewsCount,
+            businessDb.Category
         );
     }
 }

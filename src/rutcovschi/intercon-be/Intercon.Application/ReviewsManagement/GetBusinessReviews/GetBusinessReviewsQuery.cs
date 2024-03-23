@@ -7,9 +7,9 @@ namespace Intercon.Application.ReviewsManagement.GetBusinessReviews;
 
 public sealed record GetBusinessReviewsQuery(int BusinessId) : IRequest<IEnumerable<ReviewDetailsDto>>;
 
-internal sealed class GetBusinessReviewsHandler(IReviewRepository reviewRepository) : IRequestHandler<GetBusinessReviewsQuery, IEnumerable<ReviewDetailsDto>>
+internal sealed class GetBusinessReviewsHandler
+    (IReviewRepository reviewRepository) : IRequestHandler<GetBusinessReviewsQuery, IEnumerable<ReviewDetailsDto>>
 {
-
     public async Task<IEnumerable<ReviewDetailsDto>> Handle(GetBusinessReviewsQuery request,
         CancellationToken cancellationToken)
     {
@@ -18,4 +18,3 @@ internal sealed class GetBusinessReviewsHandler(IReviewRepository reviewReposito
         return reviews.Select(x => x.ToDto());
     }
 }
-

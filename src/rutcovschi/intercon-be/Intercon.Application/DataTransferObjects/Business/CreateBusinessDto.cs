@@ -1,5 +1,4 @@
 ﻿using Intercon.Domain.ComplexTypes;
-using Intercon.Domain.Entities;
 using Intercon.Domain.Enums;
 
 namespace Intercon.Application.DataTransferObjects.Business;
@@ -11,7 +10,6 @@ public record CreateBusinessDto(
     CreateImageDto? Logo,
     Address Address,
     BusinessCategory Category);
-
 
 public record CreateImageDto(
     //string ContentType,

@@ -6,13 +6,14 @@ namespace Intercon.Application.UsersManagement.RefreshToken;
 
 public record RefreshTokenCommand(Tokens Tokens) : ICommand<Tokens>;
 
-internal sealed class RefreshTokenCommandHandler(IIdentityService identityService) : ICommandHandler<RefreshTokenCommand, Tokens>
+internal sealed class RefreshTokenCommandHandler
+    (IIdentityService identityService) : ICommandHandler<RefreshTokenCommand, Tokens>
 {
     public async Task<Tokens> Handle(RefreshTokenCommand command, CancellationToken cancellationToken)
     {
         var newJwtToken = await identityService
             .RefreshTokenAsync(command.Tokens, cancellationToken);
-        
+
         return newJwtToken;
     }
 }

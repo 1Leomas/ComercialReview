@@ -9,28 +9,25 @@ public record UserLoginResponse(Tokens Tokens);
 
 public sealed record LoginUserCommand(LoginUserDto Data) : ICommand<Tokens>;
 
-public sealed class LoginUserCommandHandler(IIdentityService identityService, IUserRepository userRepository) 
+public sealed class LoginUserCommandHandler(IIdentityService identityService, IUserRepository userRepository)
     : ICommandHandler<LoginUserCommand, Tokens>
 {
     public async Task<Tokens> Handle(LoginUserCommand command, CancellationToken cancellationToken)
     {
         var userId = await userRepository.GetUserIdByEmailAsync(command.Data.Email, cancellationToken);
 
-        if (userId == 0)
-        {
-            throw new InvalidOperationException($"User with id {userId} not found");
-        }
+        if (userId == 0) throw new InvalidOperationException($"User with id {userId} not found");
 
         var tokens = await identityService.LoginUserAsync(
-            command.Data.Email, 
-            command.Data.Password, 
+            command.Data.Email,
+            command.Data.Password,
             cancellationToken);
 
         return tokens;
 
         //var validCredentials = await _context.UsersOld
         //    .AnyAsync(u => u.Email == command.Data.Email && u.Password == command.Data.Password, cancellationToken);
-        
+
         //if (!validCredentials)
         //{
         //    throw new InvalidOperationException("Invalid credentials");

@@ -5,7 +5,8 @@ namespace Intercon.Application.ReviewsManagement.DeleteReview;
 
 public sealed record DeleteReviewCommand(int businessId, int userId) : ICommand;
 
-internal sealed class DeleteReviewCommandHandler(IReviewRepository reviewRepository) : ICommandHandler<DeleteReviewCommand>
+internal sealed class DeleteReviewCommandHandler
+    (IReviewRepository reviewRepository) : ICommandHandler<DeleteReviewCommand>
 {
     public async Task Handle(DeleteReviewCommand command, CancellationToken cancellationToken)
     {

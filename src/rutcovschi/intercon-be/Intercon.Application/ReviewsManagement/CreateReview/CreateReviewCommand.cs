@@ -5,9 +5,11 @@ using Intercon.Application.Abstractions.Messaging;
 namespace Intercon.Application.ReviewsManagement.CreateReview;
 
 public sealed record CreateReviewDto(int AuthorId, int Grade, string? ReviewText);
+
 public sealed record CreateReviewCommand(int BusinessId, CreateReviewDto Data) : ICommand;
 
-internal sealed class CreateReviewCommandHandler(IReviewRepository reviewRepository) : ICommandHandler<CreateReviewCommand>
+internal sealed class CreateReviewCommandHandler
+    (IReviewRepository reviewRepository) : ICommandHandler<CreateReviewCommand>
 {
     public async Task Handle(CreateReviewCommand command, CancellationToken cancellationToken)
     {
@@ -16,17 +18,14 @@ internal sealed class CreateReviewCommandHandler(IReviewRepository reviewReposit
             command.Data,
             cancellationToken);
 
-        if (!result)
-        {
-            throw new InvalidOperationException("The review wasn't created");
-        }
+        if (!result) throw new InvalidOperationException("The review wasn't created");
     }
 }
 
 public sealed class CreateReviewCommandCommandValidator : AbstractValidator<CreateReviewCommand>
 {
     public CreateReviewCommandCommandValidator(
-        IBusinessRepository businessRepository, 
+        IBusinessRepository businessRepository,
         IUserRepository userRepository,
         IReviewRepository reviewRepository)
     {
@@ -50,9 +49,9 @@ public sealed class CreateReviewCommandCommandValidator : AbstractValidator<Crea
                     .WithMessage("The user doesn't exists");
             });
 
-        RuleFor(x => new {x.BusinessId, x.Data.AuthorId })
-            .MustAsync(async (data, ctx) 
-                => !(await reviewRepository.BusinessUserReviewExistsAsync(data.BusinessId, data.AuthorId, ctx)))
+        RuleFor(x => new { x.BusinessId, x.Data.AuthorId })
+            .MustAsync(async (data, ctx)
+                => !await reviewRepository.BusinessUserReviewExistsAsync(data.BusinessId, data.AuthorId, ctx))
             .WithName(x => nameof(x.Data.AuthorId))
             .WithMessage("The user already wrote a review");
 
@@ -60,7 +59,7 @@ public sealed class CreateReviewCommandCommandValidator : AbstractValidator<Crea
             .NotEmpty()
             .InclusiveBetween(1, 5)
             .WithName(x => nameof(x.Data.Grade));
-        
+
         RuleFor(x => x.Data.ReviewText)
             .MaximumLength(1000)
             .WithName(x => nameof(x.Data.ReviewText));

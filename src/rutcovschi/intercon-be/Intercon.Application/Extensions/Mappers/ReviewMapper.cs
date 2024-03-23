@@ -9,34 +9,34 @@ public static class ReviewMapper
 {
     public static Review ToEntity(this ReviewDetailsDto reviewDetails)
     {
-        return new Review()
-        {
-            
-        };
+        return new Review();
     }
 
     public static ReviewDetailsDto ToDto(this Review review)
     {
         return new ReviewDetailsDto(
-            BusinessId : review.BusinessId, 
-            AuthorId : review.AuthorId, 
-            Author : new ReviewAuthorDto(
-                FirstName : review.Author.FirstName,
-                LastName : review.Author.LastName,
-                UserName : review.Author.UserName,
-                Avatar: review.Author.Avatar?.Data),
-            Grade : review.Grade,
-            ReviewText : review.ReviewText,
-            CreateDate :review.CreateDate,
-            UpdateDate : review.UpdateDate,
-            WasEdited : review.WasEdited);
+            review.BusinessId,
+            review.AuthorId,
+            new ReviewAuthorDto(
+                review.Author.FirstName,
+                review.Author.LastName,
+                review.Author.UserName,
+                review.Author.Avatar?.Data),
+            review.Grade,
+            review.ReviewText,
+            review.CreateDate,
+            review.UpdateDate,
+            review.WasEdited);
     }
 
-    public static ReviewShortDto ToShortDto(this Review review) => new(
-        BusinessId: review.BusinessId,
-        AuthorId: review.AuthorId,
-        Grade: review.Grade,
-        ReviewText: review.ReviewText);
+    public static ReviewShortDto ToShortDto(this Review review)
+    {
+        return new ReviewShortDto(
+            review.BusinessId,
+            review.AuthorId,
+            review.Grade,
+            review.ReviewText);
+    }
 
     //public static Review ToEntity(this CreateReviewDto review)
     //{

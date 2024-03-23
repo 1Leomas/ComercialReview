@@ -1,5 +1,4 @@
-﻿using Intercon.Domain.Entities;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Intercon.Domain.Identity;
 
 namespace Intercon.Application.Abstractions;

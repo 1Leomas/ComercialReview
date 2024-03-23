@@ -15,7 +15,7 @@ public class CreateBusinessCommandValidator : AbstractValidator<CreateBusinessCo
                     .MustAsync(userRepository.UserExistsAsync)
                     .WithMessage("The user doesn't exists");
             });
-        
+
         RuleFor(x => x.UserId)
             .MustAsync(businessRepository.UserHasBusinessAsync)
             .WithMessage("The user already owns a business");

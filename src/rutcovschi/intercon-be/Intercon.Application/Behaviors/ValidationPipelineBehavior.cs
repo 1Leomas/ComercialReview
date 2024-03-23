@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.CustomExceptions;
 using MediatR;
+using ValidationException = Intercon.Application.CustomExceptions.ValidationException;
 
 namespace Intercon.Application.Behaviors;
 
@@ -28,17 +30,14 @@ public sealed class ValidationPipelineBehavior<TRequest, TResponse>
         var errors = validationFailures
             .Where(result => !result.IsValid)
             .SelectMany(result => result.Errors)
-            .Select(failure => new CustomExceptions.ValidationError
+            .Select(failure => new ValidationError
             (
                 failure.PropertyName.Split(".").Last(),
                 failure.ErrorMessage
             ))
-            .ToList();  
+            .ToList();
 
-        if (errors.Any())
-        {
-            throw new CustomExceptions.ValidationException(errors);
-        }
+        if (errors.Any()) throw new ValidationException(errors);
 
         var response = await next();
 

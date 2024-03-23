@@ -1,11 +1,10 @@
-﻿using Intercon.Application.Abstractions.Messaging;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace Intercon.Application.Behaviors;
 
-public class LoggingPipelineBehavior<TRequest, TResponse> 
-    : IPipelineBehavior<TRequest, TResponse?> 
+public class LoggingPipelineBehavior<TRequest, TResponse>
+    : IPipelineBehavior<TRequest, TResponse?>
     where TRequest : notnull
 {
     private readonly ILogger<LoggingPipelineBehavior<TRequest, TResponse>> _logger;
@@ -24,14 +23,10 @@ public class LoggingPipelineBehavior<TRequest, TResponse>
             typeof(TRequest).Name, DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff"));
 
         TResponse? result;
-        try
-        {
-            result = await next();
+        result = await next();
 
-            _logger.LogInformation("Finished request {@RequestName}, {@DataTimeUtc}",
-                typeof(TRequest).Name, DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff"));
-        }
-        finally { }
+        _logger.LogInformation("Finished request {@RequestName}, {@DataTimeUtc}",
+            typeof(TRequest).Name, DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff"));
 
         return result;
     }

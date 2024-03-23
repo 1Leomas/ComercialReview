@@ -7,7 +7,7 @@ namespace Intercon.Application.UsersManagement.GetUser;
 
 public sealed record GetUserQuery(int Id) : IQuery<UserDetailsDto?>;
 
-public sealed class GetUserQueryHandler(IUserRepository userRepository) 
+public sealed class GetUserQueryHandler(IUserRepository userRepository)
     : IQueryHandler<GetUserQuery, UserDetailsDto?>
 {
     public async Task<UserDetailsDto?> Handle(GetUserQuery query, CancellationToken cancellationToken)

@@ -1,5 +1,4 @@
 ﻿using Intercon.Application.DataTransferObjects.Business;
-using Intercon.Domain.Enums;
 
 namespace Intercon.Application.DataTransferObjects.User;
 

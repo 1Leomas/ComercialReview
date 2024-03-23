@@ -5,16 +5,18 @@ using MediatR;
 namespace Intercon.Application.ReviewsManagement.GetAllReviews;
 
 public record ReviewShortDto(
-       int BusinessId,
-        int AuthorId,
-        float Grade,
-        string? ReviewText);
+    int BusinessId,
+    int AuthorId,
+    float Grade,
+    string? ReviewText);
 
-public sealed record GetAllReviewsQuery() : IRequest<IEnumerable<ReviewShortDto>>;
+public sealed record GetAllReviewsQuery : IRequest<IEnumerable<ReviewShortDto>>;
 
-internal sealed class GetAllReviewsQueryHandler(IReviewRepository reviewRepository) : IRequestHandler<GetAllReviewsQuery, IEnumerable<ReviewShortDto>>
+internal sealed class GetAllReviewsQueryHandler
+    (IReviewRepository reviewRepository) : IRequestHandler<GetAllReviewsQuery, IEnumerable<ReviewShortDto>>
 {
-    public async Task<IEnumerable<ReviewShortDto>> Handle(GetAllReviewsQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<ReviewShortDto>> Handle(GetAllReviewsQuery request,
+        CancellationToken cancellationToken)
     {
         var reviews = await reviewRepository.GetAllReviewsAsync(cancellationToken);
 

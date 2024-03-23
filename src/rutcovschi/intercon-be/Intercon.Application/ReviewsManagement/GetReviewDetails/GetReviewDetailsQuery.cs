@@ -18,11 +18,13 @@ public record ReviewDetailsDto(
 
 public sealed record GetReviewDetailsQuery(int BusinessId, int AuthorId) : IQuery<ReviewDetailsDto?>;
 
-internal sealed class GetReviewDetailsHandler(IReviewRepository reviewRepository) : IQueryHandler<GetReviewDetailsQuery, ReviewDetailsDto?>
+internal sealed class GetReviewDetailsHandler
+    (IReviewRepository reviewRepository) : IQueryHandler<GetReviewDetailsQuery, ReviewDetailsDto?>
 {
     public async Task<ReviewDetailsDto?> Handle(GetReviewDetailsQuery request, CancellationToken cancellationToken)
     {
-        var reviewFromDb = await reviewRepository.GetReviewDetailsAsync(request.BusinessId, request.AuthorId, cancellationToken);
+        var reviewFromDb =
+            await reviewRepository.GetReviewDetailsAsync(request.BusinessId, request.AuthorId, cancellationToken);
 
         return reviewFromDb?.ToDto();
     }

@@ -27,8 +27,8 @@ public sealed class RegisterUserCommandValidator : AbstractValidator<RegisterUse
         When(x => !string.IsNullOrEmpty(x.Data.UserName), () =>
         {
             RuleFor(x => x.Data.UserName)
-            .Length(2, 50)
-            .WithName(x => nameof(x.Data.UserName));
+                .Length(2, 50)
+                .WithName(x => nameof(x.Data.UserName));
 
             RuleFor(x => x.Data.UserName)
                 .MustAsync(userRepository.UserNameIsUniqueAsync!)
@@ -36,16 +36,15 @@ public sealed class RegisterUserCommandValidator : AbstractValidator<RegisterUse
         });
 
         RuleFor(x => x.Data.Email)
-            .MustAsync(async (s, token) => !(await userRepository.UserEmailExistsAsync(s, token)))
+            .MustAsync(async (s, token) => !await userRepository.UserEmailExistsAsync(s, token))
             .WithMessage("The email must be unique");
 
         When(x => x.Data.Avatar is not null, () =>
         {
             RuleFor(x => x.Data.Avatar!.Data)
                 .NotEmpty()
-                .WithName(x => nameof(x.Data.Avatar)) //this doesnt work
+                .WithName(x => nameof(x.Data.Avatar)) //this doesn't work
                 .WithMessage("Bad avatar");
-
         });
     }
 }

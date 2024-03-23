@@ -7,7 +7,8 @@ namespace Intercon.Application.BusinessesManagement.GetBusiness;
 
 public sealed record GetBusinessQuery(int Id) : IQuery<BusinessDetailsDto?>;
 
-public sealed class GetBusinessQueryHandler(IBusinessRepository businessRepository) : IQueryHandler<GetBusinessQuery, BusinessDetailsDto?>
+public sealed class GetBusinessQueryHandler
+    (IBusinessRepository businessRepository) : IQueryHandler<GetBusinessQuery, BusinessDetailsDto?>
 {
     public async Task<BusinessDetailsDto?> Handle(GetBusinessQuery query, CancellationToken cancellationToken)
     {

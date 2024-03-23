@@ -7,7 +7,7 @@ public static class BusinessMapper
 {
     public static Business ToEntity(this CreateBusinessDto businessDto)
     {
-        return new Business()
+        return new Business
         {
             Title = businessDto.Title,
             ShortDescription = businessDto.ShortDescription,

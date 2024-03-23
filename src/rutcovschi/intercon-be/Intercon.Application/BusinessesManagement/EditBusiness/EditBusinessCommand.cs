@@ -7,31 +7,29 @@ namespace Intercon.Application.BusinessesManagement.EditBusiness;
 
 public sealed record EditBusinessCommand(int BusinessId, EditBusinessDto Data) : ICommand<BusinessDetailsDto?>;
 
-public sealed class EditBusinessCommandHandler(IBusinessRepository businessRepository) : ICommandHandler<EditBusinessCommand, BusinessDetailsDto?>
+public sealed class EditBusinessCommandHandler
+    (IBusinessRepository businessRepository) : ICommandHandler<EditBusinessCommand, BusinessDetailsDto?>
 {
     public async Task<BusinessDetailsDto?> Handle(EditBusinessCommand command, CancellationToken cancellationToken)
     {
         var businessDb = await businessRepository.UpdateBusinessAsync(
             command.BusinessId,
-            command.Data, 
+            command.Data,
             cancellationToken);
 
-        if (businessDb is null)
-        {
-            return null;
-        }
+        if (businessDb is null) return null;
 
         return new BusinessDetailsDto(
-            Id: businessDb.Id,
-            OwnerId: businessDb.OwnerId,
-            Title: businessDb.Title,
-            ShortDescription: businessDb.ShortDescription,
-            FullDescription: businessDb.FullDescription,
-            Rating: businessDb.Rating,
-            Logo: businessDb.LogoId.HasValue ? new ImageDto(Data: businessDb.Logo!.Data) : null,
-            Address: businessDb.Address,
-            ReviewsCount: businessDb.ReviewsCount,
-            Category: businessDb.Category
+            businessDb.Id,
+            businessDb.OwnerId,
+            businessDb.Title,
+            businessDb.ShortDescription,
+            businessDb.FullDescription,
+            businessDb.Rating,
+            businessDb.LogoId.HasValue ? new ImageDto(businessDb.Logo!.Data) : null,
+            businessDb.Address,
+            businessDb.ReviewsCount,
+            businessDb.Category
         );
     }
 }

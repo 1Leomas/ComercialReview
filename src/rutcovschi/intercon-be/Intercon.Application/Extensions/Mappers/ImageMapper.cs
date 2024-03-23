@@ -8,7 +8,7 @@ public static class ImageMapper
 {
     public static Image ToEntity(this CreateImageDto imageDto)
     {
-        return new Image()
+        return new Image
         {
             //ContentType = imageDto.ContentType,
             Data = imageDto.Data
