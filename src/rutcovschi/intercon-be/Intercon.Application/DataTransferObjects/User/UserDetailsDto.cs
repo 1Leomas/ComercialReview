@@ -6,4 +6,4 @@ public record UserDetailsDto(
     string LastName,
     string Email,
     string? UserName,
-    ImageDto? Avatar);
+    string? AvatarPath);

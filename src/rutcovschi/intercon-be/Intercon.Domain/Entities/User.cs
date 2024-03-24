@@ -11,7 +11,7 @@ public class User : IdentityUser<int>
 
     public int? AvatarId { get; set; }
 
-    public Image? Avatar { get; set; } = null;
+    public FileData? Avatar { get; set; } = null;
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
     public virtual Business Business { get; set; } = null!;
 

@@ -5,7 +5,6 @@ using Intercon.Domain.Identity;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace Intercon.Infrastructure.Services;
 
@@ -28,18 +27,27 @@ public class IdentityService(
 
         var tokens = tokenService.CreateTokens(userDb.Id, (int)userDb.Role);
 
-        await context.UserRefreshToken
-            .Where(x => x.Id == userDb.Id)
-            .ExecuteDeleteAsync(cancellationToken);
+        var userRefreshTokenDb = await context.RefreshToken.FirstOrDefaultAsync(
+                x => x.UserId == userDb.Id,
+                cancellationToken);
 
-
-        var userRefreshToken = new UserRefreshToken()
+        if (userRefreshTokenDb != null)
         {
-            Token = tokens.RefreshToken,
-            UserId = userDb.Id
-        };
+            userRefreshTokenDb.Token = tokens.RefreshToken;
 
-        context.UserRefreshToken.Add(userRefreshToken);
+            userRefreshTokenDb.UpdateDate = DateTime.Now;
+            userRefreshTokenDb.WasEdited = true;
+        }
+        else
+        {
+            var userRefreshToken = new RefreshToken()
+            {
+                Token = tokens.RefreshToken,
+                UserId = userDb.Id
+            };
+
+            context.RefreshToken.Add(userRefreshToken);
+        }
 
         await context.SaveChangesAsync(cancellationToken);
 
@@ -55,7 +63,7 @@ public class IdentityService(
 
         var userId = int.Parse(userIdClaim.Value);
 
-        var refreshTokenFromDb = await context.UserRefreshToken.FirstOrDefaultAsync(
+        var refreshTokenFromDb = await context.RefreshToken.FirstOrDefaultAsync(
             x => x.UserId == userId && x.Token == tokens.RefreshToken && x.IsActive == true, 
             cancellationToken);
 

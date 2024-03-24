@@ -1,5 +1,8 @@
-﻿using Intercon.Application.CustomExceptions;
+﻿using Intercon.Application.Abstractions;
+using Intercon.Application.CustomExceptions;
+using Intercon.Application.DataTransferObjects.Files;
 using Intercon.Application.DataTransferObjects.User;
+using Intercon.Application.FilesManagement.UploadFile;
 using Intercon.Application.UsersManagement.DeleteUser;
 using Intercon.Application.UsersManagement.EditUser;
 using Intercon.Application.UsersManagement.GetUser;
@@ -7,25 +10,26 @@ using Intercon.Application.UsersManagement.GetUsers;
 using Intercon.Application.UsersManagement.LoginUser;
 using Intercon.Application.UsersManagement.RefreshToken;
 using Intercon.Application.UsersManagement.RegisterUser;
+using Intercon.Application.UsersManagement.SetUserAvatarId;
 using Intercon.Application.UsersManagement.UserNameUniqueCheck;
 using Intercon.Domain.Identity;
+using Intercon.Presentation.Extensions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Intercon.Presentation.Controllers;
 
 [Route("api/users")]
 [ApiController]
-public class UserController(IMediator mediator) : BaseController
+public class UserController(IMediator mediator, IImageValidator imageValidator) : BaseController
 {
-    private readonly IMediator _mediator = mediator;
-
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(UserDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUser([FromRoute] int id, CancellationToken cancellationToken)
     {
-        var user = await _mediator.Send(new GetUserQuery(id), cancellationToken);
+        var user = await mediator.Send(new GetUserQuery(id), cancellationToken);
 
         return user == null ? NotFound() : Ok(user);
     }
@@ -34,7 +38,7 @@ public class UserController(IMediator mediator) : BaseController
     [ProducesResponseType(typeof(IEnumerable<UserDetailsDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUsers(CancellationToken cancellationToken)
     {
-        return Ok(await _mediator.Send(new GetUsersQuery(), cancellationToken));
+        return Ok(await mediator.Send(new GetUsersQuery(), cancellationToken));
     }
     
     [HttpPost("login")]
@@ -42,7 +46,7 @@ public class UserController(IMediator mediator) : BaseController
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> LoginUser([FromBody] LoginUserDto userToLogin, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new LoginUserCommand(userToLogin), cancellationToken);
+        var response = await mediator.Send(new LoginUserCommand(userToLogin), cancellationToken);
 
         return Ok(response);
     }
@@ -50,38 +54,44 @@ public class UserController(IMediator mediator) : BaseController
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto userToAdd, CancellationToken cancellationToken)
+    public async Task<IActionResult> RegisterUser([FromForm] RegisterUserDto userToAdd, CancellationToken cancellationToken)
     {
-        await _mediator.Send(new RegisterUserCommand(userToAdd), cancellationToken);
+        await mediator.Send(new RegisterUserCommand(userToAdd), cancellationToken);
 
         return Ok();
     }
 
-    [HttpPut("{id}")]
-    [ProducesResponseType(typeof(UserDetailsDto), StatusCodes.Status200OK)]
+    [Authorize]
+    [HttpPut("edit/profile")]
+    [ProducesResponseType(typeof(EditUserDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> EditUser([FromRoute] int id, [FromBody] EditUserDto userToEdit, CancellationToken cancellationToken)
+    public async Task<IActionResult> EditUser([FromBody] EditUserDto userToEdit, CancellationToken cancellationToken)
     {
-        var updatedUser = await _mediator.Send(new EditUserCommand(id, userToEdit), cancellationToken);
+        var currentUserId = HttpContext.User.GetUserId();
+
+        var updatedUser = await mediator.Send(new EditUserCommand(currentUserId, userToEdit), cancellationToken);
 
         return Ok(updatedUser);
     }
 
-    [HttpDelete("{id}")]
+    [Authorize]
+    [HttpDelete()]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> DeleteUser([FromRoute] int id, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeleteUser(CancellationToken cancellationToken)
     {
-        await _mediator.Send(new DeleteUserCommand(id), cancellationToken);
+        var currentUserId = HttpContext.User.GetUserId();
+
+        await mediator.Send(new DeleteUserCommand(currentUserId), cancellationToken);
 
         return Ok();
     }
 
-    [HttpGet("CheckUserName")]
+    [HttpGet("check-user-name")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UserNameUniqueCheck([FromQuery(Name = "nameToCheck")] string userName, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new UserNameUniqueCheckQuery(userName), cancellationToken);
+        var result = await mediator.Send(new UserNameUniqueCheckQuery(userName), cancellationToken);
 
         return result ? Ok() : BadRequest();
     }
@@ -95,8 +105,40 @@ public class UserController(IMediator mediator) : BaseController
     {
         //var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtClaimType.UserId);
 
-        var response = await _mediator.Send(new RefreshTokenCommand(tokens), cancellationToken);
+        var response = await mediator.Send(new RefreshTokenCommand(tokens), cancellationToken);
 
         return Ok(response);
+    }
+
+    [Authorize]
+    [HttpPost("edit/avatar")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UploadAvatar([FromForm] FileUploadModel request, CancellationToken cancellationToken)
+    {
+        var currentUserId = HttpContext.User.GetUserId();
+
+        var fileData = await mediator.Send(new UploadFileCommand(request.ImageFile), cancellationToken);
+
+        if (fileData is null)
+        {
+            return BadRequest("Cannot upload avatar");
+        }
+
+        await mediator.Send(new SetUserAvatarIdCommand(currentUserId, fileData.Id), cancellationToken);
+
+        return Ok(fileData.Path);
+    }
+
+    [Authorize]
+    [HttpGet("identity")]
+    [ProducesResponseType(typeof(UserDetailsDto), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetUserIdentity(CancellationToken cancellationToken)
+    {
+        var currentUserId = HttpContext.User.GetUserId();
+
+        var user = await mediator.Send(new GetUserQuery(currentUserId), cancellationToken);
+
+        return Ok(user);
     }
 }

@@ -66,12 +66,6 @@ public class BusinessRepository(InterconDbContext context)
             businessDb.Address.Longitude = newBusinessData.Address.Longitude ?? businessDb.Address.Longitude;
         }
 
-        if (newBusinessData.Image != null)
-        {
-            businessDb.Logo ??= new Image();
-            businessDb.Logo.Data = newBusinessData.Image.Data ?? businessDb.Logo.Data;
-        }
-
         businessDb.UpdateDate = DateTime.Now;
         businessDb.WasEdited = true;
 
@@ -88,5 +82,19 @@ public class BusinessRepository(InterconDbContext context)
     public async Task<bool> UserHasBusinessAsync(int userId, CancellationToken cancellationToken)
     {
         return await context.Businesses.AllAsync(x => x.OwnerId != userId, cancellationToken);
+    }
+
+    public async Task SetBusinessLogoIdAsync(int businessId, int logoId, CancellationToken cancellationToken)
+    {
+        var rows = await context.Businesses
+            .Where(x => x.Id == businessId)
+            .ExecuteUpdateAsync(
+                x => x.SetProperty(p => p.LogoId, logoId),
+                cancellationToken);
+
+        if (rows == 0)
+        {
+            throw new InvalidOperationException("Error when setting business logo id");
+        }
     }
 }

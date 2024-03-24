@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Intercon.Infrastructure.Persistence.Configurations;
 
-public class ImageConfiguration : IEntityTypeConfiguration<Image>
+public class FileDataConfiguration : IEntityTypeConfiguration<FileData>
 {
-    public void Configure(EntityTypeBuilder<Image> builder)
+    public void Configure(EntityTypeBuilder<FileData> builder)
     {
         builder.HasKey(i => i.Id);
 
-        builder.Property(i => i.Data).IsRequired();
+        builder.Property(i => i.Path).IsRequired();
     }
 }

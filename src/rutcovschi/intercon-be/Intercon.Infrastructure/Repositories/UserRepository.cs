@@ -83,17 +83,18 @@ public class UserRepository(
         return userDb;
     }
 
-    public async Task DeleteUserAsync(int id, CancellationToken cancellationToken)
+    public async Task<bool> DeleteUserAsync(int id, CancellationToken cancellationToken)
     {
         var userDb = await userManager.Users.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         if (userDb == null)
         {
-            return;
+            return false;
         }
 
-        await context.Images.Where(x => x.Id == userDb.AvatarId).ExecuteDeleteAsync(cancellationToken);
-        await userManager.Users.Where(x => x.Id == userDb.Id).ExecuteDeleteAsync(cancellationToken);
+        var rows = await userManager.Users.Where(x => x.Id == userDb.Id).ExecuteDeleteAsync(cancellationToken);
+
+        return rows != 0;
     }
 
     public async Task<bool> UserExistsAsync(int id, CancellationToken cancellationToken)
@@ -124,5 +125,27 @@ public class UserRepository(
     public async Task<int> GetUserIdByEmailAsync(string email, CancellationToken cancellationToken)
     {
         return await context.Users.Where(x => x.Email == email).Select(x => x.Id).FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<int?> GetAvatarIdIfExistsAsync(int userId, CancellationToken cancellationToken)
+    {
+        return await context.Users
+            .Where(x => x.Id == userId)
+            .Select(x => x.AvatarId)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task UpdateUserAvatarAsync(int userId, int avatarId, CancellationToken cancellationToken)
+    {
+        var rows = await context.Users
+            .Where(x => x.Id == userId)
+            .ExecuteUpdateAsync(
+                x => x.SetProperty(p => p.AvatarId, avatarId), 
+                cancellationToken);
+
+        if (rows == 0)
+        {
+            throw new InvalidOperationException("Error when update user avatar");
+        }
     }
 }

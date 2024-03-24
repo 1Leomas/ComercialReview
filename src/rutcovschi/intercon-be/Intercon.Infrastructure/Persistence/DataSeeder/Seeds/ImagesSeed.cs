@@ -4,14 +4,14 @@ namespace Intercon.Infrastructure.Persistence.DataSeeder.Seeds;
 
 public class ImagesSeed
 {
-    public static List<Image> SeedImages()
+    public static List<FileData> SeedImages()
     {
-        return new List<Image>()
+        return new List<FileData>()
         {
-            new Image
+            new FileData
             {
                 Id = 1,
-                Data = "imageData"
+                Path = "imageData"
             }
         };
     }

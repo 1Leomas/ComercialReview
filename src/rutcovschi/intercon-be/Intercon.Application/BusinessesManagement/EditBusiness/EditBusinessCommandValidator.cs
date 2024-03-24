@@ -38,11 +38,5 @@ public class EditBusinessCommandValidator : AbstractValidator<EditBusinessComman
                 .MaximumLength(255)
                 .WithName(x => nameof(x.Data.Address.Longitude));
         });
-        When(x => x.Data.Image != null, () =>
-        {
-            RuleFor(x => x.Data.Image!.Data)
-                .NotEmpty()
-                .WithName(x => nameof(x.Data.Image.Data));
-        });
     }
 }

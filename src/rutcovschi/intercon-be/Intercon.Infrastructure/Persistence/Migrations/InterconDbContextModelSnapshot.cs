@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Intercon.Infrastructure.Infrastructure.Migrations
+namespace Intercon.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(InterconDbContext))]
     partial class InterconDbContextModelSnapshot : ModelSnapshot
@@ -92,7 +92,7 @@ namespace Intercon.Infrastructure.Infrastructure.Migrations
                     b.ToTable("Businesses");
                 });
 
-            modelBuilder.Entity("Intercon.Domain.Entities.Image", b =>
+            modelBuilder.Entity("Intercon.Domain.Entities.FileData", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -103,24 +103,15 @@ namespace Intercon.Infrastructure.Infrastructure.Migrations
                     b.Property<int?>("BusinessId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Data")
+                    b.Property<string>("Path")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("WasEdited")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BusinessId");
 
-                    b.ToTable("Images");
+                    b.ToTable("DataFiles");
                 });
 
             modelBuilder.Entity("Intercon.Domain.Entities.Review", b =>
@@ -259,13 +250,16 @@ namespace Intercon.Infrastructure.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Intercon.Domain.Identity.UserRefreshToken", b =>
+            modelBuilder.Entity("Intercon.Domain.Identity.RefreshToken", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -274,12 +268,21 @@ namespace Intercon.Infrastructure.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("UpdateDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("WasEdited")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
-                    b.ToTable("UserRefreshToken");
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("RefreshToken");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
@@ -417,7 +420,7 @@ namespace Intercon.Infrastructure.Infrastructure.Migrations
 
             modelBuilder.Entity("Intercon.Domain.Entities.Business", b =>
                 {
-                    b.HasOne("Intercon.Domain.Entities.Image", "Logo")
+                    b.HasOne("Intercon.Domain.Entities.FileData", "Logo")
                         .WithMany()
                         .HasForeignKey("LogoId")
                         .OnDelete(DeleteBehavior.SetNull);
@@ -433,7 +436,7 @@ namespace Intercon.Infrastructure.Infrastructure.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("Intercon.Domain.Entities.Image", b =>
+            modelBuilder.Entity("Intercon.Domain.Entities.FileData", b =>
                 {
                     b.HasOne("Intercon.Domain.Entities.Business", null)
                         .WithMany("Images")
@@ -461,12 +464,23 @@ namespace Intercon.Infrastructure.Infrastructure.Migrations
 
             modelBuilder.Entity("Intercon.Domain.Entities.User", b =>
                 {
-                    b.HasOne("Intercon.Domain.Entities.Image", "Avatar")
+                    b.HasOne("Intercon.Domain.Entities.FileData", "Avatar")
                         .WithMany()
                         .HasForeignKey("AvatarId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Avatar");
+                });
+
+            modelBuilder.Entity("Intercon.Domain.Identity.RefreshToken", b =>
+                {
+                    b.HasOne("Intercon.Domain.Entities.User", "User")
+                        .WithOne()
+                        .HasForeignKey("Intercon.Domain.Identity.RefreshToken", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

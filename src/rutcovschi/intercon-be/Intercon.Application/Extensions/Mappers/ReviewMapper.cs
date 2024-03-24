@@ -21,7 +21,7 @@ public static class ReviewMapper
                 review.Author.FirstName,
                 review.Author.LastName,
                 review.Author.UserName,
-                review.Author.Avatar?.Data),
+                review.Author.Avatar?.Path),
             review.Grade,
             review.ReviewText,
             review.CreateDate,

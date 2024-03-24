@@ -1,18 +1,16 @@
 ﻿using Intercon.Application.Abstractions;
 using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.User;
-using Intercon.Application.Extensions.Mappers;
-using Intercon.Domain.Entities;
 
 namespace Intercon.Application.UsersManagement.EditUser;
 
-public sealed record EditUserCommand(int UserId, EditUserDto Data) : ICommand<UserDetailsDto>;
+public sealed record EditUserCommand(int UserId, EditUserDto Data) : ICommand<EditUserDto>;
 
 public sealed class EditUserCommandHandler(
         IUserRepository userRepository)
-    : ICommandHandler<EditUserCommand, UserDetailsDto>
+    : ICommandHandler<EditUserCommand, EditUserDto>
 {
-    public async Task<UserDetailsDto> Handle(EditUserCommand command, CancellationToken cancellationToken)
+    public async Task<EditUserDto> Handle(EditUserCommand command, CancellationToken cancellationToken)
     {
         var userDb = await userRepository.UpdateUserAsync(
             command.UserId,
@@ -21,6 +19,12 @@ public sealed class EditUserCommandHandler(
 
         if (userDb is null) throw new InvalidOperationException("Can not update user");
 
-        return userDb.ToUserDetailsDto();
+        return new EditUserDto
+        {
+            UserName = userDb.UserName,
+            Email = userDb.Email,
+            FirstName = userDb.FirstName,
+            LastName = userDb.LastName,
+        };
     }
 }

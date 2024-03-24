@@ -4,8 +4,6 @@ using Intercon.Application.ReviewsManagement.EditReview;
 using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Intercon.Infrastructure.Repositories;
 

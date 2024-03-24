@@ -41,9 +41,9 @@ public sealed class RegisterUserCommandValidator : AbstractValidator<RegisterUse
 
         When(x => x.Data.Avatar is not null, () =>
         {
-            RuleFor(x => x.Data.Avatar!.Data)
-                .NotEmpty()
-                .WithName(x => nameof(x.Data.Avatar)) //this doesn't work
+            RuleFor(x => x.Data.Avatar!.Length)
+                .GreaterThan(0)
+                .WithName(x => nameof(x.Data.Avatar))
                 .WithMessage("Bad avatar");
         });
     }

@@ -1,0 +1,37 @@
+﻿using FluentValidation;
+using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.DataTransferObjects;
+using Microsoft.AspNetCore.Http;
+
+namespace Intercon.Application.FilesManagement.UploadFile;
+
+public sealed record UploadFileCommand(IFormFile ImageData) : ICommand<FileDataDto?>;
+
+internal sealed class UploadFileQueryHandler
+    (IFileRepository fileRepository) : ICommandHandler<UploadFileCommand, FileDataDto?>
+{
+    public async Task<FileDataDto?> Handle(UploadFileCommand request, CancellationToken cancellationToken)
+    {
+        var fileDataBd = await fileRepository.UploadFileAsync(request.ImageData, cancellationToken);
+
+        if (fileDataBd is null)
+        {
+            return null;
+        }
+
+        var fileData = new FileDataDto(fileDataBd.Id, fileDataBd.Path);
+
+        return fileData;
+    }
+}
+
+internal sealed class UploadFileValidator : AbstractValidator<UploadFileCommand>
+{
+    public UploadFileValidator(IImageValidator imageValidator)
+    {
+        RuleFor(x => x.ImageData.Length)
+            .GreaterThan(0)
+            .WithMessage("No file uploaded");
+    }
+}

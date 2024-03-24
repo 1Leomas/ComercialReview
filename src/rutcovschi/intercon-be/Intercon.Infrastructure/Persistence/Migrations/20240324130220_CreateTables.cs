@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Intercon.Infrastructure.Infrastructure.Migrations
+namespace Intercon.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class CreateTables : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -24,21 +24,6 @@ namespace Intercon.Infrastructure.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetRoles", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserRefreshToken",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserRefreshToken", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -163,6 +148,30 @@ namespace Intercon.Infrastructure.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RefreshToken",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    WasEdited = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshToken", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RefreshToken_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Businesses",
                 columns: table => new
                 {
@@ -195,22 +204,19 @@ namespace Intercon.Infrastructure.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Images",
+                name: "DataFiles",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Data = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BusinessId = table.Column<int>(type: "int", nullable: true),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    WasEdited = table.Column<bool>(type: "bit", nullable: false)
+                    Path = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BusinessId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Images", x => x.Id);
+                    table.PrimaryKey("PK_DataFiles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Images_Businesses_BusinessId",
+                        name: "FK_DataFiles_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
                         principalColumn: "Id");
@@ -314,9 +320,15 @@ namespace Intercon.Infrastructure.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Images_BusinessId",
-                table: "Images",
+                name: "IX_DataFiles_BusinessId",
+                table: "DataFiles",
                 column: "BusinessId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefreshToken_UserId",
+                table: "RefreshToken",
+                column: "UserId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reviews_AuthorId",
@@ -348,18 +360,18 @@ namespace Intercon.Infrastructure.Infrastructure.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_AspNetUsers_Images_AvatarId",
+                name: "FK_AspNetUsers_DataFiles_AvatarId",
                 table: "AspNetUsers",
                 column: "AvatarId",
-                principalTable: "Images",
+                principalTable: "DataFiles",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.SetNull);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Businesses_Images_LogoId",
+                name: "FK_Businesses_DataFiles_LogoId",
                 table: "Businesses",
                 column: "LogoId",
-                principalTable: "Images",
+                principalTable: "DataFiles",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.SetNull);
         }
@@ -372,7 +384,7 @@ namespace Intercon.Infrastructure.Infrastructure.Migrations
                 table: "Businesses");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Businesses_Images_LogoId",
+                name: "FK_Businesses_DataFiles_LogoId",
                 table: "Businesses");
 
             migrationBuilder.DropTable(
@@ -391,10 +403,10 @@ namespace Intercon.Infrastructure.Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Reviews");
+                name: "RefreshToken");
 
             migrationBuilder.DropTable(
-                name: "UserRefreshToken");
+                name: "Reviews");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -403,7 +415,7 @@ namespace Intercon.Infrastructure.Infrastructure.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Images");
+                name: "DataFiles");
 
             migrationBuilder.DropTable(
                 name: "Businesses");

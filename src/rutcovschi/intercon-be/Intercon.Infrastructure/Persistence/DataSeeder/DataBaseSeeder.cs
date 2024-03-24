@@ -15,7 +15,7 @@ public class DataBaseSeeder(InterconDbContext context, UserManager<User> userMan
     {
         var dataBaseCreated = _context.Database.EnsureCreated();
 
-        await InitializeEntity(_context.Images, ImagesSeed.SeedImages);
+        await InitializeEntity(_context.DataFiles, ImagesSeed.SeedImages);
         await InitializeUsers();
         await InitializeEntity(_context.Businesses, BusinessesSeed.SeedBusinesses);
         await InitializeEntity(_context.Reviews, ReviewsSeed.SeedReviews);

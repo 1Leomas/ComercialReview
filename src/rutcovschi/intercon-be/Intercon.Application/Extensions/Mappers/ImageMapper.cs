@@ -6,22 +6,22 @@ namespace Intercon.Application.Extensions.Mappers;
 
 public static class ImageMapper
 {
-    public static Image ToEntity(this CreateImageDto imageDto)
+    public static FileData ToEntity(this CreateImageDto imageDto)
     {
-        return new Image
+        return new FileData
         {
             //ContentType = imageDto.ContentType,
-            Data = imageDto.Data
+            Path = imageDto.Data
         };
     }
 
-    public static CreateImageDto ToCreateImageDto(this Image image)
+    public static CreateImageDto ToCreateImageDto(this FileData fileData)
     {
-        return new CreateImageDto(image.Data);
+        return new CreateImageDto(fileData.Path);
     }
 
-    public static ImageDto ToDto(this Image image)
+    public static FileDataDto ToDto(this FileData fileData)
     {
-        return new ImageDto(image.Data);
+        return new FileDataDto(fileData.Id, fileData.Path);
     }
 }

@@ -50,7 +50,7 @@ public static class UserMapper
             user.LastName,
             user.Email!,
             user.UserName,
-            user.Avatar?.ToDto()
+            user.Avatar?.Path
         );
     }
 }

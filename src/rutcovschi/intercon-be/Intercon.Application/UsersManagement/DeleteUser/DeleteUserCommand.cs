@@ -5,10 +5,15 @@ namespace Intercon.Application.UsersManagement.DeleteUser;
 
 public sealed record DeleteUserCommand(int Id) : ICommand;
 
-public sealed class DeleteUserCommandHandler(IUserRepository userRepository) : ICommandHandler<DeleteUserCommand>
+internal sealed class DeleteUserCommandHandler(IUserRepository userRepository, IFileRepository fileRepository) : ICommandHandler<DeleteUserCommand>
 {
     public async Task Handle(DeleteUserCommand command, CancellationToken cancellationToken)
     {
-        await userRepository.DeleteUserAsync(command.Id, cancellationToken);
+        var avatarId = await userRepository.GetAvatarIdIfExistsAsync(command.Id, cancellationToken);
+
+        var result = await userRepository.DeleteUserAsync(command.Id, cancellationToken);
+
+        if (result && avatarId.HasValue)
+            await fileRepository.DeleteFileAsync(avatarId.Value, cancellationToken);
     }
 }

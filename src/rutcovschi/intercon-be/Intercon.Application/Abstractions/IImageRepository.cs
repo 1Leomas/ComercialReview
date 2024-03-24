@@ -4,5 +4,5 @@ namespace Intercon.Application.Abstractions;
 
 public interface IImageRepository
 {
-    Task<int?> AddImage(Image image, CancellationToken cancellationToken);
+    Task<int?> AddImage(FileData fileData, CancellationToken cancellationToken);
 }

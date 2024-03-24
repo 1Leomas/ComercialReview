@@ -2,7 +2,9 @@
 using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects;
 using Intercon.Application.DataTransferObjects.Business;
+using Intercon.Application.FilesManagement.UploadFile;
 using Intercon.Domain.Entities;
+using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace Intercon.Application.BusinessesManagement.CreateBusiness;
@@ -10,22 +12,18 @@ namespace Intercon.Application.BusinessesManagement.CreateBusiness;
 public sealed record CreateBusinessCommand(int UserId, CreateBusinessDto Data) : ICommand<BusinessDetailsDto>;
 
 public sealed class CreateBusinessCommandHandler(
-        IImageRepository imageRepository,
+        IMediator mediator,
         IBusinessRepository businessRepository,
         ILogger<CreateBusinessCommandHandler> logger)
     : ICommandHandler<CreateBusinessCommand, BusinessDetailsDto>
 {
     public async Task<BusinessDetailsDto> Handle(CreateBusinessCommand command, CancellationToken cancellationToken)
     {
-        int? logoId = null!;
+        FileDataDto? fileData = null!;
 
         if (command.Data.Logo is not null)
         {
-            logoId = await imageRepository.AddImage(
-                new Image { Data = command.Data.Logo.Data },
-                cancellationToken);
-
-            if (!logoId.HasValue) logger.LogError("Can not add logo to business");
+            fileData = await mediator.Send(new UploadFileCommand(command.Data.Logo), cancellationToken);
         }
 
         var businessDb = new Business
@@ -36,7 +34,7 @@ public sealed class CreateBusinessCommandHandler(
             FullDescription = command.Data.FullDescription,
             Address = command.Data.Address,
             Category = command.Data.Category,
-            LogoId = logoId
+            LogoId = fileData?.Id
         };
 
         var businessId = await businessRepository.CreateBusinessAsync(businessDb, cancellationToken);
@@ -48,7 +46,7 @@ public sealed class CreateBusinessCommandHandler(
             businessDb.ShortDescription,
             businessDb.FullDescription,
             businessDb.Rating,
-            businessDb.LogoId.HasValue ? new ImageDto(command.Data.Logo!.Data) : null,
+            fileData?.Path,
             businessDb.Address,
             businessDb.ReviewsCount,
             businessDb.Category

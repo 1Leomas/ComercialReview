@@ -7,14 +7,14 @@ namespace Intercon.Infrastructure.Repositories;
 public class ImageRepository(InterconDbContext context)
     : IImageRepository
 {
-    public async Task<int?> AddImage(Image image, CancellationToken cancellationToken)
+    public async Task<int?> AddImage(FileData fileData, CancellationToken cancellationToken)
     {
-        var avatar = new Image()
+        var avatar = new FileData()
         {
-            Data = image.Data
+            Path = fileData.Path
         };
 
-        await context.Images.AddAsync(avatar, cancellationToken);
+        await context.DataFiles.AddAsync(avatar, cancellationToken);
         var rows = await context.SaveChangesAsync(cancellationToken);
 
         return rows == 0 ? null : avatar.Id;

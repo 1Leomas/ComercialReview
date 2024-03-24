@@ -1,31 +1,29 @@
 ﻿using Intercon.Application.Abstractions;
 using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.User;
+using Intercon.Application.FilesManagement.UploadFile;
 using Intercon.Domain.Entities;
 using Intercon.Domain.Enums;
+using MediatR;
 
 namespace Intercon.Application.UsersManagement.RegisterUser;
 
 public sealed record RegisterUserCommand(RegisterUserDto Data) : ICommand;
 
 public sealed class RegisterUserCommandHandler(
-        IImageRepository imageRepository,
+        IMediator mediator,
         IUserRepository userRepository)
     : ICommandHandler<RegisterUserCommand>
 {
     public async Task Handle(RegisterUserCommand command, CancellationToken cancellationToken)
     {
-        //if (!ModelState.IsValid)
-        //{
-        //    return BadRequest(ModelState);
-        //}
-
         int? avatarId = null!;
 
         if (command.Data.Avatar is not null)
-            avatarId = await imageRepository.AddImage(
-                new Image { Data = command.Data.Avatar.Data },
-                cancellationToken);
+        {
+            var fileData = await mediator.Send(new UploadFileCommand(command.Data.Avatar), cancellationToken);
+            avatarId = fileData?.Id;
+        }
 
         var newUser = new User
         {
