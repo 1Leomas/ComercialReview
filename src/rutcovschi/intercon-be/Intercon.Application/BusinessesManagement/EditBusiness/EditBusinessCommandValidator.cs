@@ -7,10 +7,14 @@ public class EditBusinessCommandValidator : AbstractValidator<EditBusinessComman
 {
     public EditBusinessCommandValidator(IBusinessRepository businessRepository)
     {
-        RuleFor(x => x.BusinessId).NotEmpty();
-
         RuleFor(x => x.BusinessId)
+            .NotEmpty()
             .MustAsync(businessRepository.BusinessExistsAsync);
+
+        RuleFor(x => new { x.BusinessId, x.CurrentUserId })
+            .MustAsync(async (data, ctx) =>
+                await businessRepository.UserOwnsBusinessAsync(data.CurrentUserId, data.BusinessId, ctx))
+            .WithMessage("Current user is not the owner of this business");
 
         When(x => !string.IsNullOrEmpty(x.Data.Title), () =>
         {

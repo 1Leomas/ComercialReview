@@ -1,4 +1,6 @@
-﻿namespace Intercon.Application.DataTransferObjects.User;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Intercon.Application.DataTransferObjects.User;
 
 public record EditUserDto
 {
@@ -6,4 +8,5 @@ public record EditUserDto
     public string? LastName { get; init; } = null!;
     public string? Email { get; init; } = null!;
     public string? UserName { get; init; } = null!;
+    public IFormFile? Avatar { get; init; }
 }

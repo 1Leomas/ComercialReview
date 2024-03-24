@@ -1,5 +1,6 @@
 ﻿using Intercon.Application.Abstractions;
 using Intercon.Application.DataTransferObjects.User;
+using Intercon.Application.UsersManagement.EditUser;
 using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
@@ -47,10 +48,11 @@ public class UserRepository(
         return result.Succeeded;
     }
 
-    public async Task<User?> UpdateUserAsync(int id, EditUserDto newUserData, CancellationToken cancellationToken)
+    public async Task<User?> UpdateUserAsync(EditUser newUserData, CancellationToken cancellationToken)
     {
         var userDb = await userManager.Users
-            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            .Include(x => x.Avatar)
+            .FirstOrDefaultAsync(x => x.Id == newUserData.UserId, cancellationToken);
 
         if (userDb == null)
         {
@@ -72,6 +74,10 @@ public class UserRepository(
         if (!string.IsNullOrEmpty(newUserData.UserName))
         {
             userDb.UserName = newUserData.UserName;
+        }
+        if (newUserData.AvatarId.HasValue)
+        {
+            userDb.AvatarId = newUserData.AvatarId.Value;
         }
 
         userDb.UpdateDate = DateTime.Now;
@@ -132,19 +138,5 @@ public class UserRepository(
             .Where(x => x.Id == userId)
             .Select(x => x.AvatarId)
             .FirstOrDefaultAsync(cancellationToken);
-    }
-
-    public async Task UpdateUserAvatarAsync(int userId, int avatarId, CancellationToken cancellationToken)
-    {
-        var rows = await context.Users
-            .Where(x => x.Id == userId)
-            .ExecuteUpdateAsync(
-                x => x.SetProperty(p => p.AvatarId, avatarId), 
-                cancellationToken);
-
-        if (rows == 0)
-        {
-            throw new InvalidOperationException("Error when update user avatar");
-        }
     }
 }

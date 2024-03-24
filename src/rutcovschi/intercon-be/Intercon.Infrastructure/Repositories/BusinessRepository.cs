@@ -33,37 +33,39 @@ public class BusinessRepository(InterconDbContext context)
         return newBusiness.Id;
     }
 
-    public async Task<Business?> UpdateBusinessAsync(int id, EditBusinessDto newBusinessData, CancellationToken cancellationToken)
+    public async Task<Business?> UpdateBusinessAsync(int id, EditBusinessDto newBusinessData, int? logoId, CancellationToken cancellationToken)
     {
         var businessDb = await context.Businesses
             .Include(business => business.Logo)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
-        if (businessDb == null)
-        {
-            return null;
-        }
+        if (businessDb == null) return null;
 
         if (!string.IsNullOrEmpty(newBusinessData.Title))
         {
             businessDb.Title = newBusinessData.Title;
         }
-
         if (!string.IsNullOrEmpty(newBusinessData.ShortDescription))
         {
             businessDb.ShortDescription = newBusinessData.ShortDescription;
         }
-
         if (!string.IsNullOrEmpty(newBusinessData.ShortDescription))
         {
             businessDb.FullDescription = newBusinessData.FullDescription;
         }
-
         if (newBusinessData.Address != null)
         {
             businessDb.Address.Street = newBusinessData.Address.Street ?? businessDb.Address.Street;
             businessDb.Address.Latitude = newBusinessData.Address.Latitude ?? businessDb.Address.Latitude;
             businessDb.Address.Longitude = newBusinessData.Address.Longitude ?? businessDb.Address.Longitude;
+        }
+        if (newBusinessData.Category.HasValue)
+        {
+            businessDb.Category = newBusinessData.Category.Value;
+        }
+        if (logoId.HasValue)
+        {
+            businessDb.LogoId = logoId.Value;
         }
 
         businessDb.UpdateDate = DateTime.Now;
@@ -84,17 +86,16 @@ public class BusinessRepository(InterconDbContext context)
         return await context.Businesses.AllAsync(x => x.OwnerId != userId, cancellationToken);
     }
 
-    public async Task SetBusinessLogoIdAsync(int businessId, int logoId, CancellationToken cancellationToken)
+    public async Task<int?> GetBusinessLogoIdAsync(int businessId, CancellationToken cancellationToken)
     {
-        var rows = await context.Businesses
+        return await context.Businesses
             .Where(x => x.Id == businessId)
-            .ExecuteUpdateAsync(
-                x => x.SetProperty(p => p.LogoId, logoId),
-                cancellationToken);
+            .Select(x => x.LogoId)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
 
-        if (rows == 0)
-        {
-            throw new InvalidOperationException("Error when setting business logo id");
-        }
+    public async Task<bool> UserOwnsBusinessAsync(int userId, int businessId, CancellationToken cancellationToken)
+    {
+        return await context.Businesses.AnyAsync(x => x.OwnerId == userId && x.Id == businessId, cancellationToken);
     }
 }

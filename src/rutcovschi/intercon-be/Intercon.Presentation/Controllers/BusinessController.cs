@@ -52,48 +52,15 @@ public class BusinessController(IMediator mediator) : BaseController
     }
 
     [Authorize]
-    [HttpPut("{businessId}")]
-    [ProducesResponseType(typeof(EditBusinessDto), StatusCodes.Status200OK)]
+    [HttpPut("{businessId}/edit")]
+    [ProducesResponseType(typeof(EditBusinessDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> EditBusiness([FromRoute] int businessId, [FromBody] EditBusinessDto businessToEdit, CancellationToken cancellationToken)
+    public async Task<IActionResult> EditBusiness([FromRoute] int businessId, [FromForm] EditBusinessDto businessToEdit, CancellationToken cancellationToken)
     {
         var currentUserId = HttpContext.User.GetUserId();
 
         var updatedBusiness = await mediator.Send(new EditBusinessCommand(currentUserId, businessId, businessToEdit), cancellationToken);
 
         return Ok(updatedBusiness);
-    }
-
-    //[HttpDelete("{id}")]
-    //[ProducesResponseType(StatusCodes.Status200OK)]
-    //public async Task<IActionResult> DeleteBusiness(int id)
-    //{
-    //    await _mediator.Send(new DeleteBusinessCommand(id));
-
-    //    return Ok();
-    //}
-
-    [Authorize]
-    [HttpPost("{id}/edit/logo")]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UploadLogo([FromRoute] int id, [FromForm] FileUploadModel request, CancellationToken cancellationToken)
-    {
-        var currentUserId = HttpContext.User.GetUserId();
-
-        var fileData = await mediator.Send(
-            new UploadFileCommand(request.ImageFile), 
-            cancellationToken);
-
-        if (fileData is null)
-        {
-            return BadRequest("Cannot upload logo");
-        }
-
-        await mediator.Send(
-            new SetBusinessLogoIdCommand(currentUserId, id, fileData.Id), 
-            cancellationToken);
-
-        return Ok(fileData.Path);
     }
 }

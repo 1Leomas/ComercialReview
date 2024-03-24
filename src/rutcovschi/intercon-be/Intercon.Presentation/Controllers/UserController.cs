@@ -65,10 +65,10 @@ public class UserController(IMediator mediator, IImageValidator imageValidator) 
     }
 
     [Authorize]
-    [HttpPut("edit/profile")]
-    [ProducesResponseType(typeof(EditUserDto), StatusCodes.Status200OK)]
+    [HttpPut("edit")]
+    [ProducesResponseType(typeof(UserDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> EditUser([FromBody] EditUserDto userToEdit, CancellationToken cancellationToken)
+    public async Task<IActionResult> EditUser([FromForm] EditUserDto userToEdit, CancellationToken cancellationToken)
     {
         var currentUserId = HttpContext.User.GetUserId();
 
@@ -78,27 +78,7 @@ public class UserController(IMediator mediator, IImageValidator imageValidator) 
     }
 
     [Authorize]
-    [HttpPost("edit/avatar")]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UploadAvatar([FromForm] FileUploadModel request, CancellationToken cancellationToken)
-    {
-        var currentUserId = HttpContext.User.GetUserId();
-
-        var fileData = await mediator.Send(new UploadFileCommand(request.ImageFile), cancellationToken);
-
-        if (fileData is null)
-        {
-            return BadRequest("Cannot upload avatar");
-        }
-
-        await mediator.Send(new SetUserAvatarIdCommand(currentUserId, fileData.Id), cancellationToken);
-
-        return Ok(fileData.Path);
-    }
-
-    [Authorize]
-    [HttpDelete()]
+    [HttpDelete]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteUser(CancellationToken cancellationToken)
     {
