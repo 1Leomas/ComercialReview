@@ -15,8 +15,11 @@ using Intercon.Application.UsersManagement.UserNameUniqueCheck;
 using Intercon.Domain.Identity;
 using Intercon.Presentation.Extensions;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Intercon.Application.DataTransferObjects;
 
 namespace Intercon.Presentation.Controllers;
 
@@ -75,6 +78,26 @@ public class UserController(IMediator mediator, IImageValidator imageValidator) 
     }
 
     [Authorize]
+    [HttpPost("edit/avatar")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UploadAvatar([FromForm] FileUploadModel request, CancellationToken cancellationToken)
+    {
+        var currentUserId = HttpContext.User.GetUserId();
+
+        var fileData = await mediator.Send(new UploadFileCommand(request.ImageFile), cancellationToken);
+
+        if (fileData is null)
+        {
+            return BadRequest("Cannot upload avatar");
+        }
+
+        await mediator.Send(new SetUserAvatarIdCommand(currentUserId, fileData.Id), cancellationToken);
+
+        return Ok(fileData.Path);
+    }
+
+    [Authorize]
     [HttpDelete()]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteUser(CancellationToken cancellationToken)
@@ -99,35 +122,23 @@ public class UserController(IMediator mediator, IImageValidator imageValidator) 
     [HttpPost("refresh-token")]
     [ProducesResponseType(typeof(Tokens), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-
-    public async Task<IActionResult> RefreshToken([FromBody] Tokens tokens,
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request,
         CancellationToken cancellationToken)
     {
-        //var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtClaimType.UserId);
+        var accessToken = await HttpContext.GetTokenAsync(JwtBearerDefaults.AuthenticationScheme, "access_token");
+
+        if (accessToken is null)
+            return Unauthorized();
+
+        var tokens = new Tokens
+        {
+            AccessToken = accessToken,
+            RefreshToken = request.RefreshToken
+        };
 
         var response = await mediator.Send(new RefreshTokenCommand(tokens), cancellationToken);
 
         return Ok(response);
-    }
-
-    [Authorize]
-    [HttpPost("edit/avatar")]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UploadAvatar([FromForm] FileUploadModel request, CancellationToken cancellationToken)
-    {
-        var currentUserId = HttpContext.User.GetUserId();
-
-        var fileData = await mediator.Send(new UploadFileCommand(request.ImageFile), cancellationToken);
-
-        if (fileData is null)
-        {
-            return BadRequest("Cannot upload avatar");
-        }
-
-        await mediator.Send(new SetUserAvatarIdCommand(currentUserId, fileData.Id), cancellationToken);
-
-        return Ok(fileData.Path);
     }
 
     [Authorize]
