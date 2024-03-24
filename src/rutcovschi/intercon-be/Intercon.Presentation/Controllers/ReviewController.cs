@@ -5,7 +5,9 @@ using Intercon.Application.ReviewsManagement.EditReview;
 using Intercon.Application.ReviewsManagement.GetAllReviews;
 using Intercon.Application.ReviewsManagement.GetBusinessReviews;
 using Intercon.Application.ReviewsManagement.GetReviewDetails;
+using Intercon.Presentation.Extensions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Intercon.Presentation.Controllers;
@@ -13,13 +15,11 @@ namespace Intercon.Presentation.Controllers;
 [ApiController]
 public class ReviewController(IMediator mediator) : BaseController
 {
-    private readonly IMediator _mediator = mediator;
-
     [HttpGet("api/reviews")]
     [ProducesResponseType(typeof(IEnumerable<ReviewShortDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllReviews(CancellationToken cancellationToken)
     {
-        return Ok(await _mediator.Send(new GetAllReviewsQuery(), cancellationToken));
+        return Ok(await mediator.Send(new GetAllReviewsQuery(), cancellationToken));
     }
 
     [HttpGet("api/businesses/{businessId}/reviews/{userId}")]
@@ -27,7 +27,7 @@ public class ReviewController(IMediator mediator) : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetReview([FromRoute] int businessId, [FromRoute] int userId, CancellationToken cancellationToken)
     {
-        var review = await _mediator.Send(new GetReviewDetailsQuery(businessId, userId), cancellationToken);
+        var review = await mediator.Send(new GetReviewDetailsQuery(businessId, userId), cancellationToken);
 
         if (review == null)
         {
@@ -41,34 +41,53 @@ public class ReviewController(IMediator mediator) : BaseController
     [ProducesResponseType(typeof(IEnumerable<ReviewDetailsDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetBusinessReviews([FromRoute] int businessId, CancellationToken cancellationToken)
     {
-        return Ok(await _mediator.Send(new GetBusinessReviewsQuery(businessId), cancellationToken));
+        return Ok(await mediator.Send(new GetBusinessReviewsQuery(businessId), cancellationToken));
     }
 
+    [Authorize]
     [HttpPost("api/businesses/{businessId}/reviews")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateReview([FromRoute] int businessId, [FromBody] CreateReviewDto reviewToAdd, CancellationToken cancellationToken)
     {
-        await _mediator.Send(new CreateReviewCommand(businessId, reviewToAdd), cancellationToken);
+        var currentUserId = HttpContext.User.GetUserId();
+
+        await mediator.Send(new CreateReviewCommand(businessId, currentUserId, reviewToAdd), cancellationToken);
 
         return Ok();
     }
 
+    [Authorize]
     [HttpPut("api/businesses/{businessId}/reviews")]
     [ProducesResponseType(typeof(UpdatedReviewDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> EditReview([FromRoute] int businessId, [FromBody] EditReviewDto reviewToEdit, CancellationToken cancellationToken)
+    public async Task<IActionResult> EditReview([FromRoute] int businessId, [FromBody] EditReviewDto editReviewData, CancellationToken cancellationToken)
     {
-        var updatedReview = await _mediator.Send(new EditReviewCommand(businessId, reviewToEdit), cancellationToken);
+        var currentUserId = HttpContext.User.GetUserId();
+
+        var updatedReview = await mediator.Send(new EditReviewCommand(businessId, currentUserId, editReviewData), cancellationToken);
 
         return Ok(updatedReview);
     }
 
+    [Authorize(Roles = "2")]
     [HttpDelete("api/businesses/{businessId}/reviews/{userId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> DeleteReview([FromRoute] int businessId, [FromRoute] int userId, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeleteUserReview([FromRoute] int businessId, [FromRoute] int userId, CancellationToken cancellationToken)
     {
-        await _mediator.Send(new DeleteReviewCommand(businessId, userId), cancellationToken);
+        await mediator.Send(new DeleteReviewCommand(businessId, userId), cancellationToken);
+
+        return Ok();
+    }
+
+    [Authorize]
+    [HttpDelete("api/businesses/{businessId}/reviews")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> DeleteCurrentUserReview([FromRoute] int businessId, CancellationToken cancellationToken)
+    {
+        var currentUserId = HttpContext.User.GetUserId();
+
+        await mediator.Send(new DeleteReviewCommand(businessId, currentUserId), cancellationToken);
 
         return Ok();
     }

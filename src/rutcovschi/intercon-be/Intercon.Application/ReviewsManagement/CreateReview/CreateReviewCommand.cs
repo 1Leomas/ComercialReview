@@ -3,9 +3,9 @@ using Intercon.Application.Abstractions.Messaging;
 
 namespace Intercon.Application.ReviewsManagement.CreateReview;
 
-public sealed record CreateReviewDto(int AuthorId, int Grade, string? ReviewText);
+public sealed record CreateReviewDto(int Grade, string? ReviewText);
 
-public sealed record CreateReviewCommand(int BusinessId, CreateReviewDto Data) : ICommand;
+public sealed record CreateReviewCommand(int BusinessId, int UserId, CreateReviewDto Data) : ICommand;
 
 internal sealed class CreateReviewCommandHandler
     (IReviewRepository reviewRepository) : ICommandHandler<CreateReviewCommand>
@@ -14,6 +14,7 @@ internal sealed class CreateReviewCommandHandler
     {
         var result = await reviewRepository.CreateReviewAsync(
             command.BusinessId,
+            command.UserId,
             command.Data,
             cancellationToken);
 

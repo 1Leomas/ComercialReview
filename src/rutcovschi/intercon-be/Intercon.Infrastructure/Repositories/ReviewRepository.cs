@@ -34,47 +34,43 @@ public class ReviewRepository(InterconDbContext context)
         return await context.Reviews.ToListAsync(cancellationToken);
     }
 
-    public async Task<bool> CreateReviewAsync(int businessId, CreateReviewDto newReview, CancellationToken cancellationToken)
+    public async Task<bool> CreateReviewAsync(int businessId, int userId, CreateReviewDto newReview, CancellationToken cancellationToken)
     {
-        var business = await context.Businesses.FindAsync(businessId, cancellationToken);
-
-        if (business == null)
-        {
-            return false;
-        }
-
         var review = new Review
         {
             BusinessId = businessId,
-            AuthorId = newReview.AuthorId,
+            AuthorId = userId,
             Grade = newReview.Grade,
             ReviewText = newReview.ReviewText
         };
 
-        var reviews = context.Reviews.Where(x => x.BusinessId == businessId);
-
-        var reviewsCount = (uint)(reviews.Count() + 1);
-        float reviewsSum = reviews.Select(x => x.Grade).Sum() + newReview.Grade;
-
-        business!.ReviewsCount = reviewsCount;
-        business.Rating = reviewsSum / reviewsCount;
-
         await context.Reviews.AddAsync(review, cancellationToken);
         var rows = await context.SaveChangesAsync(cancellationToken);
 
-        return rows != 0;
+        if (rows == 0)
+        {
+            return false;
+        }
+
+        await UpdateBusinessStats(businessId, cancellationToken);
+
+        return true;
     }
 
-    public async Task<Review?> UpdateReviewAsync(int businessId, EditReviewDto newReviewData, CancellationToken cancellationToken)
+    public async Task<Review?> UpdateReviewAsync(
+        int businessId, 
+        int authorId, 
+        EditReviewDto newReviewData, 
+        CancellationToken cancellationToken)
     {
-        var reviewDb = await context.Reviews.FindAsync(businessId, newReviewData.AuthorId);
+        var reviewDb = await context.Reviews.FindAsync(businessId, authorId);
 
         if (reviewDb == null)
         {
             return null;
         }
 
-        if (newReviewData.Grade is > 0 and <= 5)
+        if (newReviewData.Grade is >= 1 and <= 5)
         {
             reviewDb.Grade = newReviewData.Grade.Value;
         }
@@ -88,14 +84,47 @@ public class ReviewRepository(InterconDbContext context)
 
         await context.SaveChangesAsync(cancellationToken);
 
+        await UpdateBusinessStats(businessId, cancellationToken);
+
         return reviewDb;
     }
 
     public async Task DeleteReviewAsync(int businessId, int authorId, CancellationToken cancellationToken)
     {
+        var reviewDb = await context.Reviews.FindAsync(businessId, authorId);
+
+        if (reviewDb == null)
+        {
+            return;
+        }
+        
         await context.Reviews
             .Where(x => x.BusinessId == businessId && x.AuthorId == authorId)
             .ExecuteDeleteAsync(cancellationToken);
+
+        await UpdateBusinessStats(businessId, cancellationToken);
+    }
+
+    private async Task UpdateBusinessStats(
+        int businessId,
+        CancellationToken cancellationToken)
+    {
+        var business = await context.Businesses.FindAsync(businessId, cancellationToken);
+
+        if (business == null)
+        {
+            return;
+        }
+
+        var reviews = context.Reviews.Where(x => x.BusinessId == businessId);
+
+        var reviewsCount = (uint)(reviews.Count());
+        float reviewsSum = reviews.Select(x => x.Grade).Sum();
+
+        business!.ReviewsCount = reviewsCount;
+        business.Rating = reviewsSum / reviewsCount;
+
+        await context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<bool> BusinessUserReviewExistsAsync(int businessId, int authorId, CancellationToken cancellationToken)

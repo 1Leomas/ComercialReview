@@ -20,20 +20,20 @@ public sealed class CreateReviewCommandCommandValidator : AbstractValidator<Crea
                     .WithMessage("The business doesn't exists");
             });
 
-        RuleFor(x => x.Data.AuthorId)
+        RuleFor(x => x.UserId)
             .NotEmpty()
-            .WithName(x => nameof(x.Data.AuthorId))
+            .WithName(x => nameof(x.UserId))
             .DependentRules(() =>
             {
-                RuleFor(x => x.Data.AuthorId)
+                RuleFor(x => x.UserId)
                     .MustAsync(userRepository.UserExistsAsync)
                     .WithMessage("The user doesn't exists");
             });
 
-        RuleFor(x => new { x.BusinessId, x.Data.AuthorId })
+        RuleFor(x => new { x.BusinessId, x.UserId })
             .MustAsync(async (data, ctx)
-                => !await reviewRepository.BusinessUserReviewExistsAsync(data.BusinessId, data.AuthorId, ctx))
-            .WithName(x => nameof(x.Data.AuthorId))
+                => !await reviewRepository.BusinessUserReviewExistsAsync(data.BusinessId, data.UserId, ctx))
+            .WithName(x => nameof(x.UserId))
             .WithMessage("The user already wrote a review");
 
         RuleFor(x => x.Data.Grade)

@@ -17,12 +17,12 @@ public sealed class EditReviewCommandValidator : AbstractValidator<EditReviewCom
                     .WithMessage("The business doesn't exists");
             });
 
-        RuleFor(x => x.Data.AuthorId)
+        RuleFor(x => x.AuthorId)
             .NotEmpty()
-            .WithName(x => nameof(x.Data.AuthorId))
+            .WithName(x => nameof(x.AuthorId))
             .DependentRules(() =>
             {
-                RuleFor(x => x.Data.AuthorId)
+                RuleFor(x => x.AuthorId)
                     .MustAsync(userRepository.UserExistsAsync)
                     .WithMessage("The user doesn't exists");
             });
