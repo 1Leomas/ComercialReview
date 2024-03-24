@@ -17,14 +17,6 @@ public sealed class RegisterUserCommandHandler(
 {
     public async Task Handle(RegisterUserCommand command, CancellationToken cancellationToken)
     {
-        int? avatarId = null!;
-
-        if (command.Data.Avatar is not null)
-        {
-            var fileData = await mediator.Send(new UploadFileCommand(command.Data.Avatar), cancellationToken);
-            avatarId = fileData?.Id;
-        }
-
         var newUser = new User
         {
             FirstName = command.Data.FirstName,
@@ -32,11 +24,10 @@ public sealed class RegisterUserCommandHandler(
             Email = command.Data.Email,
             UserName = string.IsNullOrEmpty(command.Data.UserName) ? command.Data.Email : command.Data.UserName,
             Role = (Role)command.Data.Role,
-            AvatarId = avatarId
         };
 
         var isSuccess =
-            await userRepository.CreateUserAsync(newUser, command.Data.Password, avatarId, cancellationToken);
+            await userRepository.CreateUserAsync(newUser, command.Data.Password, cancellationToken);
 
         if (!isSuccess) throw new Exception("Can not register ApplicationUser");
     }

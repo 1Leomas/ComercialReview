@@ -38,13 +38,5 @@ public sealed class RegisterUserCommandValidator : AbstractValidator<RegisterUse
         RuleFor(x => x.Data.Email)
             .MustAsync(async (s, token) => !await userRepository.UserEmailExistsAsync(s, token))
             .WithMessage("The email must be unique");
-
-        When(x => x.Data.Avatar is not null, () =>
-        {
-            RuleFor(x => x.Data.Avatar!.Length)
-                .GreaterThan(0)
-                .WithName(x => nameof(x.Data.Avatar))
-                .WithMessage("Bad avatar");
-        });
     }
 }

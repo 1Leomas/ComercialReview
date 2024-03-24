@@ -30,7 +30,7 @@ public class UserRepository(
         return usersDb;
     }
 
-    public async Task<bool> CreateUserAsync(User newUser, string password, int? avatarId, CancellationToken cancellationToken)
+    public async Task<bool> CreateUserAsync(User newUser, string password, CancellationToken cancellationToken)
     {
         var result = await userManager.CreateAsync(
             new User
@@ -39,8 +39,7 @@ public class UserRepository(
                 LastName = newUser.LastName,
                 Email = newUser.Email,
                 UserName = string.IsNullOrEmpty(newUser.UserName) ? newUser.Email : newUser.UserName,
-                Role = newUser.Role,
-                AvatarId = avatarId
+                Role = newUser.Role
             },
             password
         );

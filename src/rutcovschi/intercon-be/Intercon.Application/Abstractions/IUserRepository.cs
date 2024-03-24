@@ -7,7 +7,7 @@ public interface IUserRepository
 {
     Task<User?> GetUserByIdAsync(int id, CancellationToken cancellationToken);
     Task<IEnumerable<User>> GetAllUsersAsync(CancellationToken cancellationToken);
-    Task<bool> CreateUserAsync(User newUser, string password, int? avatarId, CancellationToken cancellationToken);
+    Task<bool> CreateUserAsync(User newUser, string password, CancellationToken cancellationToken);
     Task<User?> UpdateUserAsync(int id, EditUserDto newUserData, CancellationToken cancellationToken);
     Task<bool> DeleteUserAsync(int id, CancellationToken cancellationToken);
     Task<bool> UserExistsAsync(int id, CancellationToken cancellationToken);

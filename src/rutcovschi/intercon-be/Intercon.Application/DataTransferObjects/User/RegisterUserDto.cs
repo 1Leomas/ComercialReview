@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace Intercon.Application.DataTransferObjects.User;
+﻿namespace Intercon.Application.DataTransferObjects.User;
 
 public record RegisterUserDto
 {
@@ -9,7 +7,6 @@ public record RegisterUserDto
     public string Email { get; init; } = string.Empty;
     public string Password { get; init; } = string.Empty;
     public string? UserName { get; init; } = null;
-    public IFormFile? Avatar { get; init; } = null;
 
     public int Role { get; init; }
 }

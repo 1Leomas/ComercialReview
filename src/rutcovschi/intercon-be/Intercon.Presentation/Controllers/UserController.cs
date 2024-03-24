@@ -57,7 +57,7 @@ public class UserController(IMediator mediator, IImageValidator imageValidator) 
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> RegisterUser([FromForm] RegisterUserDto userToAdd, CancellationToken cancellationToken)
+    public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto userToAdd, CancellationToken cancellationToken)
     {
         await mediator.Send(new RegisterUserCommand(userToAdd), cancellationToken);
 
