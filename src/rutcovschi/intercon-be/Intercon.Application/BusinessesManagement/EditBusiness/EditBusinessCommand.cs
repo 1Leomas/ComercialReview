@@ -8,7 +8,8 @@ using MediatR;
 
 namespace Intercon.Application.BusinessesManagement.EditBusiness;
 
-public sealed record EditBusinessCommand(int CurrentUserId, int BusinessId, EditBusinessDto Data) : ICommand<EditBusinessDetailsDto?>;
+public sealed record EditBusinessCommand(int CurrentUserId, int BusinessId, EditBusinessRequest Data, int? NewLogoId) 
+    : ICommand<EditBusinessDetailsDto?>;
 
 public sealed class EditBusinessCommandHandler(
     IBusinessRepository businessRepository,
@@ -16,12 +17,10 @@ public sealed class EditBusinessCommandHandler(
 {
     public async Task<EditBusinessDetailsDto?> Handle(EditBusinessCommand command, CancellationToken cancellationToken)
     {
-        FileDataDto? logoFileData = null!;
-        if (command.Data.Logo is not null)
+        if (command.NewLogoId is not null)
         {
-            logoFileData = await mediator.Send(new UploadFileCommand(command.Data.Logo), cancellationToken);
-
-            var businessOldLogoId = await businessRepository.GetBusinessLogoIdAsync(command.BusinessId, cancellationToken);
+            var businessOldLogoId = 
+                await businessRepository.GetBusinessLogoIdAsync(command.BusinessId, cancellationToken);
 
             if (businessOldLogoId is not null)
                 await mediator.Send(new DeleteFileQuery(businessOldLogoId.Value), cancellationToken);
@@ -30,7 +29,7 @@ public sealed class EditBusinessCommandHandler(
         var businessDb = await businessRepository.UpdateBusinessAsync(
             command.BusinessId,
             command.Data,
-            logoFileData?.Id,
+            command.NewLogoId,
             cancellationToken);
 
         if (businessDb is null) return null;

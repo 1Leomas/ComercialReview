@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Intercon.Application.DataTransferObjects.Business;
 
-public record EditBusinessDto(
+public record EditBusinessRequest(
     string? Title,
     string? ShortDescription,
     string? FullDescription, 

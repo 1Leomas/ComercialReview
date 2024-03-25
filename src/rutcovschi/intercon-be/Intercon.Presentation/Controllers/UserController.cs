@@ -1,8 +1,6 @@
 ﻿using Intercon.Application.Abstractions;
 using Intercon.Application.CustomExceptions;
-using Intercon.Application.DataTransferObjects.Files;
 using Intercon.Application.DataTransferObjects.User;
-using Intercon.Application.FilesManagement.UploadFile;
 using Intercon.Application.UsersManagement.DeleteUser;
 using Intercon.Application.UsersManagement.EditUser;
 using Intercon.Application.UsersManagement.GetUser;
@@ -10,7 +8,6 @@ using Intercon.Application.UsersManagement.GetUsers;
 using Intercon.Application.UsersManagement.LoginUser;
 using Intercon.Application.UsersManagement.RefreshToken;
 using Intercon.Application.UsersManagement.RegisterUser;
-using Intercon.Application.UsersManagement.SetUserAvatarId;
 using Intercon.Application.UsersManagement.UserNameUniqueCheck;
 using Intercon.Domain.Identity;
 using Intercon.Presentation.Extensions;
@@ -20,6 +17,10 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Intercon.Application.DataTransferObjects;
+using Intercon.Application.FilesManagement.DeleteFile;
+using Intercon.Application.FilesManagement.UploadFile;
+using Intercon.Infrastructure.Repositories;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Intercon.Presentation.Controllers;
 
@@ -71,8 +72,19 @@ public class UserController(IMediator mediator, IImageValidator imageValidator) 
     public async Task<IActionResult> EditUser([FromForm] EditUserDto userToEdit, CancellationToken cancellationToken)
     {
         var currentUserId = HttpContext.User.GetUserId();
+        
+        int? newLogoId = null!;
+        if (userToEdit.Avatar is not null)
+        {
+            var logoFileData = await mediator.Send(new UploadFileCommand(userToEdit.Avatar), cancellationToken);
 
-        var updatedUser = await mediator.Send(new EditUserCommand(currentUserId, userToEdit), cancellationToken);
+            if (logoFileData is null)
+                throw new InvalidOperationException("Can not upload logo");
+
+            newLogoId = logoFileData.Id;
+        }
+
+        var updatedUser = await mediator.Send(new EditUserCommand(currentUserId, userToEdit, newLogoId), cancellationToken);
 
         return Ok(updatedUser);
     }

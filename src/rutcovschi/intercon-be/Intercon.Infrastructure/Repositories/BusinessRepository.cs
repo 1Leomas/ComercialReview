@@ -33,7 +33,7 @@ public class BusinessRepository(InterconDbContext context)
         return newBusiness.Id;
     }
 
-    public async Task<Business?> UpdateBusinessAsync(int id, EditBusinessDto newBusinessData, int? logoId, CancellationToken cancellationToken)
+    public async Task<Business?> UpdateBusinessAsync(int id, EditBusinessRequest newBusinessData, int? logoId, CancellationToken cancellationToken)
     {
         var businessDb = await context.Businesses
             .Include(business => business.Logo)

@@ -1,4 +1,5 @@
 ﻿using Intercon.Application.Abstractions;
+using Intercon.Infrastructure.Options;
 using Intercon.Infrastructure.Persistence;
 using Intercon.Infrastructure.Persistence.DataSeeder;
 using Intercon.Infrastructure.Services;
@@ -13,6 +14,8 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.Configure<AzureBlobStorageSettings>(configuration.GetSection(nameof(AzureBlobStorageSettings)));
+
         services.AddDbContext<InterconDbContext>(options =>
         {
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));

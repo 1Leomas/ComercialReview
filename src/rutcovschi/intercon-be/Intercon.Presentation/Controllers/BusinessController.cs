@@ -2,11 +2,10 @@ using Intercon.Application.BusinessesManagement.CreateBusiness;
 using Intercon.Application.BusinessesManagement.EditBusiness;
 using Intercon.Application.BusinessesManagement.GetBusiness;
 using Intercon.Application.BusinessesManagement.GetBusinesses;
-using Intercon.Application.BusinessesManagement.SetBusinessLogoId;
 using Intercon.Application.CustomExceptions;
 using Intercon.Application.DataTransferObjects.Business;
-using Intercon.Application.DataTransferObjects.Files;
 using Intercon.Application.FilesManagement.UploadFile;
+using Intercon.Domain.Entities;
 using Intercon.Presentation.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -55,11 +54,22 @@ public class BusinessController(IMediator mediator) : BaseController
     [HttpPut("{businessId}/edit")]
     [ProducesResponseType(typeof(EditBusinessDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> EditBusiness([FromRoute] int businessId, [FromForm] EditBusinessDto businessToEdit, CancellationToken cancellationToken)
+    public async Task<IActionResult> EditBusiness([FromRoute] int businessId, [FromForm] EditBusinessRequest businessToEdit, CancellationToken cancellationToken)
     {
         var currentUserId = HttpContext.User.GetUserId();
 
-        var updatedBusiness = await mediator.Send(new EditBusinessCommand(currentUserId, businessId, businessToEdit), cancellationToken);
+        int? newLogoId = null!;
+        if (businessToEdit.Logo is not null)
+        {
+            var logoFileData = await mediator.Send(new UploadFileCommand(businessToEdit.Logo), cancellationToken);
+
+            if (logoFileData is null)
+                throw new InvalidOperationException("Can not upload logo");
+
+            newLogoId = logoFileData.Id;
+        }
+        
+        var updatedBusiness = await mediator.Send(new EditBusinessCommand(currentUserId, businessId, businessToEdit, newLogoId), cancellationToken);
 
         return Ok(updatedBusiness);
     }

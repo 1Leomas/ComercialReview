@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Intercon.Application.UsersManagement.EditUser;
 
-public sealed record EditUserCommand(int UserId, EditUserDto Data) : ICommand<UserDetailsDto>;
+public sealed record EditUserCommand(int UserId, EditUserDto Data, int? NewLogoId) : ICommand<UserDetailsDto>;
 
 public sealed record EditUser
 {
@@ -27,13 +27,8 @@ public sealed class EditUserCommandHandler(
 {
     public async Task<UserDetailsDto> Handle(EditUserCommand command, CancellationToken cancellationToken)
     {
-        FileDataDto? avatarFileData = null!;
-        if (command.Data.Avatar is not null)
+        if (command.NewLogoId is not null)
         {
-            avatarFileData = await mediator.Send(new UploadFileCommand(command.Data.Avatar), cancellationToken);
-
-            if (avatarFileData is null) throw new InvalidOperationException("Can not upload avatar");
-
             var oldAvatarId = await userRepository.GetAvatarIdIfExistsAsync(command.UserId, cancellationToken);
 
             if (oldAvatarId is not null)
@@ -49,7 +44,7 @@ public sealed class EditUserCommandHandler(
             Email = command.Data.Email,
             FirstName = command.Data.FirstName,
             LastName = command.Data.LastName,
-            AvatarId = avatarFileData?.Id,
+            AvatarId = command.NewLogoId,
         };
 
         var userDb = await userRepository.UpdateUserAsync(

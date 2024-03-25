@@ -2,6 +2,8 @@
 using Intercon.Application.Abstractions;
 using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects;
+using Intercon.Application.DataTransferObjects.Files;
+using Intercon.Application.Extensions;
 using Microsoft.AspNetCore.Http;
 
 namespace Intercon.Application.FilesManagement.UploadFile;
@@ -26,12 +28,20 @@ internal sealed class UploadFileQueryHandler
     }
 }
 
-internal sealed class UploadFileValidator : AbstractValidator<UploadFileCommand>
+public sealed class UploadFileValidator : AbstractValidator<UploadFileCommand>
 {
     public UploadFileValidator(IImageValidator imageValidator)
     {
         RuleFor(x => x.ImageData.Length)
             .GreaterThan(0)
             .WithMessage("No file uploaded");
+
+        RuleFor(x => x.ImageData)
+            .MustAsync(async (data, ctx) =>
+            {
+                var fileData = new ImageData(data.FileName, await data.GetBytesAsync());
+
+                return imageValidator.IsValidImage(fileData);
+            }).WithMessage("Bad file type");
     }
 }
