@@ -1,4 +1,4 @@
-﻿using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions;
 using Intercon.Application.CustomExceptions;
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Application.UsersManagement.DeleteUser;
@@ -20,7 +20,7 @@ using Intercon.Application.DataTransferObjects;
 using Intercon.Application.FilesManagement.DeleteFile;
 using Intercon.Application.FilesManagement.UploadFile;
 using Intercon.Infrastructure.Repositories;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using Intercon.Application.UsersManagement.Logout;
 
 namespace Intercon.Presentation.Controllers;
 
@@ -144,4 +144,20 @@ public class UserController(IMediator mediator, IImageValidator imageValidator) 
 
         return Ok(user);
     }
+
+    [Authorize]
+    [HttpPost("logout")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync();
+
+        var currentUserId = HttpContext.User.GetUserId();
+
+        await mediator.Send(new LogoutCommand(currentUserId), CancellationToken.None);
+
+        return Ok();
+    }
+
 }

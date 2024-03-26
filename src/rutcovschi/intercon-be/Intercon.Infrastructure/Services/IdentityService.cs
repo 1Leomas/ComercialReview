@@ -1,4 +1,4 @@
-﻿using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions;
 using Intercon.Domain.Entities;
 using Intercon.Domain.Enums;
 using Intercon.Domain.Identity;
@@ -85,5 +85,12 @@ public class IdentityService(
         await context.SaveChangesAsync(cancellationToken);
 
         return newJwtToken;
+    }
+
+    public async Task LogoutUserAsync(int userId, CancellationToken cancellationToken)
+    {
+        await context.RefreshToken
+            .Where(x => x.UserId == userId)
+            .ExecuteDeleteAsync(cancellationToken);
     }
 }
