@@ -1,5 +1,6 @@
 ﻿using Intercon.Application.Abstractions;
 using Intercon.Application.Extensions.Mappers;
+using Intercon.Domain.Enums;
 using MediatR;
 
 namespace Intercon.Application.ReviewsManagement.GetAllReviews;
@@ -8,7 +9,8 @@ public record ReviewShortDto(
     int BusinessId,
     int AuthorId,
     float Grade,
-    string? ReviewText);
+    string? ReviewText,
+    int Like);
 
 public sealed record GetAllReviewsQuery : IRequest<IEnumerable<ReviewShortDto>>;
 

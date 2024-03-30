@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Intercon.Application.Abstractions;
+using Intercon.Domain.Enums;
 
 namespace Intercon.Application.ReviewsManagement.EditReview;
 
@@ -39,6 +40,14 @@ public sealed class EditReviewCommandValidator : AbstractValidator<EditReviewCom
             RuleFor(x => x.Data.ReviewText)
                 .MaximumLength(1000)
                 .WithName(x => nameof(x.Data.ReviewText));
+        });
+
+        When(x => x.Data.Like is not null, () =>
+        {
+            RuleFor(x => x.Data.Like)
+                .Must(x => Enum.IsDefined(typeof(LikeType), x))
+                .WithName(x => nameof(x.Data.Like))
+                .WithMessage("The like type is invalid");
         });
     }
 }

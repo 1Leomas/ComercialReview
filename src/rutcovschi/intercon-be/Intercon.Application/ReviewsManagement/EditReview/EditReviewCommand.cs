@@ -1,11 +1,12 @@
 ﻿using Intercon.Application.Abstractions;
 using Intercon.Application.Abstractions.Messaging;
+using Intercon.Domain.Enums;
 
 namespace Intercon.Application.ReviewsManagement.EditReview;
 
-public sealed record UpdatedReviewDto(int BusinessId, int AuthorId, float Grade, string? ReviewText);
+public sealed record UpdatedReviewDto(int BusinessId, int AuthorId, float Grade, string? ReviewText, int Like);
 
-public sealed record EditReviewDto(int? Grade, string? ReviewText);
+public sealed record EditReviewDto(int? Grade, string? ReviewText, int? Like);
 
 public sealed record EditReviewCommand(int BusinessId, int AuthorId, EditReviewDto Data) : ICommand<UpdatedReviewDto>;
 
@@ -23,7 +24,8 @@ internal sealed class EditReviewCommandHandler
             updatedReviewDb.BusinessId,
             updatedReviewDb.AuthorId,
             updatedReviewDb.Grade,
-            updatedReviewDb.ReviewText
+            updatedReviewDb.ReviewText,
+            (int)updatedReviewDb.Like
         );
     }
 }

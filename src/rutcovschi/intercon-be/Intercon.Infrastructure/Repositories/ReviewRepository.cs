@@ -2,6 +2,7 @@
 using Intercon.Application.ReviewsManagement.CreateReview;
 using Intercon.Application.ReviewsManagement.EditReview;
 using Intercon.Domain.Entities;
+using Intercon.Domain.Enums;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,7 +42,8 @@ public class ReviewRepository(InterconDbContext context)
             BusinessId = businessId,
             AuthorId = userId,
             Grade = newReview.Grade,
-            ReviewText = newReview.ReviewText
+            ReviewText = newReview.ReviewText,
+            Like = (LikeType)newReview.Like
         };
 
         await context.Reviews.AddAsync(review, cancellationToken);
@@ -77,6 +79,10 @@ public class ReviewRepository(InterconDbContext context)
         if (newReviewData.ReviewText != null)
         {
             reviewDb.ReviewText = newReviewData.ReviewText;
+        }
+        if (newReviewData.Like != null)
+        {
+            reviewDb.Like = (LikeType)newReviewData.Like.Value;
         }
 
         reviewDb.UpdateDate = DateTime.Now;

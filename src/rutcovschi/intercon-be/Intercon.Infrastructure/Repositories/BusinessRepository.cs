@@ -1,4 +1,4 @@
-﻿using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions;
 using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;

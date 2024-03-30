@@ -12,7 +12,7 @@ public static class ReviewMapper
         return new Review();
     }
 
-    public static ReviewDetailsDto ToDto(this Review review)
+    public static ReviewDetailsDto ToDetailedDto(this Review review)
     {
         return new ReviewDetailsDto(
             review.BusinessId,
@@ -24,6 +24,7 @@ public static class ReviewMapper
                 review.Author.Avatar?.Path),
             review.Grade,
             review.ReviewText,
+            (int)review.Like,
             review.CreateDate,
             review.UpdateDate,
             review.WasEdited);
@@ -35,7 +36,8 @@ public static class ReviewMapper
             review.BusinessId,
             review.AuthorId,
             review.Grade,
-            review.ReviewText);
+            review.ReviewText,
+            (int)review.Like);
     }
 
     //public static Review ToEntity(this CreateReviewDto review)

@@ -15,6 +15,6 @@ internal sealed class GetBusinessReviewsHandler
     {
         var reviews = await reviewRepository.GetBusinessReviewsAsync(request.BusinessId, cancellationToken);
 
-        return reviews.Select(x => x.ToDto());
+        return reviews.Select(x => x.ToDetailedDto());
     }
 }

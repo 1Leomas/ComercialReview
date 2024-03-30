@@ -2,6 +2,7 @@
 using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Application.Extensions.Mappers;
+using Intercon.Domain.Enums;
 
 namespace Intercon.Application.ReviewsManagement.GetReviewDetails;
 
@@ -11,6 +12,7 @@ public record ReviewDetailsDto(
     ReviewAuthorDto Author,
     float Grade,
     string? ReviewText,
+    int Like,
     DateTime CreateDate,
     DateTime UpdateDate,
     bool WasEdited
@@ -26,6 +28,6 @@ internal sealed class GetReviewDetailsHandler
         var reviewFromDb =
             await reviewRepository.GetReviewDetailsAsync(request.BusinessId, request.AuthorId, cancellationToken);
 
-        return reviewFromDb?.ToDto();
+        return reviewFromDb?.ToDetailedDto();
     }
 }
