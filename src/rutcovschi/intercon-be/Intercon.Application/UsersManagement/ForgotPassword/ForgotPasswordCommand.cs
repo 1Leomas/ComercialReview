@@ -28,6 +28,6 @@ internal sealed class ForgotPasswordCommandHandler(
             user.Email, 
             $"{user.FirstName} {user.LastName}", 
             "Reset Password",
-            $"Your reset password: \n{resetPasswordCode}\nUse it to reset password.");
+            $"Your reset password code: {resetPasswordCode}. Use it on reset password page to reset your password.");
     }
 }
