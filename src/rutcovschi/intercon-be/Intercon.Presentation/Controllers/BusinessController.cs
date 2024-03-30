@@ -2,10 +2,12 @@ using Intercon.Application.BusinessesManagement.CreateBusiness;
 using Intercon.Application.BusinessesManagement.EditBusiness;
 using Intercon.Application.BusinessesManagement.GetBusiness;
 using Intercon.Application.BusinessesManagement.GetBusinesses;
+using Intercon.Application.BusinessesManagement.GetPaginatedBusinesses;
 using Intercon.Application.CustomExceptions;
+using Intercon.Application.DataTransferObjects;
 using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Application.FilesManagement.UploadFile;
-using Intercon.Domain.Entities;
+using Intercon.Domain.Pagination;
 using Intercon.Presentation.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -27,11 +29,18 @@ public class BusinessController(IMediator mediator) : BaseController
         return business == null ? NotFound() : Ok(business);
     }
 
-    [HttpGet]
+    [HttpGet("all")]
     [ProducesResponseType(typeof(IEnumerable<BusinessDetailsDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetBusinesses(CancellationToken cancellationToken)
     {
         return Ok(await mediator.Send(new GetAllBusinessesQuery(), cancellationToken));
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(PaginatedResponse<BusinessDetailsDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetPaginatedBusinesses([FromQuery] BusinessParameters parameters, CancellationToken cancellationToken)
+    {
+        return Ok(await mediator.Send(new GetPaginatedBusinessesQuery(parameters), cancellationToken));
     }
 
     [Authorize(Roles = "2")]

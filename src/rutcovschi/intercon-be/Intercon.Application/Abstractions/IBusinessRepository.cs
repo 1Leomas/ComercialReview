@@ -1,5 +1,6 @@
 ﻿using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Domain.Entities;
+using Intercon.Domain.Pagination;
 
 namespace Intercon.Application.Abstractions;
 
@@ -13,4 +14,5 @@ public interface IBusinessRepository
     Task<bool> UserHasBusinessAsync(int userId, CancellationToken cancellationToken);
     Task<int?> GetBusinessLogoIdAsync(int businessId, CancellationToken cancellationToken);
     Task<bool> UserOwnsBusinessAsync(int userId, int businessId, CancellationToken cancellationToken);
+    Task<PaginatedList<Business>> GetPaginatedBusinessesAsync(BusinessParameters parameters, CancellationToken cancellationToken);
 }

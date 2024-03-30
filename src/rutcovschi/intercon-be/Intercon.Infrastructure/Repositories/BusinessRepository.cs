@@ -1,6 +1,7 @@
 using Intercon.Application.Abstractions;
 using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Domain.Entities;
+using Intercon.Domain.Pagination;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -97,5 +98,17 @@ public class BusinessRepository(InterconDbContext context)
     public async Task<bool> UserOwnsBusinessAsync(int userId, int businessId, CancellationToken cancellationToken)
     {
         return await context.Businesses.AnyAsync(x => x.OwnerId == userId && x.Id == businessId, cancellationToken);
+    }
+
+    public async Task<PaginatedList<Business>> GetPaginatedBusinessesAsync(BusinessParameters parameters, CancellationToken cancellationToken)
+    {
+        var businesses = context.Businesses
+            .AsNoTracking()
+            .Include(x => x.Logo)
+            .OrderBy(x => x.Id)
+            .AsQueryable();
+
+        return await PaginatedList<Business>.ToPagedList(businesses, parameters.PageNumber,
+            parameters.PageSize);
     }
 }
