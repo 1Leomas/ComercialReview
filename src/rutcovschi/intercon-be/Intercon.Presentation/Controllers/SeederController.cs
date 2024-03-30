@@ -1,5 +1,4 @@
 ﻿using Intercon.Infrastructure.Persistence.DataSeeder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Intercon.Presentation.Controllers;

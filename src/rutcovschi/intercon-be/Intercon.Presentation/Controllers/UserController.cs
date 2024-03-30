@@ -1,4 +1,4 @@
-using Intercon.Application.Abstractions;
+﻿using Intercon.Application.Abstractions;
 using Intercon.Application.CustomExceptions;
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Application.UsersManagement.DeleteUser;
@@ -17,10 +17,13 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Intercon.Application.DataTransferObjects;
-using Intercon.Application.FilesManagement.DeleteFile;
 using Intercon.Application.FilesManagement.UploadFile;
-using Intercon.Infrastructure.Repositories;
+using Intercon.Application.UsersManagement.ForgotPassword;
 using Intercon.Application.UsersManagement.Logout;
+using Intercon.Application.UsersManagement.ResetPassword;
+using Intercon.Application.UsersManagement.VerifyPasswordResetCode;
+using Microsoft.AspNetCore.Identity.Data;
+using ResetPasswordRequest = Intercon.Application.DataTransferObjects.User.ResetPasswordRequest;
 
 namespace Intercon.Presentation.Controllers;
 
@@ -69,6 +72,7 @@ public class UserController(IMediator mediator, IImageValidator imageValidator) 
     [HttpPut("edit")]
     [ProducesResponseType(typeof(UserDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> EditUser([FromForm] EditUserDto userToEdit, CancellationToken cancellationToken)
     {
         var currentUserId = HttpContext.User.GetUserId();
@@ -92,6 +96,7 @@ public class UserController(IMediator mediator, IImageValidator imageValidator) 
     [Authorize]
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> DeleteUser(CancellationToken cancellationToken)
     {
         var currentUserId = HttpContext.User.GetUserId();
@@ -136,6 +141,7 @@ public class UserController(IMediator mediator, IImageValidator imageValidator) 
     [Authorize]
     [HttpGet("identity")]
     [ProducesResponseType(typeof(UserDetailsDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetUserIdentity(CancellationToken cancellationToken)
     {
         var currentUserId = HttpContext.User.GetUserId();
@@ -143,6 +149,38 @@ public class UserController(IMediator mediator, IImageValidator imageValidator) 
         var user = await mediator.Send(new GetUserQuery(currentUserId), cancellationToken);
 
         return Ok(user);
+    }
+
+    [HttpPost("forgot-password")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest forgotPasswordDto,
+        CancellationToken cancellationToken)
+    {
+        await mediator.Send(new ForgotPasswordCommand(forgotPasswordDto.Email), cancellationToken);
+
+        return Ok();
+    }
+
+    [HttpPost("reset-password")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest resetPasswordRequest,
+        CancellationToken cancellationToken)
+    {
+        await mediator.Send(new ResetPasswordCommand(resetPasswordRequest), cancellationToken);
+
+        return Ok();
+    }
+
+    [HttpGet("verify-reset-code")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> VerifyResetCode([FromQuery] string resetCode,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new VerifyPasswordResetCodeQuery(resetCode), cancellationToken);
+
+        return result ? Ok() : BadRequest();
     }
 
     [Authorize]

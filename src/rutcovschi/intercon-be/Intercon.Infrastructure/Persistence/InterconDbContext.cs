@@ -3,6 +3,7 @@ using Intercon.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace Intercon.Infrastructure.Persistence;
 
@@ -16,11 +17,19 @@ public class InterconDbContext : IdentityDbContext<User, IdentityRole<int>, int>
     public DbSet<Business> Businesses { get; set; }
     public DbSet<FileData> DataFiles { get; set; }
 
-    public virtual DbSet<RefreshToken> RefreshToken { get; set; }
+    public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
+    public virtual DbSet<ResetPasswordCode> ResetPasswordCodes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<IdentityUser>(b =>
+        {
+            b.ToTable("Users");
+        });
+
+
         builder.ApplyConfigurationsFromAssembly(AssemblyReference.Assembly);
     }
 }

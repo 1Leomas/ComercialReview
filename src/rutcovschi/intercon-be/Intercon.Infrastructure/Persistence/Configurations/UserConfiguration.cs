@@ -1,5 +1,6 @@
 ﻿using Intercon.Domain.Entities;
 using Intercon.Domain.Enums;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -26,6 +27,19 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .WithMany()
             .HasForeignKey(u => u.AvatarId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasIndex(u => u.Email).IsUnique();
+        builder.HasIndex(u => u.UserName).IsUnique();
+    }
+}
+
+public class IdentityUserConfiguration : IEntityTypeConfiguration<IdentityUser>
+{
+    public void Configure(EntityTypeBuilder<IdentityUser> builder)
+    {
+        builder.HasKey(u => u.Id);
+        builder.Property(u => u.Email).IsRequired().HasMaxLength(255);
+        builder.Property(u => u.UserName).HasMaxLength(50);
 
         builder.HasIndex(u => u.Email).IsUnique();
         builder.HasIndex(u => u.UserName).IsUnique();

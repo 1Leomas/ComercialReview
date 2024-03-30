@@ -5,6 +5,7 @@ using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,9 +13,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intercon.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(InterconDbContext))]
-    partial class InterconDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240330101809_AddLikeFieldToReview")]
+    partial class AddLikeFieldToReview
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -112,31 +115,6 @@ namespace Intercon.Infrastructure.Persistence.Migrations
                     b.HasIndex("BusinessId");
 
                     b.ToTable("DataFiles");
-                });
-
-            modelBuilder.Entity("Intercon.Domain.Entities.ResetPasswordCode", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ValidUntilDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ResetPasswordCodes");
                 });
 
             modelBuilder.Entity("Intercon.Domain.Entities.Review", b =>
@@ -312,7 +290,7 @@ namespace Intercon.Infrastructure.Persistence.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshToken");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
@@ -533,17 +511,6 @@ namespace Intercon.Infrastructure.Persistence.Migrations
                     b.HasOne("Intercon.Domain.Entities.Business", null)
                         .WithMany("Images")
                         .HasForeignKey("BusinessId");
-                });
-
-            modelBuilder.Entity("Intercon.Domain.Entities.ResetPasswordCode", b =>
-                {
-                    b.HasOne("Intercon.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Intercon.Domain.Entities.Review", b =>

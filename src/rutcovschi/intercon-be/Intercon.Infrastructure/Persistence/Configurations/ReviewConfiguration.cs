@@ -1,4 +1,5 @@
 ﻿using Intercon.Domain.Entities;
+using Intercon.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,6 +13,8 @@ public class ReviewConfiguration : IEntityTypeConfiguration<Review>
 
         builder.Property(r => r.Grade).IsRequired();
         builder.Property(r => r.ReviewText).HasMaxLength(1000);
+        builder.Property(r => r.Like).HasDefaultValue(LikeType.None);
+
 
         builder.HasOne(r => r.Author)
                .WithMany(u => u.Reviews)

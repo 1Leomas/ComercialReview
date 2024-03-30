@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
 using Intercon.Application.Options;
+using Intercon.Infrastructure.Options;
 using Intercon.Presentation.AppSettingsOptions;
 
 namespace Intercon.Presentation.Extensions;
@@ -44,16 +45,17 @@ public static class DependencyInjection
         // Specify identity requirements
         // Must be added before .AddAuthentication otherwise a 404 is thrown on authorized endpoints
         services.AddIdentity<User, IdentityRole<int>>(options =>
-                {
-                    options.SignIn.RequireConfirmedAccount = false;
-                    options.User.RequireUniqueEmail = true;
-                    options.Password.RequireDigit = false;
-                    options.Password.RequiredLength = 6;
-                    options.Password.RequireNonAlphanumeric = false;
-                    options.Password.RequireUppercase = false;
-                })
-                .AddRoles<IdentityRole<int>>()
-                .AddEntityFrameworkStores<InterconDbContext>();
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.User.RequireUniqueEmail = true;
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+            })
+            .AddRoles<IdentityRole<int>>()
+            .AddEntityFrameworkStores<InterconDbContext>()
+            .AddTokenProvider<DataProtectorTokenProvider<User>>(TokenOptions.DefaultProvider);
 
         // These will eventually be moved to a secrets file, but for alpha development appsettings is fine
         var validIssuer = configuration.GetValue<string>("JwtTokenSettings:ValidIssuer");
@@ -123,5 +125,7 @@ public static class DependencyInjection
     {
         services.Configure<JwtTokenSettings>(cfg.GetSection(nameof(JwtTokenSettings)));
         services.Configure<SiteSettings>(cfg.GetSection(nameof(SiteSettings)));
+        services.Configure<EmailSettings>(cfg.GetSection(nameof(EmailSettings)));
+        services.Configure<ResetPasswordSettings>(cfg.GetSection(nameof(ResetPasswordSettings)));
     }
 }

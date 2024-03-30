@@ -1,18 +1,24 @@
-using Intercon.Application.Abstractions;
+﻿using Intercon.Application.Abstractions;
 using Intercon.Domain.Entities;
 using Intercon.Domain.Enums;
 using Intercon.Domain.Identity;
+using Intercon.Infrastructure.Options;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using DateTime = System.DateTime;
 
 namespace Intercon.Infrastructure.Services;
 
 public class IdentityService(
     InterconDbContext context,
     UserManager<User> userManager,
-    ITokenService tokenService) : IIdentityService
+    ITokenService tokenService,
+    IOptions<ResetPasswordSettings> resetPasswordSettings) : IIdentityService
 {
+    private readonly ResetPasswordSettings _resetPasswordSettings = resetPasswordSettings.Value;
+
     public async Task<Tokens> LoginUserAsync(string email, string password, CancellationToken cancellationToken)
     {
         var userDb = await userManager.FindByEmailAsync(email)
@@ -27,7 +33,7 @@ public class IdentityService(
 
         var tokens = tokenService.CreateTokens(userDb.Id, (int)userDb.Role);
 
-        var userRefreshTokenDb = await context.RefreshToken.FirstOrDefaultAsync(
+        var userRefreshTokenDb = await context.RefreshTokens.FirstOrDefaultAsync(
                 x => x.UserId == userDb.Id,
                 cancellationToken);
 
@@ -46,7 +52,7 @@ public class IdentityService(
                 UserId = userDb.Id
             };
 
-            context.RefreshToken.Add(userRefreshToken);
+            context.RefreshTokens.Add(userRefreshToken);
         }
 
         await context.SaveChangesAsync(cancellationToken);
@@ -63,7 +69,7 @@ public class IdentityService(
 
         var userId = int.Parse(userIdClaim.Value);
 
-        var refreshTokenFromDb = await context.RefreshToken.FirstOrDefaultAsync(
+        var refreshTokenFromDb = await context.RefreshTokens.FirstOrDefaultAsync(
             x => x.UserId == userId && x.Token == tokens.RefreshToken && x.IsActive == true, 
             cancellationToken);
 
@@ -89,8 +95,48 @@ public class IdentityService(
 
     public async Task LogoutUserAsync(int userId, CancellationToken cancellationToken)
     {
-        await context.RefreshToken
+        await context.RefreshTokens
             .Where(x => x.UserId == userId)
             .ExecuteDeleteAsync(cancellationToken);
+    }
+
+    public async Task<string> GenerateResetPasswordCodeAsync(int userId)
+    {
+        var random = new Random();
+        var resetPasswordCode = random.Next(100000, 999999).ToString();
+
+        await context.ResetPasswordCodes.AddAsync(new ResetPasswordCode()
+        {
+            UserId = userId,
+            Code = resetPasswordCode,
+            ValidUntilDate = DateTime.Now + TimeSpan.FromMinutes(_resetPasswordSettings.CodeExpirationTimeInMinutes)
+        });
+
+        await context.SaveChangesAsync();
+
+        return resetPasswordCode;
+    }
+
+    public async Task<bool> VerifyResetPasswordCode(int userId, string resetPasswordCode)
+    {
+        var code = await context.ResetPasswordCodes.FirstOrDefaultAsync(
+            x => x.UserId == userId
+            && x.Code == resetPasswordCode
+            && x.ValidUntilDate > DateTime.Now);
+
+        if (code == null) return false;
+
+        context.ResetPasswordCodes.Remove(code);
+        await context.SaveChangesAsync();
+
+        return true;
+    }
+    public async Task<bool> VerifyResetPasswordCode(string resetPasswordCode)
+    {
+        var code = await context.ResetPasswordCodes.FirstOrDefaultAsync(
+            x => x.Code == resetPasswordCode
+                 && x.ValidUntilDate > DateTime.Now);
+
+        return code != null;
     }
 }

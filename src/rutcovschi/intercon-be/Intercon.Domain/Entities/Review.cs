@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Intercon.Domain.Abstractions;
+using Intercon.Domain.Enums;
 
 namespace Intercon.Domain.Entities;
 
@@ -8,6 +9,7 @@ public class Review
     [Range(1, 5)]
     public int Grade { get; set; }
     public string? ReviewText { get; set; } = null!;
+    public LikeType Like { get; set; }
 
     public int BusinessId { get; set; }
     public int AuthorId { get; set; }
