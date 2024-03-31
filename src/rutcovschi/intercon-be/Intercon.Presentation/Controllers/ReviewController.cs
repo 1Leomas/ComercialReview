@@ -1,4 +1,3 @@
-using Intercon.Application.BusinessesManagement.GetPaginatedBusinesses;
 using Intercon.Application.CustomExceptions;
 using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Application.DataTransferObjects;

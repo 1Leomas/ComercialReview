@@ -26,6 +26,18 @@ public class BusinessRepository(InterconDbContext context)
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<PaginatedList<Business>> GetPaginatedBusinessesAsync(BusinessParameters parameters, CancellationToken cancellationToken)
+    {
+        var businesses = context.Businesses
+            .AsNoTracking()
+            .Include(x => x.Logo)
+            .OrderByDescending(x => x.UpdateDate)
+            .AsQueryable();
+
+        return await PaginatedList<Business>.ToPagedList(businesses, parameters.PageNumber,
+            parameters.PageSize);
+    }
+
     public async Task<int> CreateBusinessAsync(Business newBusiness, CancellationToken cancellationToken)
     {
         await context.Businesses.AddAsync(newBusiness, cancellationToken);
@@ -98,17 +110,5 @@ public class BusinessRepository(InterconDbContext context)
     public async Task<bool> UserOwnsBusinessAsync(int userId, int businessId, CancellationToken cancellationToken)
     {
         return await context.Businesses.AnyAsync(x => x.OwnerId == userId && x.Id == businessId, cancellationToken);
-    }
-
-    public async Task<PaginatedList<Business>> GetPaginatedBusinessesAsync(BusinessParameters parameters, CancellationToken cancellationToken)
-    {
-        var businesses = context.Businesses
-            .AsNoTracking()
-            .Include(x => x.Logo)
-            .OrderBy(x => x.Id)
-            .AsQueryable();
-
-        return await PaginatedList<Business>.ToPagedList(businesses, parameters.PageNumber,
-            parameters.PageSize);
     }
 }
