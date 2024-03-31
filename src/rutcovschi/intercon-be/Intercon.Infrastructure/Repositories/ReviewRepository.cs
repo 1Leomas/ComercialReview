@@ -3,6 +3,7 @@ using Intercon.Application.ReviewsManagement.CreateReview;
 using Intercon.Application.ReviewsManagement.EditReview;
 using Intercon.Domain.Entities;
 using Intercon.Domain.Enums;
+using Intercon.Domain.Pagination;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,6 +29,20 @@ public class ReviewRepository(InterconDbContext context)
             .ThenInclude(user => user.Avatar)
             .Where(x => x.BusinessId == businessId)
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<PaginatedList<Review>> GetPaginatedBusinessReviewsAsync(int businessId, ReviewParameters parameters, CancellationToken cancellationToken)
+    {
+        var reviews = context.Reviews
+            .AsNoTracking()
+            .Include(review => review.Author)
+            .ThenInclude(user => user.Avatar)
+            .OrderByDescending(x => x.UpdateDate)
+            .Where(x => x.BusinessId == businessId)
+            .AsQueryable();
+
+        return await PaginatedList<Review>.ToPagedList(reviews, parameters.PageNumber,
+            parameters.PageSize);
     }
 
     public async Task<IEnumerable<Review>> GetAllReviewsAsync(CancellationToken cancellationToken)

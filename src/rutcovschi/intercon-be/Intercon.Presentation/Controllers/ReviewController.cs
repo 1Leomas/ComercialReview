@@ -1,14 +1,19 @@
+using Intercon.Application.BusinessesManagement.GetPaginatedBusinesses;
 using Intercon.Application.CustomExceptions;
+using Intercon.Application.DataTransferObjects.Business;
+using Intercon.Application.DataTransferObjects;
 using Intercon.Application.ReviewsManagement.CreateReview;
 using Intercon.Application.ReviewsManagement.DeleteReview;
 using Intercon.Application.ReviewsManagement.EditReview;
 using Intercon.Application.ReviewsManagement.GetAllReviews;
 using Intercon.Application.ReviewsManagement.GetBusinessReviews;
 using Intercon.Application.ReviewsManagement.GetReviewDetails;
+using Intercon.Domain.Pagination;
 using Intercon.Presentation.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Intercon.Application.ReviewsManagement.GetPaginatedBusinessReviews;
 
 namespace Intercon.Presentation.Controllers;
 
@@ -37,11 +42,18 @@ public class ReviewController(IMediator mediator) : BaseController
         return Ok(review);
     }
 
-    [HttpGet("api/businesses/{businessId}/reviews")]
+    [HttpGet("api/businesses/{businessId}/all-reviews")]
     [ProducesResponseType(typeof(IEnumerable<ReviewDetailsDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetBusinessReviews([FromRoute] int businessId, CancellationToken cancellationToken)
     {
         return Ok(await mediator.Send(new GetBusinessReviewsQuery(businessId), cancellationToken));
+    }
+
+    [HttpGet("api/businesses/{businessId}/reviews")]
+    [ProducesResponseType(typeof(PaginatedResponse<BusinessDetailsDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetPaginatedBusinesses([FromRoute] int businessId, [FromQuery] ReviewParameters parameters, CancellationToken cancellationToken)
+    {
+        return Ok(await mediator.Send(new GetPaginatedBusinessReviewsQuery(businessId, parameters), cancellationToken));
     }
 
     [Authorize]
