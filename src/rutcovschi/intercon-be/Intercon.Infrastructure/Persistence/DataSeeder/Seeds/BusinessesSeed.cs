@@ -23,7 +23,8 @@ public class BusinessesSeed
                     Latitude = "46.997268711131156",
                     Longitude = "28.808228905548145"
                 },
-                Category = BusinessCategory.Supermarket
+                Category = BusinessCategory.Supermarket,
+                LogoId = 1
             },
             new Business
             {
@@ -38,7 +39,8 @@ public class BusinessesSeed
                     Latitude = "46.99245259019449",
                     Longitude = "28.8195631373346"
                 },
-                Category = BusinessCategory.Supermarket
+                Category = BusinessCategory.Supermarket,
+                LogoId = 2
             },
             new Business
             {
@@ -53,7 +55,8 @@ public class BusinessesSeed
                     Latitude = "46.99033662341652",
                     Longitude = "28.827228161847135"
                 },
-                Category = BusinessCategory.Supermarket
+                Category = BusinessCategory.Supermarket,
+                LogoId = 3
             },
             new Business
             {
@@ -68,7 +71,8 @@ public class BusinessesSeed
                     Latitude = "46.98159778023099",
                     Longitude = "28.838277932155503"
                 },
-                Category = BusinessCategory.Supermarket
+                Category = BusinessCategory.Supermarket,
+                LogoId = 4
             },
             new Business
             {
@@ -83,7 +87,8 @@ public class BusinessesSeed
                     Latitude = "46.97901985761206",
                     Longitude = "28.84628902068298"
                 },
-                Category = BusinessCategory.Supermarket
+                Category = BusinessCategory.Supermarket,
+                LogoId = 5
             },
             new Business
             {
@@ -98,7 +103,8 @@ public class BusinessesSeed
                     Latitude = "46.97440110685183",
                     Longitude = "28.8484844829509"
                 },
-                Category = BusinessCategory.Supermarket
+                Category = BusinessCategory.Supermarket,
+                LogoId = 6
             },
             new Business
             {
@@ -113,7 +119,8 @@ public class BusinessesSeed
                     Latitude = "46.97683767341616",
                     Longitude = "28.86946481346383"
                 },
-                Category = BusinessCategory.Supermarket
+                Category = BusinessCategory.Supermarket,
+                LogoId = 7
             },
             new Business
             {
@@ -128,7 +135,8 @@ public class BusinessesSeed
                     Latitude = "46.98006234030243",
                     Longitude = "28.85696562791677"
                 },
-                Category = BusinessCategory.Supermarket
+                Category = BusinessCategory.Supermarket,
+                LogoId = 8
             },
             new Business
             {
@@ -143,7 +151,8 @@ public class BusinessesSeed
                     Latitude = "46.98254643240371",
                     Longitude = "28.852738466974355"
                 },
-                Category = BusinessCategory.Supermarket
+                Category = BusinessCategory.Supermarket,
+                LogoId = 9
             },
             new Business
             {
@@ -158,7 +167,8 @@ public class BusinessesSeed
                     Latitude = "46.98363535990976",
                     Longitude = "28.848487165341734"
                 },
-                Category = BusinessCategory.Supermarket
+                Category = BusinessCategory.Supermarket,
+                LogoId = 10
             },
             new Business
             {
@@ -173,7 +183,8 @@ public class BusinessesSeed
                     Latitude = "46.9854276408486",
                     Longitude = "28.84450810863036"
                 },
-                Category = BusinessCategory.Supermarket
+                Category = BusinessCategory.Supermarket,
+                LogoId = 11
             },
             new Business
             {
@@ -188,7 +199,8 @@ public class BusinessesSeed
                     Latitude = "46.98837896380982",
                     Longitude = "28.847787780138415"
                 },
-                Category = BusinessCategory.Supermarket
+                Category = BusinessCategory.Supermarket,
+                LogoId = 12
             },
             new Business
             {
@@ -203,7 +215,8 @@ public class BusinessesSeed
                     Latitude = "46.989030778364764",
                     Longitude = "28.8523951505316"
                 },
-                Category = BusinessCategory.Supermarket
+                Category = BusinessCategory.Supermarket,
+                LogoId = 13
             },
             new Business
             {
@@ -218,7 +231,8 @@ public class BusinessesSeed
                     Latitude = "46.98675285653647",
                     Longitude = "28.873743911958265"
                 },
-                Category = BusinessCategory.Supermarket
+                Category = BusinessCategory.Supermarket,
+                LogoId = 14
             },
             new Business
             {
@@ -233,7 +247,8 @@ public class BusinessesSeed
                     Latitude = "46.99398475692658",
                     Longitude = "28.868086811800232"
                 },
-                Category = BusinessCategory.Supermarket
+                Category = BusinessCategory.Supermarket,
+                LogoId = 15
             },
             new Business
             {
@@ -248,7 +263,8 @@ public class BusinessesSeed
                     Latitude = "46.9840704074349",
                     Longitude = "28.89469700456433"
                 },
-                Category = BusinessCategory.Supermarket
+                Category = BusinessCategory.Supermarket,
+                LogoId = 16
             },
             new Business
             {
@@ -263,7 +279,8 @@ public class BusinessesSeed
                     Latitude = "46.99821020387124",
                     Longitude = "28.852975914683928"
                 },
-                Category = BusinessCategory.Supermarket
+                Category = BusinessCategory.Supermarket,
+                LogoId = 17
             },
             new Business
             {
@@ -278,7 +295,8 @@ public class BusinessesSeed
                     Latitude = "47.00055475652262",
                     Longitude = "28.860421333180224"
                 },
-                Category = BusinessCategory.Supermarket
+                Category = BusinessCategory.Supermarket,
+                LogoId = 18
             },
             new Business
             {
@@ -293,7 +311,8 @@ public class BusinessesSeed
                     Latitude = "47.002573085802815",
                     Longitude = "28.86912407950438"
                 },
-                Category = BusinessCategory.Supermarket
+                Category = BusinessCategory.Supermarket,
+                LogoId = 19
             },
             new Business
             {
@@ -308,7 +327,8 @@ public class BusinessesSeed
                     Latitude = "47.014784396197186",
                     Longitude = "28.84825418047755"
                 },
-                Category = BusinessCategory.Supermarket
+                Category = BusinessCategory.Supermarket,
+                LogoId = 20
             },
             new Business
             {
