@@ -18,6 +18,14 @@ public class BusinessRepository(InterconDbContext context)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
+    public async Task<Business?> GetBusinessByUserIdAsync(int userId, CancellationToken cancellationToken)
+    {
+        return await context.Businesses
+            .AsNoTracking()
+            .Include(x => x.Logo)
+            .FirstOrDefaultAsync(x => x.OwnerId == userId, cancellationToken);
+    }
+
     public async Task<IEnumerable<Business>> GetAllBusinessesAsync(CancellationToken cancellationToken)
     {
         return await context.Businesses

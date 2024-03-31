@@ -2,6 +2,7 @@ using Intercon.Application.BusinessesManagement.CreateBusiness;
 using Intercon.Application.BusinessesManagement.EditBusiness;
 using Intercon.Application.BusinessesManagement.GetBusiness;
 using Intercon.Application.BusinessesManagement.GetBusinesses;
+using Intercon.Application.BusinessesManagement.GetCurrentUserBusiness;
 using Intercon.Application.BusinessesManagement.GetPaginatedBusinesses;
 using Intercon.Application.CustomExceptions;
 using Intercon.Application.DataTransferObjects;
@@ -41,6 +42,19 @@ public class BusinessController(IMediator mediator) : BaseController
     public async Task<IActionResult> GetPaginatedBusinesses([FromQuery] BusinessParameters parameters, CancellationToken cancellationToken)
     {
         return Ok(await mediator.Send(new GetPaginatedBusinessesQuery(parameters), cancellationToken));
+    }
+
+    [Authorize]
+    [HttpGet("my")]
+    [ProducesResponseType(typeof(BusinessDetailsDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetMyBusiness(CancellationToken cancellationToken)
+    {
+        var currentUserId = HttpContext.User.GetUserId();
+
+        var business = await mediator.Send(new GetCurrentUserBusinessQuery(currentUserId), cancellationToken);
+
+        return business == null ? NotFound() : Ok(business);
     }
 
     [Authorize(Roles = "2")]

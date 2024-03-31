@@ -7,6 +7,7 @@ namespace Intercon.Application.Abstractions;
 public interface IBusinessRepository
 {
     Task<Business?> GetBusinessByIdAsync(int id, CancellationToken cancellationToken);
+    Task<Business?> GetBusinessByUserIdAsync(int userId, CancellationToken cancellationToken);
     Task<IEnumerable<Business>> GetAllBusinessesAsync(CancellationToken cancellationToken);
     Task<PaginatedList<Business>> GetPaginatedBusinessesAsync(BusinessParameters parameters, CancellationToken cancellationToken);
     Task<int> CreateBusinessAsync(Business newBusiness, CancellationToken cancellationToken);
