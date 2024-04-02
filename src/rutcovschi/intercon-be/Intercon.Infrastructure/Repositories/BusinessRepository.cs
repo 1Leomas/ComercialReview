@@ -2,6 +2,7 @@ using Intercon.Application.Abstractions;
 using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Domain.Entities;
 using Intercon.Domain.Pagination;
+using Intercon.Infrastructure.Extensions;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,11 +40,50 @@ public class BusinessRepository(InterconDbContext context)
         var businesses = context.Businesses
             .AsNoTracking()
             .Include(x => x.Logo)
-            .OrderByDescending(x => x.UpdateDate)
             .AsQueryable();
+
+
+        businesses = parameters.SortBy is not null
+            ? ApplySort(businesses, parameters.SortBy.Value, parameters.SortDirection)
+            : businesses.OrderByDescending(x => x.UpdateDate);
+
+        businesses = ApplyFilter(businesses, parameters);
 
         return await PaginatedList<Business>.ToPagedList(businesses, parameters.PageNumber,
             parameters.PageSize);
+    }
+
+    private IQueryable<Business> ApplySort(
+        IQueryable<Business> businesses, 
+        BusinessSortBy sortBy, 
+        SortingDirection? direction = SortingDirection.Ascending)
+    {
+        return sortBy switch
+        {
+            BusinessSortBy.Title => businesses.OrderUsing(x => x.Title, direction ?? SortingDirection.Ascending),
+            BusinessSortBy.Category => businesses.OrderUsing(x => x.Category, direction ?? SortingDirection.Ascending),
+            BusinessSortBy.Rating => businesses.OrderUsing(x => x.Rating, direction ?? SortingDirection.Ascending),
+        };
+    }
+
+    private IQueryable<Business> ApplyFilter(IQueryable<Business> businesses, BusinessParameters parameters)
+    {
+        if (!string.IsNullOrEmpty(parameters.Title))
+        {
+            businesses = businesses.Where(x => x.Title.Contains(parameters.Title));
+        }
+
+        if (parameters.Category.HasValue)
+        {
+            businesses = businesses.Where(x => x.Category == parameters.Category.Value);
+        }
+
+        if (parameters.Rating.HasValue)
+        {
+            businesses = businesses.Where(x => x.Rating >= parameters.Rating.Value);
+        }
+
+        return businesses;
     }
 
     public async Task<int> CreateBusinessAsync(Business newBusiness, CancellationToken cancellationToken)

@@ -41,7 +41,9 @@ public class ReviewRepository(InterconDbContext context)
             .Where(x => x.BusinessId == businessId)
             .AsQueryable();
 
-        return await PaginatedList<Review>.ToPagedList(reviews, parameters.PageNumber,
+        return await PaginatedList<Review>.ToPagedList(
+            reviews, 
+            parameters.PageNumber,
             parameters.PageSize);
     }
 
