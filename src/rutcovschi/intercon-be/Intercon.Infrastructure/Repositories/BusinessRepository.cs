@@ -1,6 +1,7 @@
 using Intercon.Application.Abstractions;
 using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Domain.Entities;
+using Intercon.Domain.Enums;
 using Intercon.Domain.Pagination;
 using Intercon.Infrastructure.Extensions;
 using Intercon.Infrastructure.Persistence;
@@ -67,20 +68,24 @@ public class BusinessRepository(InterconDbContext context)
 
     private IQueryable<Business> ApplyFilter(IQueryable<Business> businesses, BusinessParameters parameters)
     {
-        if (!string.IsNullOrEmpty(parameters.Title))
+
+        if (!string.IsNullOrEmpty(parameters.Search))
         {
-            businesses = businesses.Where(x => x.Title.Contains(parameters.Title));
+            var search = parameters.Search;
+
+            businesses = businesses.Where(x => 
+                x.Title.Contains(search) || 
+                x.ShortDescription.Contains(search) ||
+                (x.FullDescription != null && x.FullDescription.Contains(search)) ||
+                (x.Address.Street != null && x.Address.Street.Contains(search)));
         }
 
-        if (parameters.Category.HasValue)
+        if (parameters.Categories.Any() && !parameters.Categories.Contains(BusinessCategory.All))
         {
-            businesses = businesses.Where(x => x.Category == parameters.Category.Value);
+            businesses = businesses.Where(x => parameters.Categories.Contains(x.Category));
         }
 
-        if (parameters.Rating.HasValue)
-        {
-            businesses = businesses.Where(x => x.Rating >= parameters.Rating.Value);
-        }
+        businesses = businesses.Where(x => x.Rating >= parameters.MinGrade && x.Rating <= parameters.MaxGrade);
 
         return businesses;
     }

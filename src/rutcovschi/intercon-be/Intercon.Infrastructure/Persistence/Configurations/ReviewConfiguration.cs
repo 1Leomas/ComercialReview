@@ -13,7 +13,7 @@ public class ReviewConfiguration : IEntityTypeConfiguration<Review>
 
         builder.Property(r => r.Grade).IsRequired();
         builder.Property(r => r.ReviewText).HasMaxLength(1000);
-        builder.Property(r => r.Like).HasDefaultValue(LikeType.None);
+        builder.Property(r => r.Like).HasDefaultValue(LikeType.All);
 
 
         builder.HasOne(r => r.Author)

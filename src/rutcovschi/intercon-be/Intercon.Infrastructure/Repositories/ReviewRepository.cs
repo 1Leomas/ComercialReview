@@ -4,6 +4,7 @@ using Intercon.Application.ReviewsManagement.EditReview;
 using Intercon.Domain.Entities;
 using Intercon.Domain.Enums;
 using Intercon.Domain.Pagination;
+using Intercon.Infrastructure.Extensions;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,14 +38,41 @@ public class ReviewRepository(InterconDbContext context)
             .AsNoTracking()
             .Include(review => review.Author)
             .ThenInclude(user => user.Avatar)
-            .OrderByDescending(x => x.UpdateDate)
             .Where(x => x.BusinessId == businessId)
             .AsQueryable();
+
+        reviews = ApplyFilter(reviews, parameters);
+
+        reviews = ApplySort(reviews, parameters.SortBy, parameters.SortDirection);
 
         return await PaginatedList<Review>.ToPagedList(
             reviews, 
             parameters.PageNumber,
             parameters.PageSize);
+    }
+
+    private IQueryable<Review> ApplySort(
+        IQueryable<Review> review,
+        ReviewSortBy sortBy,
+        SortingDirection? direction = SortingDirection.Ascending)
+    {
+        return sortBy switch
+        {
+            ReviewSortBy.CreatedDate => review.OrderUsing(x => x.CreateDate, direction ?? SortingDirection.Descending),
+            ReviewSortBy.Grade => review.OrderUsing(x => x.Grade, direction ?? SortingDirection.Ascending),
+            ReviewSortBy.Like => review.OrderUsing(x => x.Like, direction ?? SortingDirection.Ascending),
+            _ => review.OrderUsing(x => x.CreateDate, SortingDirection.Descending)
+        };
+    }
+
+    private IQueryable<Review> ApplyFilter(IQueryable<Review> businesses, ReviewParameters parameters)
+    {
+        if (parameters.Grades.Any() && !parameters.Grades.Contains(ReviewGrade.All))
+        {
+            businesses = businesses.Where(x => parameters.Grades.Contains((ReviewGrade)x.Grade));
+        }
+
+        return businesses;
     }
 
     public async Task<IEnumerable<Review>> GetAllReviewsAsync(CancellationToken cancellationToken)

@@ -6,7 +6,8 @@ public class BusinessParameters : QueryStringParameters
 {
     public BusinessSortBy SortBy { get; set; } = BusinessSortBy.CreatedDate;
     public SortingDirection? SortDirection { get; set; }
-    public float? Rating { get; set; }
-    public string? Title { get; set; }
-    public BusinessCategory? Category { get; set; }
+    public int MinGrade { get; set; } = 1;
+    public int MaxGrade { get; set; } = 5;
+    public string? Search { get; set; }
+    public IEnumerable<BusinessCategory> Categories { get; set; } = new List<BusinessCategory>();
 }

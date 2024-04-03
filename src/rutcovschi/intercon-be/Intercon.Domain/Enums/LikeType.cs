@@ -2,7 +2,7 @@
 
 public enum LikeType
 {
-    None = 0,
+    All = 0,
     Like = 1,
     Dislike = 2
 }
