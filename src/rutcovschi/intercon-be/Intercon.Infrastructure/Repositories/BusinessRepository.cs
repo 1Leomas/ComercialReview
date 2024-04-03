@@ -42,12 +42,9 @@ public class BusinessRepository(InterconDbContext context)
             .Include(x => x.Logo)
             .AsQueryable();
 
-
-        businesses = parameters.SortBy is not null
-            ? ApplySort(businesses, parameters.SortBy.Value, parameters.SortDirection)
-            : businesses.OrderByDescending(x => x.UpdateDate);
-
         businesses = ApplyFilter(businesses, parameters);
+
+        businesses = ApplySort(businesses, parameters.SortBy, parameters.SortDirection);
 
         return await PaginatedList<Business>.ToPagedList(businesses, parameters.PageNumber,
             parameters.PageSize);
@@ -60,9 +57,11 @@ public class BusinessRepository(InterconDbContext context)
     {
         return sortBy switch
         {
+            BusinessSortBy.CreatedDate => businesses.OrderUsing(x => x.CreateDate, direction ?? SortingDirection.Descending),
             BusinessSortBy.Title => businesses.OrderUsing(x => x.Title, direction ?? SortingDirection.Ascending),
             BusinessSortBy.Category => businesses.OrderUsing(x => x.Category, direction ?? SortingDirection.Ascending),
             BusinessSortBy.Rating => businesses.OrderUsing(x => x.Rating, direction ?? SortingDirection.Ascending),
+            _ => businesses.OrderUsing(x => x.CreateDate, SortingDirection.Descending)
         };
     }
 
