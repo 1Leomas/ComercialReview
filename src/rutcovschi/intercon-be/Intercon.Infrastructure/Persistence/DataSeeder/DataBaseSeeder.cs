@@ -13,17 +13,12 @@ public class DataBaseSeeder(InterconDbContext context, UserManager<User> userMan
 
     public async Task Seed()
     {
-        var dataBaseCreated = _context.Database.EnsureCreated();
-
         await InitializeEntity(_context.DataFiles, ImagesSeed.SeedImages);
         await InitializeUsers();
         await InitializeEntity(_context.Businesses, BusinessesSeed.SeedBusinesses);
         await InitializeEntity(_context.Reviews, ReviewsSeed.SeedReviews);
 
-        if (dataBaseCreated)
-        {
-            CalculateBusinessRatings();
-        }
+        CalculateBusinessRatings();
     }
 
     private void CalculateBusinessRatings()

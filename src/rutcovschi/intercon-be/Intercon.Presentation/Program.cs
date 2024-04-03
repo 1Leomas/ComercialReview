@@ -1,5 +1,6 @@
 using Intercon.Application.Extensions;
 using Intercon.Infrastructure.Extensions;
+using Intercon.Infrastructure.Persistence;
 using Intercon.Presentation.Extensions;
 using Intercon.Presentation.Middleware;
 
@@ -11,6 +12,8 @@ builder.Services
     .AddPresentation(builder.Configuration);
 
 var app = builder.Build();
+
+app.EnsureDatabaseCreated();
 
 if (app.Environment.IsDevelopment())
 {
