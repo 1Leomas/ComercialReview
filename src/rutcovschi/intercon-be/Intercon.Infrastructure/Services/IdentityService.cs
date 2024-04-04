@@ -70,7 +70,9 @@ public class IdentityService(
         var userId = int.Parse(userIdClaim.Value);
 
         var refreshTokenFromDb = await context.RefreshTokens.FirstOrDefaultAsync(
-            x => x.UserId == userId && x.Token == tokens.RefreshToken && x.IsActive == true, 
+            x => x.UserId == userId && 
+                                     x.Token == tokens.RefreshToken && 
+                                     x.IsActive == true, 
             cancellationToken);
 
         if (refreshTokenFromDb == null)
@@ -79,7 +81,8 @@ public class IdentityService(
         }
 
         var userRole = await context.Users
-                           .Where(x => x.Id == userId).Select(x => x.Role)
+                           .Where(x => x.Id == userId)
+                           .Select(x => x.Role)
                            .FirstOrDefaultAsync(cancellationToken);
 
         var newJwtToken = tokenService.CreateTokens(userId, (int)userRole) 
