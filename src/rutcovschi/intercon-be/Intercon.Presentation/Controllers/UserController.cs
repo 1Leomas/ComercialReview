@@ -1,4 +1,4 @@
-﻿using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions;
 using Intercon.Application.CustomExceptions;
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Application.UsersManagement.DeleteUser;
@@ -122,9 +122,14 @@ public class UserController(IMediator mediator) : BaseController
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request,
         CancellationToken cancellationToken)
     {
-        var accessToken = await HttpContext.GetTokenAsync(JwtBearerDefaults.AuthenticationScheme, "access_token");
+        var authorizationHeader = HttpContext.Request.Headers["authorization"];
+        string accessToken = string.Empty;
+        if (authorizationHeader.ToString().StartsWith("Bearer"))
+        {
+            accessToken = authorizationHeader.ToString().Substring("Bearer ".Length).Trim();
+        }
 
-        if (accessToken is null)
+        if (string.IsNullOrEmpty(accessToken))
             return Unauthorized();
 
         var tokens = new Tokens
