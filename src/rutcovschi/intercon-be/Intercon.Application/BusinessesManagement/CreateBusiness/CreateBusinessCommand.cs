@@ -2,6 +2,7 @@
 using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects;
 using Intercon.Application.DataTransferObjects.Business;
+using Intercon.Application.Extensions.Mappers;
 using Intercon.Application.FilesManagement.UploadFile;
 using Intercon.Domain.Entities;
 using MediatR;
@@ -37,19 +38,8 @@ public sealed class CreateBusinessCommandHandler(
             LogoId = fileData?.Id
         };
 
-        var businessId = await businessRepository.CreateBusinessAsync(businessDb, cancellationToken);
+        await businessRepository.CreateBusinessAsync(businessDb, cancellationToken);
 
-        return new BusinessDetailsDto(
-            businessId,
-            command.UserId,
-            businessDb.Title,
-            businessDb.ShortDescription,
-            businessDb.FullDescription,
-            businessDb.Rating,
-            fileData?.Path,
-            businessDb.Address,
-            businessDb.ReviewsCount,
-            businessDb.Category
-        );
+        return businessDb.ToDetailsDto();
     }
 }

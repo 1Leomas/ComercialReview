@@ -13,4 +13,4 @@ public record BusinessDetailsDto(
     string? LogoPath,
     Address Address,
     uint ReviewsCount,
-    BusinessCategory Category);
+    int Category);

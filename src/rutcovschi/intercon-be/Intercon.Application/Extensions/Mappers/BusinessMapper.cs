@@ -29,6 +29,6 @@ public static class BusinessMapper
             business.LogoId is not null ? business.Logo?.Path : null,
             business.Address,
             business.ReviewsCount,
-            business.Category);
+            (int)business.Category);
     }
 }
