@@ -29,7 +29,7 @@ namespace Intercon.Presentation.Controllers;
 
 [Route("api/users")]
 [ApiController]
-public class UserController(IMediator mediator, IImageValidator imageValidator) : BaseController
+public class UserController(IMediator mediator) : BaseController
 {
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(UserDetailsDto), StatusCodes.Status200OK)]

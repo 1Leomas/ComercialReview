@@ -72,6 +72,11 @@ public class ReviewRepository(InterconDbContext context)
             businesses = businesses.Where(x => parameters.Grades.Contains((ReviewGrade)x.Grade));
         }
 
+        if (parameters.LikeType != LikeType.All)
+        {
+            businesses = businesses.Where(x => x.Like == parameters.LikeType);
+        }
+
         return businesses;
     }
 
