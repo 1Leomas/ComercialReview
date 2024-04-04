@@ -36,10 +36,11 @@ public sealed class EditBusinessCommandHandler(
 
         return new EditBusinessDetailsDto
         {
+            Id = businessDb.Id,
             Title = businessDb.Title,
             ShortDescription = businessDb.ShortDescription,
             FullDescription = businessDb.FullDescription,
-            Category = businessDb.Category,
+            Category = (int)businessDb.Category,
             Address = new AddressDto
             {
                 Latitude = businessDb.Address.Latitude,

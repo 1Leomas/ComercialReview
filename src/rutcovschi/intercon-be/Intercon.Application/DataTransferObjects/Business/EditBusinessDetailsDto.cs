@@ -4,10 +4,11 @@ namespace Intercon.Application.DataTransferObjects.Business;
 
 public sealed class EditBusinessDetailsDto
 {
+    public int Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public string ShortDescription { get; set; } = string.Empty;
     public string? FullDescription { get; set; } = null!;
-    public BusinessCategory Category { get; set; }
+    public int Category { get; set; }
     public AddressDto Address { get; set; } = null!;
     public string? LogoPath { get; set; } = null!;
 }
