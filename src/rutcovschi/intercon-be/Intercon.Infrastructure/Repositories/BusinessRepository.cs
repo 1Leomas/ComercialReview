@@ -58,11 +58,11 @@ public class BusinessRepository(InterconDbContext context)
     {
         return sortBy switch
         {
-            BusinessSortBy.CreatedDate => businesses.OrderUsing(x => x.CreateDate, direction ?? SortingDirection.Descending),
+            BusinessSortBy.UpdatedDate => businesses.OrderUsing(x => x.UpdateDate, direction ?? SortingDirection.Descending),
             BusinessSortBy.Title => businesses.OrderUsing(x => x.Title, direction ?? SortingDirection.Ascending),
             BusinessSortBy.Category => businesses.OrderUsing(x => x.Category, direction ?? SortingDirection.Ascending),
             BusinessSortBy.Rating => businesses.OrderUsing(x => x.Rating, direction ?? SortingDirection.Ascending),
-            _ => businesses.OrderUsing(x => x.CreateDate, SortingDirection.Descending)
+            _ => businesses.OrderUsing(x => x.UpdateDate, SortingDirection.Descending)
         };
     }
 

@@ -2,7 +2,7 @@
 
 public enum BusinessSortBy
 {
-    CreatedDate = 0,
+    UpdatedDate = 0,
     Title = 1,
     Category = 2,
     Rating = 3

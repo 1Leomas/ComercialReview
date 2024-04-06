@@ -58,10 +58,10 @@ public class ReviewRepository(InterconDbContext context)
     {
         return sortBy switch
         {
-            ReviewSortBy.CreatedDate => review.OrderUsing(x => x.CreateDate, direction ?? SortingDirection.Descending),
+            ReviewSortBy.UpdatedDate => review.OrderUsing(x => x.UpdateDate, direction ?? SortingDirection.Descending),
             ReviewSortBy.Grade => review.OrderUsing(x => x.Grade, direction ?? SortingDirection.Ascending),
             ReviewSortBy.Like => review.OrderUsing(x => x.Like, direction ?? SortingDirection.Ascending),
-            _ => review.OrderUsing(x => x.CreateDate, SortingDirection.Descending)
+            _ => review.OrderUsing(x => x.UpdateDate, SortingDirection.Descending)
         };
     }
 

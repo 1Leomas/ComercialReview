@@ -2,7 +2,7 @@
 
 public enum ReviewSortBy
 {
-    CreatedDate = 0,
+    UpdatedDate = 0,
     Grade = 1,
     Like = 2,
 }
