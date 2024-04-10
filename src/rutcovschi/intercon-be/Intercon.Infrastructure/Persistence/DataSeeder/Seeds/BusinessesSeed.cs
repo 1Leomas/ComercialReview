@@ -343,7 +343,8 @@ public class BusinessesSeed
                     Latitude = "46.987043756473525",
                     Longitude = "28.858158245545862"
                 },
-                Category = BusinessCategory.Bakery
+                Category = BusinessCategory.Bakery,
+                LogoId = 21
             },
             new Business
             {
@@ -358,7 +359,8 @@ public class BusinessesSeed
                     Latitude = "47.04659714748263",
                     Longitude = "28.862784138001565"
                 },
-                Category = BusinessCategory.Bakery
+                Category = BusinessCategory.Bakery,
+                LogoId = 22
             },
             new Business
             {
@@ -373,7 +375,8 @@ public class BusinessesSeed
                     Latitude = "47.03707074148245",
                     Longitude = "28.812059282788898"
                 },
-                Category = BusinessCategory.Bakery
+                Category = BusinessCategory.Bakery,
+                LogoId = 23
             },
             new Business
             {
@@ -388,7 +391,8 @@ public class BusinessesSeed
                     Latitude = "47.02794057099621",
                     Longitude = "28.794680547206337"
                 },
-                Category = BusinessCategory.Bakery
+                Category = BusinessCategory.Bakery,
+                LogoId = 24
             },
             new Business
             {
@@ -403,7 +407,8 @@ public class BusinessesSeed
                     Latitude = "47.01735225708259",
                     Longitude = "28.84274959996724"
                 },
-                Category = BusinessCategory.Bakery
+                Category = BusinessCategory.Bakery,
+                LogoId = 25
             },
             new Business
             {
@@ -418,7 +423,8 @@ public class BusinessesSeed
                     Latitude = "47.01704785707604",
                     Longitude = "28.848374799967235"
                 },
-                Category = BusinessCategory.Bakery
+                Category = BusinessCategory.Bakery,
+                LogoId = 26
             },
             new Business
             {
@@ -433,7 +439,8 @@ public class BusinessesSeed
                     Latitude = "46.98704398518555",
                     Longitude = "28.858158246593405"
                 },
-                Category = BusinessCategory.Bakery
+                Category = BusinessCategory.Bakery,
+                LogoId = 27
             },
             new Business
             {
@@ -448,7 +455,8 @@ public class BusinessesSeed
                     Latitude = "47.03817349730268",
                     Longitude = "28.769902617145586"
                 },
-                Category = BusinessCategory.Bakery
+                Category = BusinessCategory.Bakery,
+                LogoId = 28
             },
             new Business
             {
@@ -462,7 +470,8 @@ public class BusinessesSeed
                     Latitude = "47.034170414465535",
                     Longitude = "28.77906807051942"
                 },
-                Category = BusinessCategory.Gym
+                Category = BusinessCategory.Gym,
+                LogoId = 29
             },
             new Business
             {
@@ -477,27 +486,13 @@ public class BusinessesSeed
                     Latitude = "47.040153314542394",
                     Longitude = "28.802261799967244"
                 },
-                Category = BusinessCategory.Gym
+                Category = BusinessCategory.Gym,
+                LogoId = 30
             },
             new Business
             {
                 Id = 31,
                 OwnerId = 31,
-                Title = "Jungle Fitness",
-                ShortDescription =
-                    "State-of-the-Art Equipment: Experience the latest in fitness technology with our state-of-the-art exercise machines designed for optimal results.",
-                FullDescription = "",
-                Address = new Address {
-                    Street = "Strada Ceucari 2/3, Chișinău, Moldova",
-                    Latitude = "47.061499693722865",
-                    Longitude = "28.846700904257833"
-                },
-                Category = BusinessCategory.Gym
-            },
-            new Business
-            {
-                Id = 32,
-                OwnerId = 32,
                 Title = "Big sport gym",
                 ShortDescription =
                     "Group Fitness Fiesta: Join our invigorating group fitness classes, from heart-pounding HIIT sessions to calming yoga, catering to all fitness levels.",
@@ -507,12 +502,13 @@ public class BusinessesSeed
                     Latitude = "47.061454471605394",
                     Longitude = "28.846780029415065"
                 },
-                Category = BusinessCategory.Gym
+                Category = BusinessCategory.Gym,
+                LogoId = 31
             },
             new Business
             {
-                Id = 33,
-                OwnerId = 33,
+                Id = 32,
+                OwnerId = 32,
                 Title = "Big sport gym",
                 ShortDescription =
                     "Personalized Training Programs: Achieve your fitness goals with our personalized training programs, crafted by experienced fitness professionals.",
@@ -522,12 +518,13 @@ public class BusinessesSeed
                     Latitude = "47.05619741474855",
                     Longitude = "28.89190357051942"
                 },
-                Category = BusinessCategory.Gym
+                Category = BusinessCategory.Gym,
+                LogoId = 32
             },
             new Business
             {
-                Id = 34,
-                OwnerId = 34,
+                Id = 33,
+                OwnerId = 33,
                 Title = "Big sport gym",
                 ShortDescription =
                     "Wellness Community Hub: Connect with like-minded individuals in our vibrant fitness community, fostering motivation and support.",
@@ -537,7 +534,24 @@ public class BusinessesSeed
                     Latitude = "46.9894162312499",
                     Longitude = "28.860072521799268"
                 },
-                Category = BusinessCategory.Gym
+                Category = BusinessCategory.Gym,
+                LogoId = 33
+            },
+            new Business
+            {
+                Id = 34,
+                OwnerId = 34,
+                Title = "Jungle Fitness",
+                ShortDescription =
+                    "State-of-the-Art Equipment: Experience the latest in fitness technology with our state-of-the-art exercise machines designed for optimal results.",
+                FullDescription = "",
+                Address = new Address {
+                    Street = "Strada Ceucari 2/3, Chișinău, Moldova",
+                    Latitude = "47.061499693722865",
+                    Longitude = "28.846700904257833"
+                },
+                Category = BusinessCategory.Gym,
+                LogoId = 34
             },
             new Business
             {
@@ -552,7 +566,8 @@ public class BusinessesSeed
                     Latitude = "46.98718779604783",
                     Longitude = "28.857078982756153"
                 },
-                Category = BusinessCategory.FastFood
+                Category = BusinessCategory.FastFood,
+                LogoId = 35
             },
             new Business
             {
@@ -567,7 +582,8 @@ public class BusinessesSeed
                     Latitude = "46.99556232794662",
                     Longitude = "28.797881468852168"
                 },
-                Category = BusinessCategory.FastFood
+                Category = BusinessCategory.FastFood,
+                LogoId = 36
             },
             new Business
             {
@@ -582,7 +598,8 @@ public class BusinessesSeed
                     Latitude = "47.004621527706284",
                     Longitude = "28.840940282175964"
                 },
-                Category = BusinessCategory.FastFood
+                Category = BusinessCategory.FastFood,
+                LogoId = 37
             },
             new Business
             {
@@ -597,7 +614,8 @@ public class BusinessesSeed
                     Latitude = "47.01666195706779",
                     Longitude = "28.84588759996724"
                 },
-                Category = BusinessCategory.FastFood
+                Category = BusinessCategory.FastFood,
+                LogoId = 38
             },
             new Business
             {
@@ -612,7 +630,8 @@ public class BusinessesSeed
                     Latitude = "47.023347857210915",
                     Longitude = "28.834795729415063"
                 },
-                Category = BusinessCategory.FastFood
+                Category = BusinessCategory.FastFood,
+                LogoId = 39
             },
             new Business
             {
@@ -627,7 +646,8 @@ public class BusinessesSeed
                     Latitude = "47.03967041453619",
                     Longitude = "28.80318217051942"
                 },
-                Category = BusinessCategory.FastFood
+                Category = BusinessCategory.FastFood,
+                LogoId = 40
             },
             new Business
             {
@@ -642,7 +662,8 @@ public class BusinessesSeed
                     Latitude = "47.038700828492104",
                     Longitude = "28.770121370519423"
                 },
-                Category = BusinessCategory.FastFood
+                Category = BusinessCategory.FastFood,
+                LogoId = 41
             },
             new Business
             {
@@ -657,7 +678,8 @@ public class BusinessesSeed
                     Latitude = "47.04458835766566",
                     Longitude = "28.861046799967244"
                 },
-                Category = BusinessCategory.FastFood
+                Category = BusinessCategory.FastFood,
+                LogoId = 42
             },
             new Business
             {
@@ -672,7 +694,8 @@ public class BusinessesSeed
                     Latitude = "47.07014241492778",
                     Longitude = "28.888394929415064"
                 },
-                Category = BusinessCategory.FastFood
+                Category = BusinessCategory.FastFood,
+                LogoId = 43
             },
             new Business
             {
@@ -687,7 +710,8 @@ public class BusinessesSeed
                     Latitude = "46.97775792300121",
                     Longitude = "28.85631288155769"
                 },
-                Category = BusinessCategory.Electronics
+                Category = BusinessCategory.Electronics,
+                LogoId = 44
             },
             new Business
             {
@@ -702,7 +726,8 @@ public class BusinessesSeed
                     Latitude = "47.00430172863937",
                     Longitude = "28.840684799967242"
                 },
-                Category = BusinessCategory.Electronics
+                Category = BusinessCategory.Electronics,
+                LogoId = 45
             },
             new Business
             {
@@ -717,7 +742,8 @@ public class BusinessesSeed
                     Latitude = "47.00273211406181",
                     Longitude = "28.816402429415064"
                 },
-                Category = BusinessCategory.Electronics
+                Category = BusinessCategory.Electronics,
+                LogoId = 46
             },
             new Business
             {
@@ -732,7 +758,8 @@ public class BusinessesSeed
                     Latitude = "47.01822345710117",
                     Longitude = "28.84141332941506"
                 },
-                Category = BusinessCategory.Electronics
+                Category = BusinessCategory.Electronics,
+                LogoId = 47
             },
             new Business
             {
@@ -747,7 +774,8 @@ public class BusinessesSeed
                     Latitude = "47.019306871424895",
                     Longitude = "28.845023929415063"
                 },
-                Category = BusinessCategory.Electronics
+                Category = BusinessCategory.Electronics,
+                LogoId = 48
             },
             new Business
             {
@@ -762,7 +790,8 @@ public class BusinessesSeed
                     Latitude = "47.02248167143844",
                     Longitude = "28.836127599967234"
                 },
-                Category = BusinessCategory.Electronics
+                Category = BusinessCategory.Electronics,
+                LogoId = 49
             },
             new Business
             {
@@ -777,7 +806,8 @@ public class BusinessesSeed
                     Latitude = "47.02755544258538, ",
                     Longitude = "28.795076827982474"
                 },
-                Category = BusinessCategory.Electronics
+                Category = BusinessCategory.Electronics,
+                LogoId = 50
             }
         };
     }
