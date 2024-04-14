@@ -13,8 +13,8 @@ public record ReviewDetailsDto(
     string? ReviewText,
     int Like,
     uint CommentsCount,
-    DateTime CreateDate,
-    DateTime UpdateDate,
+    DateTime CreatedDate,
+    DateTime UpdatedDate,
     bool WasEdited
 );
 

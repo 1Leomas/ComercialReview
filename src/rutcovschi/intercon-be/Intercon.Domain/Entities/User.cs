@@ -5,6 +5,11 @@ namespace Intercon.Domain.Entities;
 
 public class User : IdentityUser<int>
 {
+    public User()
+    {
+        CreatedDate = UpdatedDate = DateTime.Now;
+    }
+
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;
 #pragma warning disable CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
@@ -19,7 +24,7 @@ public class User : IdentityUser<int>
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
-    public DateTime CreateDate { get; set; } = DateTime.Now;
-    public DateTime UpdateDate { get; set; } = DateTime.Now;
-    public bool WasEdited => UpdateDate != CreateDate;
+    public DateTime CreatedDate { get; set; }
+    public DateTime UpdatedDate { get; set; }
+    public bool WasEdited => UpdatedDate != CreatedDate;
 }

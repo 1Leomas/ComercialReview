@@ -38,8 +38,8 @@ public sealed class CreateBusinessCommandHandler(
             Address = command.Data.Address,
             Category = command.Data.Category,
             LogoId = fileData?.Id,
-            CreateDate = dateNow,
-            UpdateDate = dateNow
+            CreatedDate = dateNow,
+            UpdatedDate = dateNow
         };
 
         await businessRepository.CreateBusinessAsync(businessDb, cancellationToken);

@@ -42,8 +42,8 @@ public class UserRepository(
                 Email = newUser.Email,
                 UserName = string.IsNullOrEmpty(newUser.UserName) ? "None" : newUser.UserName,
                 Role = newUser.Role,
-                CreateDate = date,
-                UpdateDate = date,
+                CreatedDate = date,
+                UpdatedDate = date,
             },
             password
         );
@@ -83,7 +83,7 @@ public class UserRepository(
             userDb.AvatarId = newUserData.AvatarId.Value;
         }
 
-        userDb.UpdateDate = DateTime.Now;
+        userDb.UpdatedDate = DateTime.Now;
 
         await context.SaveChangesAsync(cancellationToken);
 

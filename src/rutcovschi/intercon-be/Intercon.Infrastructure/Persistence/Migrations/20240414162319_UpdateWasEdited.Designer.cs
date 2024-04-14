@@ -5,6 +5,7 @@ using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,9 +13,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intercon.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(InterconDbContext))]
-    partial class InterconDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240414162319_UpdateWasEdited")]
+    partial class UpdateWasEdited
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +37,7 @@ namespace Intercon.Infrastructure.Persistence.Migrations
                     b.Property<int>("Category")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FullDescription")
@@ -62,7 +65,7 @@ namespace Intercon.Infrastructure.Persistence.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<DateTime>("UpdatedDate")
+                    b.Property<DateTime>("UpdateDate")
                         .HasColumnType("datetime2");
 
                     b.ComplexProperty<Dictionary<string, object>>("Address", "Intercon.Domain.Entities.Business.Address#Address", b1 =>
@@ -148,38 +151,6 @@ namespace Intercon.Infrastructure.Persistence.Migrations
                     b.ToTable("DataFiles");
                 });
 
-            modelBuilder.Entity("Intercon.Domain.Entities.RefreshToken", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("RefreshTokens");
-                });
-
             modelBuilder.Entity("Intercon.Domain.Entities.ResetPasswordCode", b =>
                 {
                     b.Property<int>("Id")
@@ -216,7 +187,7 @@ namespace Intercon.Infrastructure.Persistence.Migrations
                     b.Property<long>("CommentsCount")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Grade")
@@ -231,7 +202,7 @@ namespace Intercon.Infrastructure.Persistence.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<DateTime>("UpdatedDate")
+                    b.Property<DateTime>("UpdateDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("BusinessId", "AuthorId");
@@ -259,7 +230,7 @@ namespace Intercon.Infrastructure.Persistence.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
@@ -314,7 +285,7 @@ namespace Intercon.Infrastructure.Persistence.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("UpdatedDate")
+                    b.Property<DateTime>("UpdateDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserName")
@@ -341,6 +312,38 @@ namespace Intercon.Infrastructure.Persistence.Migrations
                         .HasFilter("[UserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Intercon.Domain.Identity.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
@@ -590,17 +593,6 @@ namespace Intercon.Infrastructure.Persistence.Migrations
                         .HasForeignKey("BusinessId");
                 });
 
-            modelBuilder.Entity("Intercon.Domain.Entities.RefreshToken", b =>
-                {
-                    b.HasOne("Intercon.Domain.Entities.User", "User")
-                        .WithOne()
-                        .HasForeignKey("Intercon.Domain.Entities.RefreshToken", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Intercon.Domain.Entities.ResetPasswordCode", b =>
                 {
                     b.HasOne("Intercon.Domain.Entities.User", "User")
@@ -639,6 +631,17 @@ namespace Intercon.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Avatar");
+                });
+
+            modelBuilder.Entity("Intercon.Domain.Identity.RefreshToken", b =>
+                {
+                    b.HasOne("Intercon.Domain.Entities.User", "User")
+                        .WithOne()
+                        .HasForeignKey("Intercon.Domain.Identity.RefreshToken", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

@@ -1,4 +1,4 @@
-﻿using Intercon.Domain.Identity;
+﻿using Intercon.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

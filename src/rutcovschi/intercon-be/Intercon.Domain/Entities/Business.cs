@@ -1,12 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Intercon.Domain.Abstractions;
 using Intercon.Domain.ComplexTypes;
 using Intercon.Domain.Enums;
 
 namespace Intercon.Domain.Entities;
 
-public class Business : Entity
+public class Business : Entity, IEntity
 {
+    public int Id { get; init; }
     public string Title { get; set; } = null!;
     public string ShortDescription { get; set; } = null!;
     public string? FullDescription { get; set; } = null!;

@@ -1,5 +1,4 @@
 ﻿using Intercon.Domain.Entities;
-using Intercon.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

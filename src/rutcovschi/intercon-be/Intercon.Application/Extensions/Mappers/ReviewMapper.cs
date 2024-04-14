@@ -26,8 +26,8 @@ public static class ReviewMapper
             review.ReviewText,
             (int)review.Like,
             review.CommentsCount,
-            review.CreateDate,
-            review.UpdateDate,
+            review.CreatedDate,
+            review.UpdatedDate,
             review.WasEdited);
     }
 

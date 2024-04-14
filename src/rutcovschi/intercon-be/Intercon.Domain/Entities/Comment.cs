@@ -1,8 +1,10 @@
-﻿namespace Intercon.Domain.Entities;
+﻿using Intercon.Domain.Abstractions;
 
-public class Comment
+namespace Intercon.Domain.Entities;
+
+public class Comment : Entity, IEntity
 {
-    public int Id { get; set; }
+    public int Id { get; init; }
     public string Text { get; set; } = null!;
 
     public int BusinessId { get; set; }
@@ -12,8 +14,4 @@ public class Comment
     public virtual Business Business { get; set; } = null!;
     public virtual Review Review { get; set; } = null!;
     public virtual User Author { get; set; } = null!;
-
-    public DateTime CreatedDate { get; set; } = DateTime.Now;
-    public DateTime UpdatedDate { get; set; } = DateTime.Now;
-    public bool WasEdited => UpdatedDate != CreatedDate;
 }

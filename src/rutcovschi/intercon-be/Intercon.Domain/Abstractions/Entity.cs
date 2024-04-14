@@ -2,10 +2,12 @@
 
 public abstract class Entity
 {
-    protected Entity() { }
+    protected Entity()
+    {
+        CreatedDate = UpdatedDate = DateTime.Now;
+    }
 
-    public int Id { get; init; }
-    public DateTime CreateDate { get; set; } = DateTime.Now;
-    public DateTime UpdateDate { get; set; } = DateTime.Now;
-    public bool WasEdited => UpdateDate != CreateDate;
+    public DateTime CreatedDate { get; set; }
+    public DateTime UpdatedDate { get; set; }
+    public bool WasEdited => UpdatedDate != CreatedDate;
 }

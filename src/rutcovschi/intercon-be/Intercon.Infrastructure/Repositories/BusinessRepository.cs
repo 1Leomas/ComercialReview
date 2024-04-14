@@ -58,11 +58,11 @@ public class BusinessRepository(InterconDbContext context)
     {
         return sortBy switch
         {
-            BusinessSortBy.UpdatedDate => businesses.OrderUsing(x => x.UpdateDate, direction ?? SortingDirection.Descending),
+            BusinessSortBy.UpdatedDate => businesses.OrderUsing(x => x.UpdatedDate, direction ?? SortingDirection.Descending),
             BusinessSortBy.Title => businesses.OrderUsing(x => x.Title, direction ?? SortingDirection.Ascending),
             BusinessSortBy.Category => businesses.OrderUsing(x => x.Category, direction ?? SortingDirection.Ascending),
             BusinessSortBy.Rating => businesses.OrderUsing(x => x.Rating, direction ?? SortingDirection.Ascending),
-            _ => businesses.OrderUsing(x => x.UpdateDate, SortingDirection.Descending)
+            _ => businesses.OrderUsing(x => x.UpdatedDate, SortingDirection.Descending)
         };
     }
 
@@ -93,7 +93,7 @@ public class BusinessRepository(InterconDbContext context)
     public async Task<int> CreateBusinessAsync(Business newBusiness, CancellationToken cancellationToken)
     {
         await context.Businesses.AddAsync(newBusiness, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        var result = await context.SaveChangesAsync(cancellationToken);
 
         return newBusiness.Id;
     }
@@ -133,7 +133,7 @@ public class BusinessRepository(InterconDbContext context)
             businessDb.LogoId = logoId.Value;
         }
 
-        businessDb.UpdateDate = DateTime.Now;
+        businessDb.UpdatedDate = DateTime.Now;
 
         await context.SaveChangesAsync(cancellationToken);
 
@@ -160,6 +160,7 @@ public class BusinessRepository(InterconDbContext context)
 
     public async Task<bool> UserOwnsBusinessAsync(int userId, int businessId, CancellationToken cancellationToken)
     {
-        return await context.Businesses.AnyAsync(x => x.OwnerId == userId && x.Id == businessId, cancellationToken);
+        return await context.Businesses
+            .AnyAsync(x => x.OwnerId == userId && x.Id == businessId, cancellationToken);
     }
 }

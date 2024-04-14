@@ -58,10 +58,10 @@ public class ReviewRepository(InterconDbContext context)
     {
         return sortBy switch
         {
-            ReviewSortBy.UpdatedDate => review.OrderUsing(x => x.UpdateDate, direction ?? SortingDirection.Descending),
+            ReviewSortBy.UpdatedDate => review.OrderUsing(x => x.UpdatedDate, direction ?? SortingDirection.Descending),
             ReviewSortBy.Grade => review.OrderUsing(x => x.Grade, direction ?? SortingDirection.Ascending),
             ReviewSortBy.Like => review.OrderUsing(x => x.Like, direction ?? SortingDirection.Ascending),
-            _ => review.OrderUsing(x => x.UpdateDate, SortingDirection.Descending)
+            _ => review.OrderUsing(x => x.UpdatedDate, SortingDirection.Descending)
         };
     }
 
@@ -96,8 +96,8 @@ public class ReviewRepository(InterconDbContext context)
             Grade = newReview.Grade,
             ReviewText = newReview.ReviewText,
             Like = (LikeType)newReview.Like,
-            CreateDate = date,
-            UpdateDate = date
+            CreatedDate = date,
+            UpdatedDate = date
         };
 
         await context.Reviews.AddAsync(review, cancellationToken);
@@ -139,7 +139,7 @@ public class ReviewRepository(InterconDbContext context)
             reviewDb.Like = (LikeType)newReviewData.Like.Value;
         }
 
-        reviewDb.UpdateDate = DateTime.Now;
+        reviewDb.UpdatedDate = DateTime.Now;
 
         await context.SaveChangesAsync(cancellationToken);
 
