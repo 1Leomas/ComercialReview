@@ -5,6 +5,7 @@ using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,9 +13,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intercon.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(InterconDbContext))]
-    partial class InterconDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240414123422_UpdateCommentFileds")]
+    partial class UpdateCommentFileds
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -109,7 +112,7 @@ namespace Intercon.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ReviewAuthorId")
+                    b.Property<int>("ReviewId")
                         .HasColumnType("int");
 
                     b.Property<string>("Text")
@@ -124,7 +127,7 @@ namespace Intercon.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.HasIndex("BusinessId", "ReviewAuthorId");
+                    b.HasIndex("BusinessId", "ReviewId");
 
                     b.ToTable("Comments");
                 });
@@ -581,7 +584,7 @@ namespace Intercon.Infrastructure.Persistence.Migrations
 
                     b.HasOne("Intercon.Domain.Entities.Review", "Review")
                         .WithMany("Comments")
-                        .HasForeignKey("BusinessId", "ReviewAuthorId")
+                        .HasForeignKey("BusinessId", "ReviewId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
