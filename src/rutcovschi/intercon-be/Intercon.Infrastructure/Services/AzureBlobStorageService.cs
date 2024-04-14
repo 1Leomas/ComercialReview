@@ -12,16 +12,24 @@ namespace Intercon.Infrastructure.Services;
 
 public class AzureBlobStorageService : IFileRepository
 {
-    public AzureBlobStorageService(InterconDbContext context, IOptions<AzureBlobStorageSettings> azureBlobStorageSettings)
+    public AzureBlobStorageService(
+        InterconDbContext context, 
+        IOptions<AzureBlobStorageSettings> azureBlobStorageSettings)
     {
         _context = context;
         _azureBlobStorageSettings = azureBlobStorageSettings.Value;
 
-        var credential = new StorageSharedKeyCredential(_azureBlobStorageSettings.StorageAccount, _azureBlobStorageSettings.AccessKey);
-        var blobUri = new Uri($"https://{_azureBlobStorageSettings.StorageAccount}.blob.core.windows.net");
+        var storageAccount = _azureBlobStorageSettings.StorageAccount;
+        var containerName = _azureBlobStorageSettings.ContainerName;
+
+        var credential = new StorageSharedKeyCredential(
+            storageAccount, 
+            _azureBlobStorageSettings.AccessKey);
+
+        var blobUri = new Uri($"https://{storageAccount}.blob.core.windows.net");
         _blobServiceClient = new BlobServiceClient(blobUri, credential);
 
-        _blobLinkPrefix = $"https://{_azureBlobStorageSettings.StorageAccount}.blob.core.windows.net/{_azureBlobStorageSettings.ContainerName}";
+        _blobLinkPrefix = $"https://{storageAccount}.blob.core.windows.net/{containerName}";
     }
 
     private readonly BlobServiceClient _blobServiceClient;
@@ -29,14 +37,6 @@ public class AzureBlobStorageService : IFileRepository
     private readonly AzureBlobStorageSettings _azureBlobStorageSettings;
 
     private readonly string _blobLinkPrefix;
-
-    public async Task ListContainersAsync()
-    {
-        await foreach (var container in _blobServiceClient.GetBlobContainersAsync())
-        {
-            Console.WriteLine(container.Name);
-        }
-    }
 
     private async Task<string> UploadFileToAzureAsync(IFormFile file)
     {

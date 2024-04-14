@@ -1,4 +1,4 @@
-using Intercon.Application.Abstractions;
+﻿using Intercon.Application.Abstractions;
 using Intercon.Application.CustomExceptions;
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Application.UsersManagement.DeleteUser;

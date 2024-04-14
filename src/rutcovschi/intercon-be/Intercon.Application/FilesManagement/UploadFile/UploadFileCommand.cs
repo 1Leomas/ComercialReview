@@ -10,8 +10,8 @@ namespace Intercon.Application.FilesManagement.UploadFile;
 
 public sealed record UploadFileCommand(IFormFile ImageData) : ICommand<FileDataDto?>;
 
-internal sealed class UploadFileQueryHandler
-    (IFileRepository fileRepository) : ICommandHandler<UploadFileCommand, FileDataDto?>
+internal sealed class UploadFileCommandHandler(
+    IFileRepository fileRepository) : ICommandHandler<UploadFileCommand, FileDataDto?>
 {
     public async Task<FileDataDto?> Handle(UploadFileCommand request, CancellationToken cancellationToken)
     {
