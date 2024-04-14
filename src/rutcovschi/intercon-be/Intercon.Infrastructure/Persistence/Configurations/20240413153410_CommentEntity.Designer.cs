@@ -5,16 +5,19 @@ using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Intercon.Infrastructure.Persistence.Migrations
+namespace Intercon.Infrastructure.Persistence.Configurations
 {
     [DbContext(typeof(InterconDbContext))]
-    partial class InterconDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240413153410_CommentEntity")]
+    partial class CommentEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

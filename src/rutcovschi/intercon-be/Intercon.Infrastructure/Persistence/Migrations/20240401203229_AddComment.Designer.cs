@@ -5,6 +5,7 @@ using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,9 +13,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intercon.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(InterconDbContext))]
-    partial class InterconDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240401203229_AddComment")]
+    partial class AddComment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,10 +103,10 @@ namespace Intercon.Infrastructure.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AuthorId")
+                    b.Property<int>("BusinessId")
                         .HasColumnType("int");
 
-                    b.Property<int>("BusinessId")
+                    b.Property<int>("CommentAuthorId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")
@@ -114,15 +117,18 @@ namespace Intercon.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Text")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("WasEdited")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
+                    b.HasIndex("CommentAuthorId");
 
                     b.HasIndex("BusinessId", "ReviewId");
 
@@ -567,27 +573,27 @@ namespace Intercon.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Intercon.Domain.Entities.Comment", b =>
                 {
-                    b.HasOne("Intercon.Domain.Entities.User", "Author")
-                        .WithMany("Comments")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Intercon.Domain.Entities.Business", "Business")
                         .WithMany()
                         .HasForeignKey("BusinessId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Intercon.Domain.Entities.User", "CommentAuthor")
+                        .WithMany("Comments")
+                        .HasForeignKey("CommentAuthorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Intercon.Domain.Entities.Review", "Review")
                         .WithMany("Comments")
                         .HasForeignKey("BusinessId", "ReviewId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Author");
-
                     b.Navigation("Business");
+
+                    b.Navigation("CommentAuthor");
 
                     b.Navigation("Review");
                 });
@@ -595,7 +601,7 @@ namespace Intercon.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Intercon.Domain.Entities.FileData", b =>
                 {
                     b.HasOne("Intercon.Domain.Entities.Business", null)
-                        .WithMany("ProfileImages")
+                        .WithMany("Images")
                         .HasForeignKey("BusinessId");
                 });
 
@@ -703,7 +709,7 @@ namespace Intercon.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Intercon.Domain.Entities.Business", b =>
                 {
-                    b.Navigation("ProfileImages");
+                    b.Navigation("Images");
 
                     b.Navigation("Reviews");
                 });
