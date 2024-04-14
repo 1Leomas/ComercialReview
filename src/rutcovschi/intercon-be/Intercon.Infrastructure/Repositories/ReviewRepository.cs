@@ -119,7 +119,7 @@ public class ReviewRepository(InterconDbContext context)
         EditReviewDto newReviewData, 
         CancellationToken cancellationToken)
     {
-        var reviewDb = await context.Reviews.FindAsync(businessId, authorId);
+        var reviewDb = await context.Reviews.FindAsync(businessId, authorId, cancellationToken);
 
         if (reviewDb == null)
         {

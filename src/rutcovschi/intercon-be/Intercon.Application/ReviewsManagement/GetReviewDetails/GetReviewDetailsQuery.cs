@@ -12,6 +12,7 @@ public record ReviewDetailsDto(
     float Grade,
     string? ReviewText,
     int Like,
+    uint CommentsCount,
     DateTime CreateDate,
     DateTime UpdateDate,
     bool WasEdited

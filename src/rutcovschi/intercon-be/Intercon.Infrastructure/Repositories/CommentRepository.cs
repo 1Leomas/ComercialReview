@@ -84,6 +84,11 @@ public class CommentRepository : ICommentRepository
         _context.Comments.Add(comment);
         var result = await _context.SaveChangesAsync(cancellationToken);
 
+        if (result > 0)
+        {
+            await UpdateReviewStats(comment.BusinessId, comment.ReviewAuthorId, cancellationToken);
+        }
+
         return result > 0;
     }
 
@@ -100,5 +105,27 @@ public class CommentRepository : ICommentRepository
     public async Task<bool> CommentExistsAsync(int id, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
+    }
+
+    private async Task UpdateReviewStats(
+        int businessId,
+        int reviewAuthorId,
+        CancellationToken cancellationToken)
+    {
+        var review = await _context.Reviews.FindAsync(businessId, reviewAuthorId, cancellationToken);
+
+        if (review == null)
+        {
+            return;
+        }
+
+        var comments = _context.Comments
+            .Where(x => x.BusinessId == businessId && x.ReviewAuthorId == reviewAuthorId);
+
+        var commentsCount = (uint)(comments.Count());
+
+        review!.CommentsCount = commentsCount;
+
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

@@ -10,6 +10,7 @@ public class Review
     public int Grade { get; set; }
     public string? ReviewText { get; set; } = null!;
     public LikeType Like { get; set; }
+    public uint CommentsCount { get; set; }
 
     public int BusinessId { get; set; }
     public int AuthorId { get; set; }
