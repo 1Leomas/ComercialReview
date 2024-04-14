@@ -33,7 +33,7 @@ public sealed class CreateReviewCommandCommandValidator : AbstractValidator<Crea
 
         RuleFor(x => new { x.BusinessId, x.UserId })
             .MustAsync(async (data, ctx)
-                => !await reviewRepository.BusinessUserReviewExistsAsync(data.BusinessId, data.UserId, ctx))
+                => !await reviewRepository.ReviewExistsAsync(data.BusinessId, data.UserId, ctx))
             .WithName(x => nameof(x.UserId))
             .WithMessage("The user already wrote a review");
 

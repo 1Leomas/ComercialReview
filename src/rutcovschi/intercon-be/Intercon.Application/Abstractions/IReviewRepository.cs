@@ -14,5 +14,5 @@ public interface IReviewRepository
     Task<bool> CreateReviewAsync(int businessId, int userId, CreateReviewDto newReview, CancellationToken cancellationToken);
     Task<Review?> UpdateReviewAsync(int businessId, int authorId, EditReviewDto newReviewData, CancellationToken cancellationToken);
     Task DeleteReviewAsync(int businessId, int authorId, CancellationToken cancellationToken);
-    Task<bool> BusinessUserReviewExistsAsync(int businessId, int authorId, CancellationToken cancellationToken);
+    Task<bool> ReviewExistsAsync(int businessId, int authorId, CancellationToken cancellationToken);
 }

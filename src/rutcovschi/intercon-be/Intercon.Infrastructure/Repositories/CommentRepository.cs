@@ -79,9 +79,12 @@ public class CommentRepository : ICommentRepository
         throw new NotImplementedException();
     }
 
-    public async Task<bool> CreateCommentAsync(Comment newComment, CancellationToken cancellationToken)
+    public async Task<bool> AddAsync(Comment comment, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        _context.Comments.Add(comment);
+        var result = await _context.SaveChangesAsync(cancellationToken);
+
+        return result > 0;
     }
 
     public async Task<bool> UpdateCommentAsync(Comment newCommentData, CancellationToken cancellationToken)
