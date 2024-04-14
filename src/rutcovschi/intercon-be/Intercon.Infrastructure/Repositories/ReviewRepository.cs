@@ -87,13 +87,17 @@ public class ReviewRepository(InterconDbContext context)
 
     public async Task<bool> CreateReviewAsync(int businessId, int userId, CreateReviewDto newReview, CancellationToken cancellationToken)
     {
+        var date = DateTime.Now;
+
         var review = new Review
         {
             BusinessId = businessId,
             AuthorId = userId,
             Grade = newReview.Grade,
             ReviewText = newReview.ReviewText,
-            Like = (LikeType)newReview.Like
+            Like = (LikeType)newReview.Like,
+            CreateDate = date,
+            UpdateDate = date
         };
 
         await context.Reviews.AddAsync(review, cancellationToken);
@@ -183,7 +187,7 @@ public class ReviewRepository(InterconDbContext context)
         await context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<bool> BusinessUserReviewExistsAsync(int businessId, int authorId, CancellationToken cancellationToken)
+    public async Task<bool> ReviewExistsAsync(int businessId, int authorId, CancellationToken cancellationToken)
     {
         return await context.Reviews.AnyAsync(
             x => x.BusinessId == businessId && x.AuthorId == authorId, 

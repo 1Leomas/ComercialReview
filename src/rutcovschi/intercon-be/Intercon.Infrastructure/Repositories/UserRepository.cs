@@ -32,14 +32,18 @@ public class UserRepository(
 
     public async Task<bool> CreateUserAsync(User newUser, string password, CancellationToken cancellationToken)
     {
+        var date = DateTime.Now;
+
         var result = await userManager.CreateAsync(
             new User
             {
                 FirstName = newUser.FirstName,
                 LastName = newUser.LastName,
                 Email = newUser.Email,
-                UserName = string.IsNullOrEmpty(newUser.UserName) ? newUser.Email : newUser.UserName,
-                Role = newUser.Role
+                UserName = string.IsNullOrEmpty(newUser.UserName) ? "None" : newUser.UserName,
+                Role = newUser.Role,
+                CreateDate = date,
+                UpdateDate = date,
             },
             password
         );

@@ -1,4 +1,4 @@
-﻿using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions;
 using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects;
 using Intercon.Application.DataTransferObjects.Business;
@@ -27,7 +27,9 @@ public sealed class CreateBusinessCommandHandler(
             fileData = await mediator.Send(new UploadFileCommand(command.Data.Logo), cancellationToken);
         }
 
-        var businessDb = new Business
+        var dateNow = DateTime.Now;
+
+        var business = new Business
         {
             OwnerId = command.UserId,
             Title = command.Data.Title,
@@ -35,7 +37,9 @@ public sealed class CreateBusinessCommandHandler(
             FullDescription = command.Data.FullDescription,
             Address = command.Data.Address,
             Category = command.Data.Category,
-            LogoId = fileData?.Id
+            LogoId = fileData?.Id,
+            CreateDate = dateNow,
+            UpdateDate = dateNow
         };
 
         await businessRepository.CreateBusinessAsync(businessDb, cancellationToken);

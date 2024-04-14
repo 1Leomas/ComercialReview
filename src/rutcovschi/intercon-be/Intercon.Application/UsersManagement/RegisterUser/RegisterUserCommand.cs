@@ -22,7 +22,7 @@ public sealed class RegisterUserCommandHandler(
             FirstName = command.Data.FirstName,
             LastName = command.Data.LastName,
             Email = command.Data.Email,
-            UserName = string.IsNullOrEmpty(command.Data.UserName) ? command.Data.Email : command.Data.UserName,
+            UserName = string.IsNullOrEmpty(command.Data.UserName) ? "None" : command.Data.UserName,
             Role = (Role)command.Data.Role,
         };
 
