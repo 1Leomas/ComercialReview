@@ -1,5 +1,4 @@
-﻿using Intercon.Application.DataTransferObjects.User;
-using Intercon.Application.UsersManagement.EditUser;
+﻿using Intercon.Application.UsersManagement.EditUser;
 using Intercon.Domain.Entities;
 
 namespace Intercon.Application.Abstractions;

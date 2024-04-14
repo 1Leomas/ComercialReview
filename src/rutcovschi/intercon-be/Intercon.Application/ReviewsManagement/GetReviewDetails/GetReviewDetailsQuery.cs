@@ -2,7 +2,6 @@
 using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Application.Extensions.Mappers;
-using Intercon.Domain.Enums;
 
 namespace Intercon.Application.ReviewsManagement.GetReviewDetails;
 

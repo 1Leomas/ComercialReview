@@ -1,5 +1,4 @@
-﻿using Intercon.Application.Abstractions;
-using Intercon.Application.CustomExceptions;
+﻿using Intercon.Application.CustomExceptions;
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Application.UsersManagement.DeleteUser;
 using Intercon.Application.UsersManagement.EditUser;
@@ -12,7 +11,6 @@ using Intercon.Application.UsersManagement.UserNameUniqueCheck;
 using Intercon.Domain.Identity;
 using Intercon.Presentation.Extensions;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
