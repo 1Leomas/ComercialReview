@@ -134,7 +134,6 @@ public class BusinessRepository(InterconDbContext context)
         }
 
         businessDb.UpdateDate = DateTime.Now;
-        businessDb.WasEdited = true;
 
         await context.SaveChangesAsync(cancellationToken);
 

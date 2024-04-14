@@ -84,7 +84,6 @@ public class UserRepository(
         }
 
         userDb.UpdateDate = DateTime.Now;
-        userDb.WasEdited = true;
 
         await context.SaveChangesAsync(cancellationToken);
 

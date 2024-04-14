@@ -42,7 +42,6 @@ public class IdentityService(
             userRefreshTokenDb.Token = tokens.RefreshToken;
 
             userRefreshTokenDb.UpdateDate = DateTime.Now;
-            userRefreshTokenDb.WasEdited = true;
         }
         else
         {

@@ -21,5 +21,5 @@ public class User : IdentityUser<int>
 
     public DateTime CreateDate { get; set; } = DateTime.Now;
     public DateTime UpdateDate { get; set; } = DateTime.Now;
-    public bool WasEdited { get; set; }
+    public bool WasEdited => UpdateDate != CreateDate;
 }

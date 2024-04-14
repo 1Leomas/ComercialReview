@@ -140,7 +140,6 @@ public class ReviewRepository(InterconDbContext context)
         }
 
         reviewDb.UpdateDate = DateTime.Now;
-        reviewDb.WasEdited = true;
 
         await context.SaveChangesAsync(cancellationToken);
 
