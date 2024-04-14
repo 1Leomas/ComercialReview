@@ -45,7 +45,7 @@ public sealed class EditReviewCommandValidator : AbstractValidator<EditReviewCom
         When(x => x.Data.Like is not null, () =>
         {
             RuleFor(x => x.Data.Like)
-                .Must(x => Enum.IsDefined(typeof(LikeType), x))
+                .Must(x => Enum.IsDefined(typeof(RecommendationType), x))
                 .WithName(x => nameof(x.Data.Like))
                 .WithMessage("The like type is invalid");
         });

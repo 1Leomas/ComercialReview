@@ -48,7 +48,7 @@ public sealed class CreateReviewCommandCommandValidator : AbstractValidator<Crea
 
         RuleFor(x => x.Data.Like)
             .NotEmpty()
-            .Must(x => Enum.IsDefined(typeof(LikeType), x))
+            .Must(x => Enum.IsDefined(typeof(RecommendationType), x))
             .WithName(x => nameof(x.Data.Like))
             .WithMessage("The like type is invalid");
     }

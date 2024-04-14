@@ -25,7 +25,7 @@ internal sealed class EditReviewCommandHandler
             updatedReviewDb.AuthorId,
             updatedReviewDb.Grade,
             updatedReviewDb.ReviewText,
-            (int)updatedReviewDb.Like
+            (int)updatedReviewDb.Recommendation
         );
     }
 }

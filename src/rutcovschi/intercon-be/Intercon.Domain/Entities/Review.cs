@@ -9,7 +9,7 @@ public class Review : Entity
     [Range(1, 5)]
     public int Grade { get; set; }
     public string? ReviewText { get; set; } = null!;
-    public LikeType Like { get; set; }
+    public RecommendationType Recommendation { get; set; }
     public uint CommentsCount { get; set; }
 
     public int BusinessId { get; set; }

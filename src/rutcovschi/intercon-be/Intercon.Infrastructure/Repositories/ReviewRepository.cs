@@ -60,7 +60,7 @@ public class ReviewRepository(InterconDbContext context)
         {
             ReviewSortBy.UpdatedDate => review.OrderUsing(x => x.UpdatedDate, direction ?? SortingDirection.Descending),
             ReviewSortBy.Grade => review.OrderUsing(x => x.Grade, direction ?? SortingDirection.Ascending),
-            ReviewSortBy.Like => review.OrderUsing(x => x.Like, direction ?? SortingDirection.Ascending),
+            ReviewSortBy.Like => review.OrderUsing(x => x.Recommendation, direction ?? SortingDirection.Ascending),
             _ => review.OrderUsing(x => x.UpdatedDate, SortingDirection.Descending)
         };
     }
@@ -72,9 +72,9 @@ public class ReviewRepository(InterconDbContext context)
             businesses = businesses.Where(x => parameters.Grades.Contains((ReviewGrade)x.Grade));
         }
 
-        if (parameters.LikeType != LikeType.All)
+        if (parameters.RecommendationType != RecommendationType.Neutral)
         {
-            businesses = businesses.Where(x => x.Like == parameters.LikeType);
+            businesses = businesses.Where(x => x.Recommendation == parameters.RecommendationType);
         }
 
         return businesses;
@@ -95,7 +95,7 @@ public class ReviewRepository(InterconDbContext context)
             AuthorId = userId,
             Grade = newReview.Grade,
             ReviewText = newReview.ReviewText,
-            Like = (LikeType)newReview.Like,
+            Recommendation = (RecommendationType)newReview.Like,
             CreatedDate = date,
             UpdatedDate = date
         };
@@ -136,7 +136,7 @@ public class ReviewRepository(InterconDbContext context)
         }
         if (newReviewData.Like != null)
         {
-            reviewDb.Like = (LikeType)newReviewData.Like.Value;
+            reviewDb.Recommendation = (RecommendationType)newReviewData.Like.Value;
         }
 
         reviewDb.UpdatedDate = DateTime.Now;

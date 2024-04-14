@@ -24,7 +24,7 @@ public static class ReviewMapper
                 review.Author.Avatar?.Path),
             review.Grade,
             review.ReviewText,
-            (int)review.Like,
+            (int)review.Recommendation,
             review.CommentsCount,
             review.CreatedDate,
             review.UpdatedDate,
@@ -38,7 +38,7 @@ public static class ReviewMapper
             review.AuthorId,
             review.Grade,
             review.ReviewText,
-            (int)review.Like);
+            (int)review.Recommendation);
     }
 
     //public static Review ToEntity(this CreateReviewDto review)
