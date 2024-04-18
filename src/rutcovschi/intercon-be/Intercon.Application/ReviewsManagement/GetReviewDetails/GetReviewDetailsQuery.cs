@@ -11,7 +11,7 @@ public record ReviewDetailsDto(
     ReviewAuthorDto Author,
     float Grade,
     string? ReviewText,
-    int Like,
+    int Recommendation,
     uint CommentsCount,
     DateTime CreatedDate,
     DateTime UpdatedDate,

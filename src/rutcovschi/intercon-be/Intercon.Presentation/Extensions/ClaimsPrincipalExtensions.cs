@@ -16,4 +16,15 @@ public static class ClaimsPrincipalExtensions
 
         return int.Parse(authenticatedUserIdClaim);
     }
+    public static Role GetUserRole(this ClaimsPrincipal claimsPrincipal)
+    {
+        var userRoleClaim = claimsPrincipal.FindFirstValue(JwtClaimType.Role);
+
+        if (userRoleClaim is null)
+        {
+            throw new InvalidOperationException("User role not found");
+        }
+
+        return (Role)int.Parse(userRoleClaim);
+    }
 }

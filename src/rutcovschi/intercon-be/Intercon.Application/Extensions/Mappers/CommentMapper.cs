@@ -12,6 +12,7 @@ public static class CommentMapper
         {
             Id = comment.Id,
             Text = comment.Text,
+            IsCommentOfBusinessOwner = comment.IsCommentOfBusinessOwner,
 
             AuthorId = comment.AuthorId,
             ReviewAuthorId = comment.ReviewAuthorId,

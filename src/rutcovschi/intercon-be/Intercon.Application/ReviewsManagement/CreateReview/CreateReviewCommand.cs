@@ -4,7 +4,7 @@ using Intercon.Domain.Enums;
 
 namespace Intercon.Application.ReviewsManagement.CreateReview;
 
-public sealed record CreateReviewDto(int Grade, string? ReviewText, int Like);
+public sealed record CreateReviewDto(int Grade, string? ReviewText, int RecommendationType);
 
 public sealed record CreateReviewCommand(int BusinessId, int UserId, CreateReviewDto Data) : ICommand;
 

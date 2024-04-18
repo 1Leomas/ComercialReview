@@ -6,6 +6,7 @@ public class Comment : Entity, IEntity
 {
     public int Id { get; init; }
     public string Text { get; set; } = null!;
+    public bool IsCommentOfBusinessOwner { get; set; }
 
     public int BusinessId { get; set; }
     public int ReviewAuthorId { get; set; }

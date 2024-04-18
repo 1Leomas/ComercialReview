@@ -6,6 +6,7 @@ public record CommentDetailsDto
 {
     public int Id { get; init; }
     public string Text { get; init; } = string.Empty;
+    public bool IsCommentOfBusinessOwner { get; init; }
 
     public int BusinessId { get; init; }
     public int ReviewAuthorId { get; init; }

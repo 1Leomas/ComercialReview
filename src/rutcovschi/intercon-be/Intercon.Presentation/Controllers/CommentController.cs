@@ -1,4 +1,6 @@
 ﻿using Intercon.Application.CommentsManagement.AddComment;
+using Intercon.Application.CommentsManagement.DeleteComment;
+using Intercon.Application.CommentsManagement.EditComment;
 using Intercon.Application.CommentsManagement.GetBusinessReviewComments;
 using Intercon.Application.CustomExceptions;
 using Intercon.Application.DataTransferObjects;
@@ -11,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Intercon.Presentation.Controllers;
 
+[Route("api")]
 [ApiController]
 public class CommentController : ControllerBase
 {
@@ -21,13 +24,13 @@ public class CommentController : ControllerBase
 
     private readonly IMediator _mediator;
 
-    [HttpGet("api/comments/{id}")]
+    [HttpGet("comments/{id}")]
     public IActionResult GetComment(int id)
     {
         return Ok();
     }
 
-    [HttpGet("api/businesses/{businessId}/reviews/{userId}/comments")]
+    [HttpGet("businesses/{businessId}/reviews/{userId}/comments")]
     [ProducesResponseType(typeof(PaginatedResponse<CommentDetailsDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetPaginatedComments([FromRoute] int businessId, [FromRoute] int userId, [FromQuery] CommentParameters parameters, CancellationToken cancellationToken)
     {
@@ -39,7 +42,7 @@ public class CommentController : ControllerBase
     }
 
     [Authorize]
-    [HttpPost("api/businesses/{businessId}/reviews/{userId}/comments")]
+    [HttpPost("businesses/{businessId}/reviews/{userId}/comments")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -60,15 +63,40 @@ public class CommentController : ControllerBase
         return Ok();
     }
 
-    [HttpPut("api/businesses/{businessId}/reviews/{userId}/comments{id}")]
-    public IActionResult EditComment(int id)
+    [Authorize]
+    [HttpPut("review-comments/{id}")]
+    public async Task<IActionResult> EditComment([FromRoute] int id, [FromBody] string text, CancellationToken cancellationToken)
     {
+        var currentUserId = HttpContext.User.GetUserId();
+
+        var comment = new EditCommentDto
+        {
+            Id = id,
+            AuthorId = currentUserId,
+            Text = text
+        };
+
+        await _mediator.Send(new EditCommentCommand(comment), cancellationToken);
+
         return Ok();
     }
 
-    [HttpDelete("api/businesses/{businessId}/reviews/{userId}/comments/{id}")]
-    public IActionResult DeleteComment(int id)
+    [Authorize]
+    [HttpDelete("review-comments/{id}")]
+    public async Task<IActionResult> DeleteComment([FromRoute] int id, CancellationToken cancellationToken)
     {
+        var currentUserId = HttpContext.User.GetUserId();
+        var currentUserRole = HttpContext.User.GetUserRole();
+
+        var deleteCommentRequest = new DeleteCommentRequest
+        {
+            Id = id,
+            CurrentUserId = currentUserId,
+            CurrentUserRole = currentUserRole
+        };
+
+        await _mediator.Send(new DeleteCommentCommand(deleteCommentRequest), cancellationToken);
+
         return Ok();
     }
 }

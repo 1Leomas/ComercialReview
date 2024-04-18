@@ -95,7 +95,7 @@ public class ReviewRepository(InterconDbContext context)
             AuthorId = userId,
             Grade = newReview.Grade,
             ReviewText = newReview.ReviewText,
-            Recommendation = (RecommendationType)newReview.Like,
+            Recommendation = (RecommendationType)newReview.RecommendationType,
             CreatedDate = date,
             UpdatedDate = date
         };

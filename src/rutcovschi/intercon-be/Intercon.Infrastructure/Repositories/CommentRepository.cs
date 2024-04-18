@@ -16,9 +16,11 @@ public class CommentRepository : ICommentRepository
 
     private readonly InterconDbContext _context;
 
-    public async Task<Comment?> GetCommentByIdAsync(int id, CancellationToken cancellationToken)
+    public async Task<Comment?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _context.Comments            
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
     public async Task<PaginatedList<Comment>> GetPaginatedCommentsByBusinessReviewAsync(
@@ -69,12 +71,12 @@ public class CommentRepository : ICommentRepository
         };
     }
 
-    public async Task<IEnumerable<Comment>> GetCommentsByUserIdAsync(int userId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Comment>> GetByUserIdAsync(int userId, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<Comment>> GetCommentsByBusinessIdAsync(int businessId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Comment>> GetByBusinessIdAsync(int businessId, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
@@ -82,24 +84,43 @@ public class CommentRepository : ICommentRepository
     public async Task<bool> AddAsync(Comment comment, CancellationToken cancellationToken)
     {
         _context.Comments.Add(comment);
-        var result = await _context.SaveChangesAsync(cancellationToken);
+        var rows = await _context.SaveChangesAsync(cancellationToken);
 
-        if (result > 0)
+        if (rows > 0)
         {
             await UpdateReviewStats(comment.BusinessId, comment.ReviewAuthorId, cancellationToken);
         }
 
-        return result > 0;
+        return rows > 0;
     }
 
-    public async Task<bool> UpdateCommentAsync(Comment newCommentData, CancellationToken cancellationToken)
+    public async Task<bool> EditAsync(Comment newCommentData, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var comment = await _context.Comments.FindAsync(newCommentData.Id, cancellationToken);
+        
+        if (comment == null) return false;
+
+        comment.Text = newCommentData.Text;
+        comment.UpdatedDate = DateTime.Now;
+
+        var rows = await _context.SaveChangesAsync(cancellationToken);
+
+        return rows > 0;
     }
 
-    public async Task<bool> DeleteCommentAsync(int id, CancellationToken cancellationToken)
+    public async Task DeleteAsync(int id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var comment = await _context.Comments
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+        if (comment == null)
+        {
+            return;
+        }
+        
+        _context.Comments.Remove(comment);
+
+        await UpdateReviewStats(comment.BusinessId, comment.ReviewAuthorId, cancellationToken);
     }
 
     public async Task<bool> CommentExistsAsync(int id, CancellationToken cancellationToken)
