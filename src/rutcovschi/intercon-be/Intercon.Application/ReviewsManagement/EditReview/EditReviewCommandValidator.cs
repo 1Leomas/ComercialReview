@@ -42,12 +42,12 @@ public sealed class EditReviewCommandValidator : AbstractValidator<EditReviewCom
                 .WithName(x => nameof(x.Data.ReviewText));
         });
 
-        When(x => x.Data.Like is not null, () =>
+        When(x => x.Data.RecommendationType is not null, () =>
         {
-            RuleFor(x => x.Data.Like)
+            RuleFor(x => x.Data.RecommendationType)
                 .Must(x => Enum.IsDefined(typeof(RecommendationType), x))
-                .WithName(x => nameof(x.Data.Like))
-                .WithMessage("The like type is invalid");
+                .WithName(x => nameof(x.Data.RecommendationType))
+                .WithMessage("The recommendation type is invalid");
         });
     }
 }

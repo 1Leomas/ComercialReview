@@ -4,9 +4,9 @@ using Intercon.Domain.Enums;
 
 namespace Intercon.Application.ReviewsManagement.EditReview;
 
-public sealed record UpdatedReviewDto(int BusinessId, int AuthorId, float Grade, string? ReviewText, int Like);
+public sealed record UpdatedReviewDto(int BusinessId, int AuthorId, float Grade, string? ReviewText, int RecommendationType);
 
-public sealed record EditReviewDto(int? Grade, string? ReviewText, int? Like);
+public sealed record EditReviewDto(int? Grade, string? ReviewText, int? RecommendationType);
 
 public sealed record EditReviewCommand(int BusinessId, int AuthorId, EditReviewDto Data) : ICommand<UpdatedReviewDto>;
 

@@ -144,9 +144,9 @@ public class ReviewRepository(InterconDbContext context)
         {
             reviewDb.ReviewText = newReviewData.ReviewText;
         }
-        if (newReviewData.Like != null)
+        if (newReviewData.RecommendationType != null)
         {
-            reviewDb.Recommendation = (RecommendationType)newReviewData.Like.Value;
+            reviewDb.Recommendation = (RecommendationType)newReviewData.RecommendationType.Value;
         }
 
         reviewDb.UpdatedDate = DateTime.Now;
