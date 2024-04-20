@@ -15,13 +15,16 @@ public class PaginatedList<T> : List<T>
         TotalCount = count;
         PageSize = pageSize;
         CurrentPage = pageNumber;
-        TotalPages = (int)Math.Ceiling(count / (double)pageSize);
+        TotalPages = count > 0 ? (int)Math.Ceiling(count / (double)pageSize) : 1;
         AddRange(items);
     }
     public static async Task<PaginatedList<T>> ToPagedList(IQueryable<T> source, int pageNumber, int pageSize)
     {
         var count = source.Count();
-        var items = await source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        var items = await source
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
         return new PaginatedList<T>(items, count, pageNumber, pageSize);
     }
 }
