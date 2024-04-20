@@ -7,7 +7,6 @@ using Intercon.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using DateTime = System.DateTime;
 
 namespace Intercon.Infrastructure.Services;
 

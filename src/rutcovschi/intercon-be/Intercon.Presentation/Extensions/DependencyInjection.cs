@@ -7,8 +7,10 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
 using Intercon.Application.Options;
+using Intercon.Domain.Enums;
 using Intercon.Infrastructure.Options;
 using Intercon.Presentation.AppSettingsOptions;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Intercon.Presentation.Extensions;
 
@@ -62,6 +64,8 @@ public static class DependencyInjection
         var validAudience = configuration.GetValue<string>("JwtTokenSettings:ValidAudience");
         var symmetricSecurityKey = configuration.GetValue<string>("JwtTokenSettings:SymmetricSecurityKey");
 
+        JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
         services.AddAuthentication(options => {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -69,6 +73,7 @@ public static class DependencyInjection
         })
         .AddJwtBearer(options =>
         {
+            options.SaveToken = true;
             options.IncludeErrorDetails = true;
             options.TokenValidationParameters = new TokenValidationParameters()
             {
@@ -81,9 +86,9 @@ public static class DependencyInjection
                 ValidAudience = validAudience,
                 IssuerSigningKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(symmetricSecurityKey!)
-                ),
+                )
+                ,RoleClaimType = JwtClaimType.Role
             };
-            options.SaveToken = true;
         });
 
         return services;
