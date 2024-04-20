@@ -65,19 +65,29 @@ public class ReviewRepository(InterconDbContext context)
         };
     }
 
-    private IQueryable<Review> ApplyFilter(IQueryable<Review> businesses, ReviewParameters parameters)
+    private IQueryable<Review> ApplyFilter(IQueryable<Review> reviews, ReviewParameters parameters)
     {
+        if (!string.IsNullOrEmpty(parameters.Search))
+        {
+            var search = parameters.Search.ToLower();
+
+            reviews = reviews.Where(x =>
+                x.ReviewText != null && x.ReviewText.ToLower().Contains(search) ||
+                x.Author.FirstName.ToLower().Contains(search) ||
+                x.Author.LastName.ToLower().Contains(search));
+        }
+
         if (parameters.Grades.Any() && !parameters.Grades.Contains(ReviewGrade.All))
         {
-            businesses = businesses.Where(x => parameters.Grades.Contains((ReviewGrade)x.Grade));
+            reviews = reviews.Where(x => parameters.Grades.Contains((ReviewGrade)x.Grade));
         }
 
         if (parameters.RecommendationType != RecommendationType.Neutral)
         {
-            businesses = businesses.Where(x => x.Recommendation == parameters.RecommendationType);
+            reviews = reviews.Where(x => x.Recommendation == parameters.RecommendationType);
         }
 
-        return businesses;
+        return reviews;
     }
 
     public async Task<IEnumerable<Review>> GetAllReviewsAsync(CancellationToken cancellationToken)

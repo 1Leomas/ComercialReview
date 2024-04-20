@@ -71,13 +71,13 @@ public class BusinessRepository(InterconDbContext context)
 
         if (!string.IsNullOrEmpty(parameters.Search))
         {
-            var search = parameters.Search;
+            var search = parameters.Search.ToLower();
 
             businesses = businesses.Where(x => 
-                x.Title.Contains(search) || 
-                x.ShortDescription.Contains(search) ||
-                (x.FullDescription != null && x.FullDescription.Contains(search)) ||
-                (x.Address.Street != null && x.Address.Street.Contains(search)));
+                x.Title.ToLower().Contains(search) || 
+                x.ShortDescription.ToLower().Contains(search) ||
+                (x.FullDescription != null && x.FullDescription.ToLower().Contains(search)) ||
+                (x.Address.Street != null && x.Address.Street.ToLower().Contains(search)));
         }
 
         if (parameters.Categories.Any() && !parameters.Categories.Contains(BusinessCategory.All))

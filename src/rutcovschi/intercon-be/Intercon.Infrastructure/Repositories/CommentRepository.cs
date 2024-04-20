@@ -49,10 +49,10 @@ public class CommentRepository : ICommentRepository
     {
         if (!string.IsNullOrEmpty(parameters.Search))
         {
-            var search = parameters.Search;
+            var search = parameters.Search.ToLower();
 
             comments = comments.Where(
-                x => x.Text.Contains(search));
+                x => x.Text.ToLower().Contains(search));
         }
 
         return comments;
