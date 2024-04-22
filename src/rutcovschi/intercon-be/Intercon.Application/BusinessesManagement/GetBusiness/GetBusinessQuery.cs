@@ -14,6 +14,22 @@ public sealed class GetBusinessQueryHandler
     {
         var business = await businessRepository.GetBusinessByIdAsync(query.Id, cancellationToken);
 
-        return business?.ToDetailsDto();
+        if (business is null)
+        {
+            return null;
+        }
+
+        return new BusinessDetailsDto(
+            business.Id,
+            business.OwnerId,
+            business.Title,
+            business.ShortDescription,
+            business.FullDescription,
+            business.Rating,
+            business.LogoId is not null ? business.Logo?.Path : null,
+            business.ProfileImages.Select(x => x.Path),
+            business.Address,
+            business.ReviewsCount,
+            (int)business.Category);
     }
 }

@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Intercon.Domain.Abstractions;
 using Intercon.Domain.ComplexTypes;
 using Intercon.Domain.Enums;
@@ -22,6 +22,6 @@ public class Business : Entity, IEntity
 
     public virtual User Owner { get; set; } = null!;
     public virtual FileData? Logo { get; set; } = null;
-    public virtual ICollection<FileData> Images { get; set; } = new List<FileData>();
+    public virtual ICollection<FileData> ProfileImages { get; set; } = new List<FileData>();
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 }

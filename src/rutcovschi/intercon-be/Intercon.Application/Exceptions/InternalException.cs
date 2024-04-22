@@ -6,3 +6,10 @@ public class InternalException : BaseException
     {
     }
 }
+
+public class NotFoundException : BaseException
+{
+    public NotFoundException(string obj) : base($"The {obj} not found")
+    {
+    }
+}

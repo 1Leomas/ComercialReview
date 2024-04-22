@@ -2,6 +2,7 @@
 using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.Comment;
 using Intercon.Application.Exceptions;
+using Intercon.Domain.Entities;
 
 namespace Intercon.Application.CommentsManagement.EditComment;
 
@@ -20,7 +21,10 @@ internal sealed class EditCommentCommandHandler : ICommandHandler<EditCommentCom
     {
         var comment = await _commentRepository.GetByIdAsync(request.CommentDto.Id, cancellationToken);
 
-        if (comment is null || comment.AuthorId != request.CommentDto.AuthorId) return;
+        if (comment is null || comment.AuthorId != request.CommentDto.AuthorId)
+        {
+            throw new NotFoundException(nameof(Comment));
+        }
 
         comment.Text = request.CommentDto.Text;
         comment.UpdatedDate = DateTime.Now;

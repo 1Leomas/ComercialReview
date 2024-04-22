@@ -16,19 +16,4 @@ public static class BusinessMapper
             Category = businessDto.Category
         };
     }
-
-    public static BusinessDetailsDto ToDetailsDto(this Business business)
-    {
-        return new BusinessDetailsDto(
-            business.Id,
-            business.OwnerId,
-            business.Title,
-            business.ShortDescription,
-            business.FullDescription,
-            business.Rating,
-            business.LogoId is not null ? business.Logo?.Path : null,
-            business.Address,
-            business.ReviewsCount,
-            (int)business.Category);
-    }
 }

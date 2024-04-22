@@ -6,7 +6,8 @@ public class EditCommentCommandValidator : AbstractValidator<EditCommentCommand>
 {
     public EditCommentCommandValidator()
     {
-        RuleFor(x => x.CommentDto.Id).NotEmpty();
+        RuleFor(x => x.CommentDto.Id)
+            .NotEmpty();
 
         RuleFor(x => x.CommentDto.Text)
             .NotEmpty()

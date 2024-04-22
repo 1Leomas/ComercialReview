@@ -1,8 +1,9 @@
-using Intercon.Application.Abstractions;
+﻿using Intercon.Application.Abstractions;
 using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects;
 using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Application.Extensions.Mappers;
+using Intercon.Application.FilesManagement.UploadBusinessProfileImages;
 using Intercon.Application.FilesManagement.UploadFile;
 using Intercon.Domain.Entities;
 using MediatR;
@@ -42,8 +43,26 @@ public sealed class CreateBusinessCommandHandler(
             UpdatedDate = dateNow
         };
 
-        await businessRepository.CreateBusinessAsync(businessDb, cancellationToken);
+        var businessId = await businessRepository.CreateBusinessAsync(business, cancellationToken);
+        
+        var profileImages = new List<string>();
 
-        return businessDb.ToDetailsDto();
+        if (command.Data.ProfileImages.Any())
+        {
+            profileImages = await mediator.Send(new UploadBusinessProfileImagesCommand(command.Data.ProfileImages), cancellationToken);
+        }
+
+        return new BusinessDetailsDto(
+            business.Id,
+            business.OwnerId,
+            business.Title,
+            business.ShortDescription,
+            business.FullDescription,
+            business.Rating,
+            business.LogoId is not null ? business.Logo?.Path : null,
+            profileImages,
+            business.Address,
+            business.ReviewsCount,
+            (int)business.Category);
     }
 }

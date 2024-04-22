@@ -2,7 +2,6 @@
 using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects;
 using Intercon.Application.DataTransferObjects.Business;
-using Intercon.Application.Extensions.Mappers;
 using Intercon.Domain.Pagination;
 
 namespace Intercon.Application.BusinessesManagement.GetPaginatedBusinesses;
@@ -18,6 +17,26 @@ internal sealed class GetPaginatedBusinessesQueryHandler(IBusinessRepository bus
         var businesses = 
             await businessRepository.GetPaginatedBusinessesAsync(query.Parameters, cancellationToken);
 
+        var businessesDetailsList = new List<BusinessDetailsDto>();
+
+        foreach (var business in businesses)
+        {
+            var bDetails = new BusinessDetailsDto(
+                business.Id,
+                business.OwnerId,
+                business.Title,
+                business.ShortDescription,
+                business.FullDescription,
+                business.Rating,
+                business.LogoId is not null ? business.Logo?.Path : null,
+                business.ProfileImages.Select(x => x.Path),
+                business.Address,
+                business.ReviewsCount,
+                (int)business.Category);
+
+            businessesDetailsList.Add(bDetails);
+        }
+
         return new PaginatedResponse<BusinessDetailsDto>()
         {
             CurrentPage = businesses.CurrentPage,
@@ -26,7 +45,7 @@ internal sealed class GetPaginatedBusinessesQueryHandler(IBusinessRepository bus
             TotalCount = businesses.TotalCount,
             HasPrevious = businesses.HasPrevious,
             HasNext = businesses.HasNext,
-            Items = businesses.Select(b => b.ToDetailsDto()).ToList()
+            Items = businessesDetailsList
         };
     }
 }

@@ -11,6 +11,7 @@ public record BusinessDetailsDto(
     string? FullDescription,
     float Rating,
     string? LogoPath,
+    IEnumerable<string> ProfileImages,
     Address Address,
     uint ReviewsCount,
     int Category);
