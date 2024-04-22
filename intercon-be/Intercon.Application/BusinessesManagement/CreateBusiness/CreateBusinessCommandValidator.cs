@@ -32,6 +32,7 @@ public class CreateBusinessCommandValidator : AbstractValidator<CreateBusinessCo
 
         RuleFor(x => x.Data.Address)
             .NotEmpty()
-            .WithName(x => nameof(x.Data.Address));
+            .WithName(x => nameof(x.Data.Address))
+            .WithMessage("The address is required");
     }
 }

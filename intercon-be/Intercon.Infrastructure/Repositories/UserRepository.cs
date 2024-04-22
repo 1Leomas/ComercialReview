@@ -40,7 +40,7 @@ public class UserRepository(
                 FirstName = newUser.FirstName,
                 LastName = newUser.LastName,
                 Email = newUser.Email,
-                UserName = string.IsNullOrEmpty(newUser.UserName) ? "None" : newUser.UserName,
+                UserName = string.IsNullOrEmpty(newUser.UserName) ? newUser.Email : newUser.UserName,
                 Role = newUser.Role,
                 CreatedDate = date,
                 UpdatedDate = date,
