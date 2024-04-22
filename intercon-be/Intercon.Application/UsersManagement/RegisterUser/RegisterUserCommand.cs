@@ -22,13 +22,13 @@ public sealed class RegisterUserCommandHandler(
             FirstName = command.Data.FirstName,
             LastName = command.Data.LastName,
             Email = command.Data.Email,
-            UserName = string.IsNullOrEmpty(command.Data.UserName) ? "None" : command.Data.UserName,
+            UserName = string.IsNullOrEmpty(command.Data.UserName) ? command.Data.Email : command.Data.UserName,
             Role = (Role)command.Data.Role,
         };
 
         var isSuccess =
             await userRepository.CreateUserAsync(newUser, command.Data.Password, cancellationToken);
 
-        if (!isSuccess) throw new Exception("Can not register ApplicationUser");
+        if (!isSuccess) throw new Exception("Can not register user");
     }
 }

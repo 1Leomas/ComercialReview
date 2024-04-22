@@ -1,4 +1,4 @@
-﻿using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions;
 using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects;
 using Intercon.Application.DataTransferObjects.Business;
@@ -47,7 +47,7 @@ public sealed class CreateBusinessCommandHandler(
         
         var profileImages = new List<string>();
 
-        if (command.Data.ProfileImages.Any())
+        if (command.Data.ProfileImages is not null && command.Data.ProfileImages.Any())
         {
             profileImages = await mediator.Send(new UploadBusinessProfileImagesCommand(command.Data.ProfileImages), cancellationToken);
         }
