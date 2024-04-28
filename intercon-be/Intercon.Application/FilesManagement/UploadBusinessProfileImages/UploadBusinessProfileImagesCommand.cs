@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Intercon.Application.FilesManagement.UploadBusinessProfileImages;
 
-public sealed record UploadBusinessProfileImagesCommand(IEnumerable<IFormFile> ProfileImages) : ICommand<List<string>>;
+public sealed record UploadBusinessProfileImagesCommand(IEnumerable<IFormFile> ProfileImages, int BusinessId) : ICommand<List<string>>;
 
 internal sealed class UploadBusinessProfileImagesCommandHandler(
     IFileRepository fileRepository,
@@ -24,7 +24,7 @@ internal sealed class UploadBusinessProfileImagesCommandHandler(
 
             if (!imageValidator.IsValidImage(imageData)) continue;
 
-            var fileDataBd = await fileRepository.UploadFileAsync(image, cancellationToken);
+            var fileDataBd = await fileRepository.UploadFileAsync(image, request.BusinessId, cancellationToken);
 
             if (fileDataBd is not null)
             {

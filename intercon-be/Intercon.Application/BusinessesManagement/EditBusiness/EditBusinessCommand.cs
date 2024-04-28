@@ -3,7 +3,9 @@ using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects;
 using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Application.FilesManagement.DeleteFile;
+using Intercon.Application.FilesManagement.UploadBusinessProfileImages;
 using Intercon.Application.FilesManagement.UploadFile;
+using Intercon.Domain.Entities;
 using MediatR;
 
 namespace Intercon.Application.BusinessesManagement.EditBusiness;
@@ -24,6 +26,23 @@ public sealed class EditBusinessCommandHandler(
 
             if (businessOldLogoId is not null)
                 await mediator.Send(new DeleteFileQuery(businessOldLogoId.Value), cancellationToken);
+        }
+
+        var profileImages = new List<string>();
+
+        if (command.Data.ProfileImages != null)
+        {
+            // delete images that are not in the list
+
+            profileImages.AddRange(command.Data.ProfileImages.ToList());
+        }
+
+        if (command.Data.NewProfileImages is not null && command.Data.NewProfileImages.Any())
+        {
+            profileImages.AddRange(await mediator.Send(
+                new UploadBusinessProfileImagesCommand(
+                    command.Data.NewProfileImages, command.BusinessId),
+                        cancellationToken));
         }
 
         var businessDb = await businessRepository.UpdateBusinessAsync(
@@ -48,6 +67,7 @@ public sealed class EditBusinessCommandHandler(
                 Street = businessDb.Address.Street,
             },
             LogoPath = businessDb.Logo?.Path,
+            ProfileImages = profileImages
         };
     }
 }

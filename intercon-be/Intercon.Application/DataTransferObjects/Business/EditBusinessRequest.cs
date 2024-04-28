@@ -9,4 +9,6 @@ public record EditBusinessRequest(
     string? FullDescription, 
     BusinessCategory? Category,
     AddressDto? Address,
-    IFormFile? Logo);
+    IFormFile? Logo,
+    IEnumerable<IFormFile>? NewProfileImages,
+    IEnumerable<string>? ProfileImages);

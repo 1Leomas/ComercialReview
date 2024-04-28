@@ -11,4 +11,5 @@ public sealed class EditBusinessDetailsDto
     public int Category { get; set; }
     public AddressDto Address { get; set; } = null!;
     public string? LogoPath { get; set; } = null!;
+    public IEnumerable<string> ProfileImages { get; set; } = null!;
 }

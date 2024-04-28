@@ -76,6 +76,23 @@ public class AzureBlobStorageService : IFileRepository
         return fileData;
     }
 
+    public async Task<FileData?> UploadFileAsync(IFormFile imageData, int businessId, CancellationToken cancellationToken)
+    {
+        var filePath = await UploadFileToAzureAsync(imageData);
+
+        var fileData = new FileData
+        {
+            Path = filePath,
+            BusinessId = businessId
+        };
+
+        _context.DataFiles.Add(fileData);
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return fileData;
+    }
+
     public async Task DeleteFileAsync(int id, CancellationToken cancellationToken)
     {
         var filePath = await _context.DataFiles
