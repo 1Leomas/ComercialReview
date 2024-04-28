@@ -1,12 +1,11 @@
-﻿using Intercon.Application.DataTransferObjects.Files;
-using Intercon.Domain.Entities;
-using Microsoft.AspNetCore.Http;
+﻿using Intercon.Domain.Entities;
 
 namespace Intercon.Application.Abstractions;
 
 public interface IFileRepository
 {
-    Task<FileData?> UploadFileAsync(IFormFile imageData, CancellationToken cancellationToken);
-    Task<FileData?> UploadFileAsync(IFormFile imageData, int businessId, CancellationToken cancellationToken);
-    Task DeleteFileAsync(int id, CancellationToken cancellationToken);
+    Task<FileData?> GetByIdAsync(int id, CancellationToken cancellationToken);
+    Task<FileData> UploadFileAsync(string filePath, CancellationToken cancellationToken);
+    Task<FileData> UploadFileAsync(string filePath, int businessId, CancellationToken cancellationToken);
+    Task<bool> DeleteAsync(int id, CancellationToken cancellationToken);
 }

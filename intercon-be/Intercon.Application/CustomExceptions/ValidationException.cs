@@ -8,6 +8,15 @@ public class ValidationException : Exception
         Errors = errors;
     }
 
+    public ValidationException(string propertyName, string message)
+        : base("Validation failed")
+    {
+        Errors = new ValidationError[]
+        {
+            new ValidationError(propertyName, message)
+        };
+    }
+
     public IReadOnlyCollection<ValidationError> Errors { get; }
 }
 

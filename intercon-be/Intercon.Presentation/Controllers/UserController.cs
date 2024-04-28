@@ -46,7 +46,7 @@ public class UserController(IMediator mediator) : BaseController
         if (userToEdit.Avatar is not null)
         {
             var logoFileData = await mediator.Send(new UploadFileCommand(userToEdit.Avatar), cancellationToken) 
-                               ?? throw new InvalidOperationException("Can not upload logo");
+                               ?? throw new ValidationException("logo", "Can not upload image file");
 
             newLogoId = logoFileData.Id;
         }

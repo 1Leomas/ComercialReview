@@ -1,4 +1,5 @@
 using Intercon.Application.BusinessesManagement.CreateBusiness;
+using Intercon.Application.BusinessesManagement.DeleteBusinessGalleryPhoto;
 using Intercon.Application.BusinessesManagement.EditBusiness;
 using Intercon.Application.BusinessesManagement.GetBusiness;
 using Intercon.Application.BusinessesManagement.GetBusinesses;
@@ -87,7 +88,7 @@ public class BusinessController(IMediator mediator) : BaseController
             var logoFileData = await mediator.Send(new UploadFileCommand(businessToEdit.Logo), cancellationToken);
 
             if (logoFileData is null)
-                throw new InvalidOperationException("Can not upload logo");
+                throw new ValidationException("logo","Can not upload image file");
 
             newLogoId = logoFileData.Id;
         }
@@ -95,5 +96,19 @@ public class BusinessController(IMediator mediator) : BaseController
         var updatedBusiness = await mediator.Send(new EditBusinessCommand(currentUserId, businessId, businessToEdit, newLogoId), cancellationToken);
 
         return Ok(updatedBusiness);
+    }
+
+    [Authorize]
+    [HttpDelete("{businessId}/profile-image/{imageId}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> DeleteGalleryPhoto([FromRoute] int businessId, [FromRoute] int imageId,
+        CancellationToken cancellationToken)
+    {
+        var currentUserId = HttpContext.User.GetUserId();
+
+        await mediator.Send(new DeleteGalleryPhotoCommand(businessId, currentUserId, imageId), cancellationToken);
+
+        return NoContent();
     }
 }

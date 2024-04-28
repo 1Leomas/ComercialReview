@@ -11,16 +11,14 @@ namespace Intercon.Application.FilesManagement.UploadFile;
 public sealed record UploadFileCommand(IFormFile ImageData) : ICommand<FileDataDto?>;
 
 internal sealed class UploadFileCommandHandler(
+    IBlobStorage blobStorage,
     IFileRepository fileRepository) : ICommandHandler<UploadFileCommand, FileDataDto?>
 {
     public async Task<FileDataDto?> Handle(UploadFileCommand request, CancellationToken cancellationToken)
     {
-        var fileDataBd = await fileRepository.UploadFileAsync(request.ImageData, cancellationToken);
+        var azureFilePath = await blobStorage.UploadAsync(request.ImageData, cancellationToken);
 
-        if (fileDataBd is null)
-        {
-            return null;
-        }
+        var fileDataBd = await fileRepository.UploadFileAsync(azureFilePath, cancellationToken);
 
         var fileData = new FileDataDto(fileDataBd.Id, fileDataBd.Path);
 

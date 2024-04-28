@@ -1,22 +1,17 @@
 ﻿using Azure.Storage;
 using Azure.Storage.Blobs;
 using Intercon.Application.Abstractions;
-using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Options;
-using Intercon.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Intercon.Infrastructure.Services;
 
-public class AzureBlobStorageService : IFileRepository
+public class AzureBlobStorageService : IBlobStorage
 {
     public AzureBlobStorageService(
-        InterconDbContext context, 
         IOptions<AzureBlobStorageSettings> azureBlobStorageSettings)
     {
-        _context = context;
         _azureBlobStorageSettings = azureBlobStorageSettings.Value;
 
         var storageAccount = _azureBlobStorageSettings.StorageAccount;
@@ -33,12 +28,11 @@ public class AzureBlobStorageService : IFileRepository
     }
 
     private readonly BlobServiceClient _blobServiceClient;
-    private readonly InterconDbContext _context;
     private readonly AzureBlobStorageSettings _azureBlobStorageSettings;
 
     private readonly string _blobLinkPrefix;
 
-    private async Task<string> UploadFileToAzureAsync(IFormFile file)
+    public async Task<string> UploadAsync(IFormFile file, CancellationToken cancellationToken)
     {
         var blobContainer = _blobServiceClient.GetBlobContainerClient(_azureBlobStorageSettings.ContainerName);
 
@@ -47,68 +41,18 @@ public class AzureBlobStorageService : IFileRepository
         var blob = blobContainer.GetBlobClient(filePath);
 
         await using var fileStream = file.OpenReadStream();
-        await blob.UploadAsync(fileStream, true);
+        await blob.UploadAsync(fileStream, true, cancellationToken);
 
         return blob.Uri.AbsoluteUri;
     }
 
-    private async Task<bool> DeleteFileFromAzureAsync(string filePath)
+    public async Task<bool> DeleteAsync(string filePath, CancellationToken cancellationToken)
     {
         var blobContainer = _blobServiceClient.GetBlobContainerClient(_azureBlobStorageSettings.ContainerName);
         var blob = blobContainer.GetBlobClient(filePath.Replace($"{_blobLinkPrefix}", ""));
 
-        return await blob.DeleteIfExistsAsync();
-    }
+        var result = await blob.DeleteIfExistsAsync(cancellationToken: cancellationToken);
 
-    public async Task<FileData?> UploadFileAsync(IFormFile imageData, CancellationToken cancellationToken)
-    {
-        var filePath = await UploadFileToAzureAsync(imageData);
-
-        var fileData = new FileData
-        {
-            Path = filePath,
-        };
-
-        _context.DataFiles.Add(fileData);
-
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return fileData;
-    }
-
-    public async Task<FileData?> UploadFileAsync(IFormFile imageData, int businessId, CancellationToken cancellationToken)
-    {
-        var filePath = await UploadFileToAzureAsync(imageData);
-
-        var fileData = new FileData
-        {
-            Path = filePath,
-            BusinessId = businessId
-        };
-
-        _context.DataFiles.Add(fileData);
-
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return fileData;
-    }
-
-    public async Task DeleteFileAsync(int id, CancellationToken cancellationToken)
-    {
-        var filePath = await _context.DataFiles
-            .Where(x => x.Id == id).Select(x => x.Path)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        if (filePath == null)
-        {
-            throw new InvalidOperationException("File not found in db");
-        }
-
-        var result = await DeleteFileFromAzureAsync(filePath);
-
-        if (!result)
-        {
-            throw new InvalidOperationException("File not found in Azure Blob Storage");
-        }
+        return result;
     }
 }

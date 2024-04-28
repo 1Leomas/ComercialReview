@@ -99,7 +99,9 @@ public class UserRepository(
             return false;
         }
 
-        var rows = await userManager.Users.Where(x => x.Id == userDb.Id).ExecuteDeleteAsync(cancellationToken);
+        var rows = await userManager.Users
+            .Where(x => x.Id == userDb.Id)
+            .ExecuteDeleteAsync(cancellationToken);
 
         return rows != 0;
     }

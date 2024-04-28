@@ -6,54 +6,52 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Intercon.Infrastructure.Repositories;
 
-//public class FileRepository(InterconDbContext context) : IFileRepository
-//{
-//    public async Task<FileData?> UploadFileAsync(IFormFile imageData, CancellationToken cancellationToken)
-//    {
-//        var folderName = "intercon_uploads";
+public class FileRepository(InterconDbContext context) : IFileRepository
+{
+    private readonly InterconDbContext _context = context;
 
-//        if (!Directory.Exists($"/{folderName}"))
-//        {
-//            Directory.CreateDirectory($"/{folderName}");
-//        }
+    public async Task<FileData?> GetByIdAsync(int id, CancellationToken cancellationToken)
+    {
+        return await _context.DataFiles
+            .Where(x => x.Id == id)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
 
-//        var filePath = $"/{folderName}/{Guid.NewGuid()}{Path.GetExtension(imageData.FileName)}";
-        
-//        using (var fileStream = new FileStream(filePath, FileMode.Create))
-//        {
-//            await imageData.CopyToAsync(fileStream, cancellationToken);
-//        }
+    public async Task<FileData> UploadFileAsync(string filePath, CancellationToken cancellationToken)
+    {
+        var fileData = new FileData
+        {
+            Path = filePath,
+        };
 
-//        var fileData = new FileData
-//        {
-//            Path = filePath,
-//        };
+        _context.DataFiles.Add(fileData);
 
-//        context.DataFiles.Add(fileData);
+        await _context.SaveChangesAsync(cancellationToken);
 
-//        await context.SaveChangesAsync(cancellationToken);
+        return fileData;
+    }
 
-//        return fileData;
-//    }
+    public async Task<FileData> UploadFileAsync(string filePath, int businessId, CancellationToken cancellationToken)
+    {
+        var fileData = new FileData
+        {
+            Path = filePath,
+            BusinessId = businessId
+        };
 
-//    public async Task DeleteFileAsync(int id, CancellationToken cancellationToken)
-//    {
-//        var file = await context.DataFiles
-//            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        _context.DataFiles.Add(fileData);
 
-//        if (file is null) return;
+        await _context.SaveChangesAsync(cancellationToken);
 
-//        try
-//        {
-//            if (File.Exists(file.Path)) File.Delete(file.Path);
-//        }
-//        catch (IOException ioExp)
-//        {
-//            throw new IOException("Can not delete file", ioExp);
-//        }
+        return fileData;
+    }
 
-//        context.DataFiles.Remove(file);
+    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken)
+    {
+        var rows = await _context.DataFiles
+            .Where(x => x.Id == id)
+            .ExecuteDeleteAsync(cancellationToken);
 
-//        await context.SaveChangesAsync(cancellationToken);
-//    }
-//}
+        return rows > 0;
+    }
+}
