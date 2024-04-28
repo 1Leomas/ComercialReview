@@ -11,5 +11,7 @@ public class FileDataConfiguration : IEntityTypeConfiguration<FileData>
         builder.HasKey(i => i.Id);
 
         builder.Property(i => i.Path).IsRequired();
+
+        builder.Property(i => i.BusinessId).IsRequired(false);
     }
 }

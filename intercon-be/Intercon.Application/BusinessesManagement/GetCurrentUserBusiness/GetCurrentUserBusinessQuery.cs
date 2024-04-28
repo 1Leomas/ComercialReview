@@ -28,7 +28,7 @@ public sealed class GetCurrentUserBusinessQueryHandler
             business.FullDescription,
             business.Rating,
             business.LogoId is not null ? business.Logo?.Path : null,
-            business.ProfileImages.Select(x => x.Path),
+            business.PhotoGallery.Select(x => x.Path),
             business.Address,
             business.ReviewsCount,
             (int)business.Category);

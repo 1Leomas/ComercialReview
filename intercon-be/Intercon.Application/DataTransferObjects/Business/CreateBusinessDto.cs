@@ -12,7 +12,3 @@ public record CreateBusinessDto(
     IEnumerable<IFormFile>? ProfileImages,
     Address Address,
     BusinessCategory Category);
-
-public record CreateImageDto(
-    //string ContentType,
-    string Data);
