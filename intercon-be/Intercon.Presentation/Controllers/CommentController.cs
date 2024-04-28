@@ -30,30 +30,30 @@ public class CommentController : ControllerBase
         return Ok();
     }
 
-    [HttpGet("businesses/{businessId}/reviews/{userId}/comments")]
+    [HttpGet("businesses/{businessId}/reviews/{reviewAuthorId}/comments")]
     [ProducesResponseType(typeof(PaginatedResponse<CommentDetailsDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetPaginatedComments([FromRoute] int businessId, [FromRoute] int userId, [FromQuery] CommentParameters parameters, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetPaginatedComments([FromRoute] int businessId, [FromRoute] int reviewAuthorId, [FromQuery] CommentParameters parameters, CancellationToken cancellationToken)
     {
         var paginatedComments = await _mediator.Send(
-            new GetPaginatedBusinessReviewCommentsQuery(businessId, userId, parameters), 
+            new GetPaginatedBusinessReviewCommentsQuery(businessId, reviewAuthorId, parameters), 
             cancellationToken);
 
         return Ok(paginatedComments);
     }
 
     [Authorize]
-    [HttpPost("businesses/{businessId}/reviews/{userId}/comments")]
+    [HttpPost("businesses/{businessId}/reviews/{reviewAuthorId}/comments")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> AddComment([FromRoute] int businessId, [FromRoute] int userId, [FromBody] string text, CancellationToken cancellationToken)
+    public async Task<IActionResult> AddComment([FromRoute] int businessId, [FromRoute] int reviewAuthorId, [FromBody] string text, CancellationToken cancellationToken)
     {
         var currentUserId = HttpContext.User.GetUserId();
 
         var comment = new AddCommentDto
         {
             BusinessId = businessId,
-            ReviewAuthorId = userId,
+            ReviewAuthorId = reviewAuthorId,
             AuthorId = currentUserId,
             Text = text
         };
