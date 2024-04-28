@@ -2,6 +2,7 @@
 using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects;
 using Intercon.Application.DataTransferObjects.Business;
+using Intercon.Application.DataTransferObjects.Files;
 using Intercon.Application.FilesManagement.DeleteFile;
 using Intercon.Application.FilesManagement.UploadBusinessProfileImages;
 using Intercon.Application.FilesManagement.UploadFile;
@@ -10,15 +11,21 @@ using MediatR;
 
 namespace Intercon.Application.BusinessesManagement.EditBusiness;
 
-public sealed record EditBusinessCommand(int CurrentUserId, int BusinessId, EditBusinessRequest Data, int? NewLogoId) 
-    : ICommand<EditBusinessDetailsDto?>;
+public sealed record EditBusinessCommand(
+        int CurrentUserId, 
+        int BusinessId, 
+        EditBusinessRequest Data, int? NewLogoId) 
+    : ICommand<BusinessDetailsDto?>;
 
 public sealed class EditBusinessCommandHandler(
     IBusinessRepository businessRepository,
-    IMediator mediator) : ICommandHandler<EditBusinessCommand, EditBusinessDetailsDto?>
+    IMediator mediator) : ICommandHandler<EditBusinessCommand, BusinessDetailsDto?>
 {
-    public async Task<EditBusinessDetailsDto?> Handle(EditBusinessCommand command, CancellationToken cancellationToken)
+    public async Task<BusinessDetailsDto?> Handle(EditBusinessCommand command, CancellationToken cancellationToken)
     {
+        // TO DO: check if the user is the owner of the business
+
+
         if (command.NewLogoId is not null)
         {
             var businessOldLogoId = 
@@ -28,14 +35,7 @@ public sealed class EditBusinessCommandHandler(
                 await mediator.Send(new DeleteFileQuery(businessOldLogoId.Value), cancellationToken);
         }
 
-        var profileImages = new List<string>();
-
-        if (command.Data.ProfileImages != null)
-        {
-            // delete images that are not in the list
-
-            profileImages.AddRange(command.Data.ProfileImages.ToList());
-        }
+        var profileImages = new List<BusinessGalleryPhotoDto>();
 
         if (command.Data.NewProfileImages is not null && command.Data.NewProfileImages.Any())
         {
@@ -45,29 +45,25 @@ public sealed class EditBusinessCommandHandler(
                         cancellationToken));
         }
 
-        var businessDb = await businessRepository.UpdateBusinessAsync(
+        var business = await businessRepository.UpdateBusinessAsync(
             command.BusinessId,
             command.Data,
             command.NewLogoId,
             cancellationToken);
 
-        if (businessDb is null) return null;
+        if (business is null) return null;
 
-        return new EditBusinessDetailsDto
-        {
-            Id = businessDb.Id,
-            Title = businessDb.Title,
-            ShortDescription = businessDb.ShortDescription,
-            FullDescription = businessDb.FullDescription,
-            Category = (int)businessDb.Category,
-            Address = new AddressDto
-            {
-                Latitude = businessDb.Address.Latitude,
-                Longitude = businessDb.Address.Longitude,
-                Street = businessDb.Address.Street,
-            },
-            LogoPath = businessDb.Logo?.Path,
-            ProfileImages = profileImages
-        };
+        return new BusinessDetailsDto(
+            business.Id,
+            business.OwnerId,
+            business.Title,
+            business.ShortDescription,
+            business.FullDescription,
+            business.Rating,
+            business.LogoId is not null ? business.Logo?.Path : null,
+            profileImages,
+            business.Address,
+            business.ReviewsCount,
+            (int)business.Category);
     }
 }

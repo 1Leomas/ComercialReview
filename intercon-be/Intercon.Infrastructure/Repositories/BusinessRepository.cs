@@ -17,7 +17,7 @@ public class BusinessRepository(InterconDbContext context)
         return await context.Businesses
             .AsNoTracking()
             .Include(x => x.Logo)
-            .Include(x => x.PhotoGallery)
+            .Include(x => x.GalleryPhotos)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
@@ -26,7 +26,7 @@ public class BusinessRepository(InterconDbContext context)
         return await context.Businesses
             .AsNoTracking()
             .Include(x => x.Logo)
-            .Include(x => x.PhotoGallery)
+            .Include(x => x.GalleryPhotos)
             .FirstOrDefaultAsync(x => x.OwnerId == userId, cancellationToken);
     }
 
@@ -34,7 +34,7 @@ public class BusinessRepository(InterconDbContext context)
     {
         return await context.Businesses
             .Include(x => x.Logo)
-            .Include(x => x.PhotoGallery)
+            .Include(x => x.GalleryPhotos)
             .OrderBy(x => x.Id)
             .ToListAsync(cancellationToken);
     }
@@ -44,7 +44,7 @@ public class BusinessRepository(InterconDbContext context)
         var businesses = context.Businesses
             .AsNoTracking()
             .Include(x => x.Logo)
-            .Include(x => x.PhotoGallery)
+            .Include(x => x.GalleryPhotos)
             .AsQueryable();
 
         businesses = ApplyFilter(businesses, parameters);

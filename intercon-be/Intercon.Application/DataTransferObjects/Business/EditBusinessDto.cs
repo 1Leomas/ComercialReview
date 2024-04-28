@@ -2,7 +2,7 @@
 
 namespace Intercon.Application.DataTransferObjects.Business;
 
-public sealed class EditBusinessDetailsDto
+public sealed class EditBusinessDto
 {
     public int Id { get; set; }
     public string Title { get; set; } = string.Empty;

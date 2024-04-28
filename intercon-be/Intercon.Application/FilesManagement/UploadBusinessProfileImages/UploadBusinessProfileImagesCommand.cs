@@ -6,15 +6,15 @@ using Microsoft.AspNetCore.Http;
 
 namespace Intercon.Application.FilesManagement.UploadBusinessProfileImages;
 
-public sealed record UploadBusinessProfileImagesCommand(IEnumerable<IFormFile> ProfileImages, int BusinessId) : ICommand<List<string>>;
+public sealed record UploadBusinessProfileImagesCommand(IEnumerable<IFormFile> ProfileImages, int BusinessId) : ICommand<List<BusinessGalleryPhotoDto>>;
 
 internal sealed class UploadBusinessProfileImagesCommandHandler(
     IFileRepository fileRepository,
-    IImageValidator imageValidator) : ICommandHandler<UploadBusinessProfileImagesCommand, List<string>>
+    IImageValidator imageValidator) : ICommandHandler<UploadBusinessProfileImagesCommand, List<BusinessGalleryPhotoDto>>
 {
-    public async Task<List<string>> Handle(UploadBusinessProfileImagesCommand request, CancellationToken cancellationToken)
+    public async Task<List<BusinessGalleryPhotoDto>> Handle(UploadBusinessProfileImagesCommand request, CancellationToken cancellationToken)
     {
-        var profileImages = new List<string>();
+        var galleryPhotoDtos = new List<BusinessGalleryPhotoDto>();
 
         foreach (var image in request.ProfileImages)
         {
@@ -28,10 +28,14 @@ internal sealed class UploadBusinessProfileImagesCommandHandler(
 
             if (fileDataBd is not null)
             {
-                profileImages.Add(fileDataBd.Path);
+                galleryPhotoDtos.Add( new BusinessGalleryPhotoDto
+                {
+                    Id = fileDataBd.Id,
+                    Path = fileDataBd.Path
+                });
             }
         }
 
-        return profileImages;
+        return galleryPhotoDtos;
     }
 }

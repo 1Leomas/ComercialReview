@@ -2,6 +2,7 @@
 using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects;
 using Intercon.Application.DataTransferObjects.Business;
+using Intercon.Application.DataTransferObjects.Files;
 using Intercon.Application.Extensions.Mappers;
 using Intercon.Application.FilesManagement.UploadBusinessProfileImages;
 using Intercon.Application.FilesManagement.UploadFile;
@@ -45,7 +46,7 @@ public sealed class CreateBusinessCommandHandler(
 
         var businessId = await businessRepository.CreateBusinessAsync(business, cancellationToken);
         
-        var profileImages = new List<string>();
+        var profileImages = new List<BusinessGalleryPhotoDto>();
 
         if (command.Data.ProfileImages is not null && command.Data.ProfileImages.Any())
         {

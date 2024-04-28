@@ -9,7 +9,8 @@ public class EditBusinessCommandValidator : AbstractValidator<EditBusinessComman
     {
         RuleFor(x => x.BusinessId)
             .NotEmpty()
-            .MustAsync(businessRepository.BusinessExistsAsync);
+            .MustAsync(businessRepository.BusinessExistsAsync)
+            .WithMessage("Business not found");
 
         RuleFor(x => new { x.BusinessId, x.CurrentUserId })
             .MustAsync(async (data, ctx) =>

@@ -22,6 +22,6 @@ public class Business : Entity, IEntity
 
     public virtual User Owner { get; set; } = null!;
     public virtual FileData? Logo { get; set; } = null;
-    public virtual ICollection<FileData> PhotoGallery { get; set; } = new List<FileData>();
+    public virtual ICollection<FileData> GalleryPhotos { get; set; } = new List<FileData>();
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 }

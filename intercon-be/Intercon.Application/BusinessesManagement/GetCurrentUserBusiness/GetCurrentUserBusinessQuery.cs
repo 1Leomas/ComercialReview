@@ -1,6 +1,7 @@
 ﻿using Intercon.Application.Abstractions;
 using Intercon.Application.Abstractions.Messaging;
 using Intercon.Application.DataTransferObjects.Business;
+using Intercon.Application.DataTransferObjects.Files;
 using Intercon.Application.Extensions.Mappers;
 
 namespace Intercon.Application.BusinessesManagement.GetCurrentUserBusiness;
@@ -28,7 +29,11 @@ public sealed class GetCurrentUserBusinessQueryHandler
             business.FullDescription,
             business.Rating,
             business.LogoId is not null ? business.Logo?.Path : null,
-            business.PhotoGallery.Select(x => x.Path),
+            business.GalleryPhotos.Select(x => new BusinessGalleryPhotoDto
+            {
+                Id = x.Id,
+                Path = x.Path
+            }),
             business.Address,
             business.ReviewsCount,
             (int)business.Category);

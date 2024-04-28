@@ -75,7 +75,7 @@ public class BusinessController(IMediator mediator) : BaseController
 
     [Authorize]
     [HttpPut("{businessId}/edit")]
-    [ProducesResponseType(typeof(EditBusinessDetailsDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BusinessDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> EditBusiness([FromRoute] int businessId, [FromForm] EditBusinessRequest businessToEdit, CancellationToken cancellationToken)
     {

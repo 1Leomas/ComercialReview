@@ -1,4 +1,5 @@
-﻿using Intercon.Domain.Enums;
+﻿using Intercon.Application.DataTransferObjects.Files;
+using Intercon.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
 namespace Intercon.Application.DataTransferObjects.Business;
@@ -10,5 +11,4 @@ public record EditBusinessRequest(
     BusinessCategory? Category,
     AddressDto? Address,
     IFormFile? Logo,
-    IEnumerable<IFormFile>? NewProfileImages,
-    IEnumerable<string>? ProfileImages);
+    IEnumerable<IFormFile>? NewProfileImages);

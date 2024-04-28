@@ -4,29 +4,27 @@ using Intercon.Application.DataTransferObjects.Business;
 
 namespace Intercon.Application.BusinessesManagement.GetBusinesses;
 
-public sealed record GetAllBusinessesQuery : IQuery<IEnumerable<BusinessDetailsDto>>;
+public sealed record GetAllBusinessesQuery : IQuery<IEnumerable<BusinessShortDetailsDto>>;
 
 internal sealed class GetAllBusinessesQueryHandler(IBusinessRepository businessRepository)
-    : IQueryHandler<GetAllBusinessesQuery, IEnumerable<BusinessDetailsDto>>
+    : IQueryHandler<GetAllBusinessesQuery, IEnumerable<BusinessShortDetailsDto>>
 {
-    public async Task<IEnumerable<BusinessDetailsDto>> Handle(
+    public async Task<IEnumerable<BusinessShortDetailsDto>> Handle(
         GetAllBusinessesQuery query, CancellationToken cancellationToken)
     {
         var businesses = await businessRepository.GetAllBusinessesAsync(cancellationToken);
 
-        var businessesDetailsList = new List<BusinessDetailsDto>();
+        var businessesDetailsList = new List<BusinessShortDetailsDto>();
 
         foreach (var business in businesses)
         {
-            var bDetails = new BusinessDetailsDto(
+            var bDetails = new BusinessShortDetailsDto(
                 business.Id,
                 business.OwnerId,
                 business.Title,
                 business.ShortDescription,
-                business.FullDescription,
                 business.Rating,
                 business.LogoId is not null ? business.Logo?.Path : null,
-                business.PhotoGallery.Select(x => x.Path),
                 business.Address,
                 business.ReviewsCount,
                 (int)business.Category);
