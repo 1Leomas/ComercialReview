@@ -49,7 +49,7 @@ public class ReviewController(IMediator mediator) : BaseController
     }
 
     [HttpGet("api/businesses/{businessId}/reviews")]
-    [ProducesResponseType(typeof(PaginatedResponse<BusinessDetailsDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PaginatedResponse<ReviewDetailsDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetPaginatedBusinesses([FromRoute] int businessId, [FromQuery] ReviewParameters parameters, CancellationToken cancellationToken)
     {
         return Ok(await mediator.Send(new GetPaginatedBusinessReviewsQuery(businessId, parameters), cancellationToken));
