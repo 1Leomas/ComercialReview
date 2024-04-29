@@ -65,7 +65,7 @@ public class CommentController : ControllerBase
 
     [Authorize]
     [HttpPut("review-comments/{id}")]
-    public async Task<IActionResult> EditComment([FromRoute] int id, [FromBody] string text, CancellationToken cancellationToken)
+    public async Task<IActionResult> EditComment([FromRoute] int id, [FromBody] EditCommentRequest editRequest, CancellationToken cancellationToken)
     {
         var currentUserId = HttpContext.User.GetUserId();
 
@@ -73,7 +73,7 @@ public class CommentController : ControllerBase
         {
             Id = id,
             AuthorId = currentUserId,
-            Text = text
+            Text = editRequest.Text
         };
 
         await _mediator.Send(new EditCommentCommand(comment), cancellationToken);
