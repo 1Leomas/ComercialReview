@@ -46,7 +46,7 @@ public class CommentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> AddComment([FromRoute] int businessId, [FromRoute] int reviewAuthorId, [FromBody] string text, CancellationToken cancellationToken)
+    public async Task<IActionResult> AddComment([FromRoute] int businessId, [FromRoute] int reviewAuthorId, [FromBody] AddEditCommentRequest addEditRequest, CancellationToken cancellationToken)
     {
         var currentUserId = HttpContext.User.GetUserId();
 
@@ -55,7 +55,7 @@ public class CommentController : ControllerBase
             BusinessId = businessId,
             ReviewAuthorId = reviewAuthorId,
             AuthorId = currentUserId,
-            Text = text
+            Text = addEditRequest.Text
         };
 
         await _mediator.Send(new AddCommentCommand(comment), cancellationToken);
@@ -65,7 +65,7 @@ public class CommentController : ControllerBase
 
     [Authorize]
     [HttpPut("review-comments/{id}")]
-    public async Task<IActionResult> EditComment([FromRoute] int id, [FromBody] EditCommentRequest editRequest, CancellationToken cancellationToken)
+    public async Task<IActionResult> EditComment([FromRoute] int id, [FromBody] AddEditCommentRequest addEditRequest, CancellationToken cancellationToken)
     {
         var currentUserId = HttpContext.User.GetUserId();
 
@@ -73,7 +73,7 @@ public class CommentController : ControllerBase
         {
             Id = id,
             AuthorId = currentUserId,
-            Text = editRequest.Text
+            Text = addEditRequest.Text
         };
 
         await _mediator.Send(new EditCommentCommand(comment), cancellationToken);

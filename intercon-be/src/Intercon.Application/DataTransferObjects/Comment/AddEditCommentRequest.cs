@@ -1,6 +1,6 @@
 ﻿namespace Intercon.Application.DataTransferObjects.Comment;
 
-public class EditCommentRequest
+public class AddEditCommentRequest
 {
     public string Text { get; set; } = string.Empty;
 }
