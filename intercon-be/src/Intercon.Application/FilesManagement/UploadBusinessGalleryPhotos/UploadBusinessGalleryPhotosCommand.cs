@@ -1,26 +1,25 @@
 ﻿using Intercon.Application.Abstractions;
 using Intercon.Application.Abstractions.Messaging;
-using Intercon.Application.CustomExceptions;
 using Intercon.Application.DataTransferObjects.Files;
 using Intercon.Application.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace Intercon.Application.FilesManagement.UploadBusinessProfileImages;
+namespace Intercon.Application.FilesManagement.UploadBusinessGalleryPhotos;
 
-public sealed record UploadBusinessProfileImagesCommand(IEnumerable<IFormFile> ProfileImages, int BusinessId) : ICommand<List<BusinessGalleryPhotoDto>>;
+public sealed record UploadBusinessGalleryPhotosCommand(IEnumerable<IFormFile> GalleryPhotos, int BusinessId) : ICommand<List<BusinessGalleryPhotoDto>>;
 
-internal sealed class UploadBusinessProfileImagesCommandHandler(
+internal sealed class UploadBusinessGalleryPhotosCommandHandler(
     IBlobStorage blobStorage,
     IFileRepository fileRepository,
     IImageValidator imageValidator,
-    ILogger<UploadBusinessProfileImagesCommandHandler> logger) : ICommandHandler<UploadBusinessProfileImagesCommand, List<BusinessGalleryPhotoDto>>
+    ILogger<UploadBusinessGalleryPhotosCommandHandler> logger) : ICommandHandler<UploadBusinessGalleryPhotosCommand, List<BusinessGalleryPhotoDto>>
 {
-    public async Task<List<BusinessGalleryPhotoDto>> Handle(UploadBusinessProfileImagesCommand request, CancellationToken cancellationToken)
+    public async Task<List<BusinessGalleryPhotoDto>> Handle(UploadBusinessGalleryPhotosCommand request, CancellationToken cancellationToken)
     {
         var galleryPhotos = new List<BusinessGalleryPhotoDto>();
 
-        foreach (var image in request.ProfileImages)
+        foreach (var image in request.GalleryPhotos)
         {
             if (image.Length == 0) continue;
 

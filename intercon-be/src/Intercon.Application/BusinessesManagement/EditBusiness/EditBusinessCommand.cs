@@ -4,7 +4,7 @@ using Intercon.Application.DataTransferObjects;
 using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Application.DataTransferObjects.Files;
 using Intercon.Application.FilesManagement.DeleteFile;
-using Intercon.Application.FilesManagement.UploadBusinessProfileImages;
+using Intercon.Application.FilesManagement.UploadBusinessGalleryPhotos;
 using Intercon.Application.FilesManagement.UploadFile;
 using Intercon.Domain.Entities;
 using MediatR;
@@ -35,13 +35,13 @@ public sealed class EditBusinessCommandHandler(
                 await mediator.Send(new DeleteFileQuery(businessOldLogoId.Value), cancellationToken);
         }
 
-        var profileImages = new List<BusinessGalleryPhotoDto>();
+        var galleryPhotos = new List<BusinessGalleryPhotoDto>();
 
-        if (command.Data.NewProfileImages is not null && command.Data.NewProfileImages.Any())
+        if (command.Data.GalleryPhotos is not null && command.Data.GalleryPhotos.Any())
         {
-            profileImages.AddRange(await mediator.Send(
-                new UploadBusinessProfileImagesCommand(
-                    command.Data.NewProfileImages, command.BusinessId),
+            galleryPhotos.AddRange(await mediator.Send(
+                new UploadBusinessGalleryPhotosCommand(
+                    command.Data.GalleryPhotos, command.BusinessId),
                         cancellationToken));
         }
 
@@ -61,7 +61,7 @@ public sealed class EditBusinessCommandHandler(
             business.FullDescription,
             business.Rating,
             business.LogoId is not null ? business.Logo?.Path : null,
-            profileImages,
+            galleryPhotos,
             business.Address,
             business.ReviewsCount,
             (int)business.Category);

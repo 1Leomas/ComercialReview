@@ -4,7 +4,7 @@ using Intercon.Application.DataTransferObjects;
 using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Application.DataTransferObjects.Files;
 using Intercon.Application.Extensions.Mappers;
-using Intercon.Application.FilesManagement.UploadBusinessProfileImages;
+using Intercon.Application.FilesManagement.UploadBusinessGalleryPhotos;
 using Intercon.Application.FilesManagement.UploadFile;
 using Intercon.Domain.Entities;
 using MediatR;
@@ -46,11 +46,11 @@ public sealed class CreateBusinessCommandHandler(
 
         var businessId = await businessRepository.CreateBusinessAsync(business, cancellationToken);
         
-        var profileImages = new List<BusinessGalleryPhotoDto>();
+        var galleryPhotos = new List<BusinessGalleryPhotoDto>();
 
-        if (command.Data.ProfileImages is not null && command.Data.ProfileImages.Any())
+        if (command.Data.GalleryPhotos is not null && command.Data.GalleryPhotos.Any())
         {
-            profileImages = await mediator.Send(new UploadBusinessProfileImagesCommand(command.Data.ProfileImages, businessId), cancellationToken);
+            galleryPhotos = await mediator.Send(new UploadBusinessGalleryPhotosCommand(command.Data.GalleryPhotos, businessId), cancellationToken);
         }
 
         return new BusinessDetailsDto(
@@ -61,7 +61,7 @@ public sealed class CreateBusinessCommandHandler(
             business.FullDescription,
             business.Rating,
             business.LogoId is not null ? business.Logo?.Path : null,
-            profileImages,
+            galleryPhotos,
             business.Address,
             business.ReviewsCount,
             (int)business.Category);

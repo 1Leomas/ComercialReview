@@ -9,6 +9,6 @@ public record CreateBusinessDto(
     string ShortDescription,
     string? FullDescription,
     IFormFile? Logo,
-    IEnumerable<IFormFile>? ProfileImages,
+    IEnumerable<IFormFile>? GalleryPhotos,
     Address Address,
     BusinessCategory Category);
