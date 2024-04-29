@@ -13,6 +13,7 @@ public static class DependencyInjection
             config.RegisterServicesFromAssemblies(AssemblyReference.Assembly);
             config.AddOpenBehavior(typeof(ValidationPipelineBehavior<,>));
             config.AddOpenBehavior(typeof(LoggingPipelineBehavior<,>));
+            config.AddOpenBehavior(typeof(PerformancePipelineBehavior<,>));
         });
 
         services.AddValidatorsFromAssembly(AssemblyReference.Assembly);

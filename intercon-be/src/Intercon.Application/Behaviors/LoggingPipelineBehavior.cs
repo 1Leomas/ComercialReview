@@ -1,4 +1,7 @@
-﻿using MediatR;
+﻿using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.PerformanceLogsManagement.GetPerformanceLogs;
+using Intercon.Domain.Entities;
+using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace Intercon.Application.Behaviors;
@@ -19,6 +22,11 @@ public class LoggingPipelineBehavior<TRequest, TResponse>
         RequestHandlerDelegate<TResponse?> next,
         CancellationToken cancellationToken)
     {
+        if (request is GetPerformanceLogsQuery)
+        {
+            return await next();
+        }
+
         _logger.LogInformation("Starting request {@RequestName}, {@DataTimeUtc}",
             typeof(TRequest).Name, DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff"));
 
