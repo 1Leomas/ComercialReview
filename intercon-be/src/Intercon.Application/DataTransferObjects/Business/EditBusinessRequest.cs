@@ -1,4 +1,4 @@
-﻿using Intercon.Application.DataTransferObjects.Files;
+using Intercon.Application.DataTransferObjects.Files;
 using Intercon.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
@@ -11,4 +11,4 @@ public record EditBusinessRequest(
     BusinessCategory? Category,
     AddressDto? Address,
     IFormFile? Logo,
-    IEnumerable<IFormFile>? NewGalleryPhotos);
+    IEnumerable<IFormFile>? GalleryPhotos);
