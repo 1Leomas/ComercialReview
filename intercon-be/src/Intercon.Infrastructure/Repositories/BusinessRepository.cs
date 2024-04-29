@@ -6,6 +6,7 @@ using Intercon.Domain.Pagination;
 using Intercon.Infrastructure.Extensions;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+#pragma warning disable CA1862
 
 namespace Intercon.Infrastructure.Repositories;
 
@@ -55,49 +56,10 @@ public class BusinessRepository(InterconDbContext context)
             parameters.PageSize);
     }
 
-    private IQueryable<Business> ApplySort(
-        IQueryable<Business> businesses, 
-        BusinessSortBy sortBy, 
-        SortingDirection? direction = SortingDirection.Ascending)
-    {
-        return sortBy switch
-        {
-            BusinessSortBy.UpdatedDate => businesses.OrderUsing(x => x.UpdatedDate, direction ?? SortingDirection.Descending),
-            BusinessSortBy.Title => businesses.OrderUsing(x => x.Title, direction ?? SortingDirection.Ascending),
-            BusinessSortBy.Category => businesses.OrderUsing(x => x.Category, direction ?? SortingDirection.Ascending),
-            BusinessSortBy.Rating => businesses.OrderUsing(x => x.Rating, direction ?? SortingDirection.Ascending),
-            _ => businesses.OrderUsing(x => x.UpdatedDate, SortingDirection.Descending)
-        };
-    }
-
-    private IQueryable<Business> ApplyFilter(IQueryable<Business> businesses, BusinessParameters parameters)
-    {
-
-        if (!string.IsNullOrEmpty(parameters.Search))
-        {
-            var search = parameters.Search.ToLower();
-
-            businesses = businesses.Where(x => 
-                x.Title.ToLower().Contains(search) || 
-                x.ShortDescription.ToLower().Contains(search) ||
-                (x.FullDescription != null && x.FullDescription.ToLower().Contains(search)) ||
-                (x.Address.Street != null && x.Address.Street.ToLower().Contains(search)));
-        }
-
-        if (parameters.Categories.Any() && !parameters.Categories.Contains(BusinessCategory.All))
-        {
-            businesses = businesses.Where(x => parameters.Categories.Contains(x.Category));
-        }
-
-        businesses = businesses.Where(x => x.Rating >= parameters.MinGrade && x.Rating <= parameters.MaxGrade);
-
-        return businesses;
-    }
-
     public async Task<int> CreateBusinessAsync(Business newBusiness, CancellationToken cancellationToken)
     {
         await context.Businesses.AddAsync(newBusiness, cancellationToken);
-        var result = await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
         return newBusiness.Id;
     }
@@ -166,5 +128,44 @@ public class BusinessRepository(InterconDbContext context)
     {
         return await context.Businesses
             .AnyAsync(x => x.OwnerId == userId && x.Id == businessId, cancellationToken);
+    }
+
+    private static IQueryable<Business> ApplySort(
+        IQueryable<Business> businesses,
+        BusinessSortBy sortBy,
+        SortingDirection? direction = SortingDirection.Ascending)
+    {
+        return sortBy switch
+        {
+            BusinessSortBy.UpdatedDate => businesses.OrderUsing(x => x.UpdatedDate, direction ?? SortingDirection.Descending),
+            BusinessSortBy.Title => businesses.OrderUsing(x => x.Title, direction ?? SortingDirection.Ascending),
+            BusinessSortBy.Category => businesses.OrderUsing(x => x.Category, direction ?? SortingDirection.Ascending),
+            BusinessSortBy.Rating => businesses.OrderUsing(x => x.Rating, direction ?? SortingDirection.Ascending),
+            _ => businesses.OrderUsing(x => x.UpdatedDate, SortingDirection.Descending)
+        };
+    }
+
+    private static IQueryable<Business> ApplyFilter(IQueryable<Business> businesses, BusinessParameters parameters)
+    {
+
+        if (!string.IsNullOrEmpty(parameters.Search))
+        {
+            var search = parameters.Search.ToLower();
+
+            businesses = businesses.Where(x =>
+                x.Title.ToLower().Contains(search) ||
+                x.ShortDescription.ToLower().Contains(search) ||
+                (x.FullDescription != null && x.FullDescription.ToLower().Contains(search)) ||
+                (x.Address.Street != null && x.Address.Street.ToLower().Contains(search)));
+        }
+
+        if (parameters.Categories.Any() && !parameters.Categories.Contains(BusinessCategory.All))
+        {
+            businesses = businesses.Where(x => parameters.Categories.Contains(x.Category));
+        }
+
+        businesses = businesses.Where(x => x.Rating >= parameters.MinGrade && x.Rating <= parameters.MaxGrade);
+
+        return businesses;
     }
 }

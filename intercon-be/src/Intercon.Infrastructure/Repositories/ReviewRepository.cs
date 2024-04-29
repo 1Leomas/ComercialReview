@@ -7,6 +7,7 @@ using Intercon.Domain.Pagination;
 using Intercon.Infrastructure.Extensions;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+#pragma warning disable CA1862
 
 namespace Intercon.Infrastructure.Repositories;
 
@@ -51,45 +52,6 @@ public class ReviewRepository(InterconDbContext context)
             parameters.PageSize);
     }
 
-    private IQueryable<Review> ApplySort(
-        IQueryable<Review> review,
-        ReviewSortBy sortBy,
-        SortingDirection? direction = SortingDirection.Ascending)
-    {
-        return sortBy switch
-        {
-            ReviewSortBy.UpdatedDate => review.OrderUsing(x => x.UpdatedDate, direction ?? SortingDirection.Descending),
-            ReviewSortBy.Grade => review.OrderUsing(x => x.Grade, direction ?? SortingDirection.Ascending),
-            ReviewSortBy.Like => review.OrderUsing(x => x.Recommendation, direction ?? SortingDirection.Ascending),
-            _ => review.OrderUsing(x => x.UpdatedDate, SortingDirection.Descending)
-        };
-    }
-
-    private IQueryable<Review> ApplyFilter(IQueryable<Review> reviews, ReviewParameters parameters)
-    {
-        if (!string.IsNullOrEmpty(parameters.Search))
-        {
-            var search = parameters.Search.ToLower();
-
-            reviews = reviews.Where(x =>
-                x.ReviewText != null && x.ReviewText.ToLower().Contains(search) ||
-                x.Author.FirstName.ToLower().Contains(search) ||
-                x.Author.LastName.ToLower().Contains(search));
-        }
-
-        if (parameters.Grades.Any() && !parameters.Grades.Contains(ReviewGrade.All))
-        {
-            reviews = reviews.Where(x => parameters.Grades.Contains((ReviewGrade)x.Grade));
-        }
-
-        if (parameters.RecommendationType != RecommendationType.Neutral)
-        {
-            reviews = reviews.Where(x => x.Recommendation == parameters.RecommendationType);
-        }
-
-        return reviews;
-    }
-
     public async Task<IEnumerable<Review>> GetAllReviewsAsync(CancellationToken cancellationToken)
     {
         return await context.Reviews.ToListAsync(cancellationToken);
@@ -129,7 +91,9 @@ public class ReviewRepository(InterconDbContext context)
         EditReviewDto newReviewData, 
         CancellationToken cancellationToken)
     {
-        var reviewDb = await context.Reviews.FindAsync(businessId, authorId, cancellationToken);
+        var reviewDb = await context.Reviews.FindAsync(
+            new object?[] { businessId, authorId }, 
+            cancellationToken: cancellationToken);
 
         if (reviewDb == null)
         {
@@ -160,7 +124,9 @@ public class ReviewRepository(InterconDbContext context)
 
     public async Task DeleteReviewAsync(int businessId, int authorId, CancellationToken cancellationToken)
     {
-        var reviewDb = await context.Reviews.FindAsync(businessId, authorId);
+        var reviewDb = await context.Reviews.FindAsync(
+            new object?[] { businessId, authorId }, 
+            cancellationToken: cancellationToken);
 
         if (reviewDb == null)
         {
@@ -174,11 +140,59 @@ public class ReviewRepository(InterconDbContext context)
         await UpdateBusinessStats(businessId, cancellationToken);
     }
 
+    public async Task<bool> ReviewExistsAsync(int businessId, int authorId, CancellationToken cancellationToken)
+    {
+        return await context.Reviews.AnyAsync(
+            x => x.BusinessId == businessId && x.AuthorId == authorId,
+            cancellationToken);
+    }
+
+    private static IQueryable<Review> ApplySort(
+        IQueryable<Review> review,
+        ReviewSortBy sortBy,
+        SortingDirection? direction = SortingDirection.Ascending)
+    {
+        return sortBy switch
+        {
+            ReviewSortBy.UpdatedDate => review.OrderUsing(x => x.UpdatedDate, direction ?? SortingDirection.Descending),
+            ReviewSortBy.Grade => review.OrderUsing(x => x.Grade, direction ?? SortingDirection.Ascending),
+            ReviewSortBy.Like => review.OrderUsing(x => x.Recommendation, direction ?? SortingDirection.Ascending),
+            _ => review.OrderUsing(x => x.UpdatedDate, SortingDirection.Descending)
+        };
+    }
+
+    private static IQueryable<Review> ApplyFilter(IQueryable<Review> reviews, ReviewParameters parameters)
+    {
+        if (!string.IsNullOrEmpty(parameters.Search))
+        {
+            var search = parameters.Search.ToLower();
+
+            reviews = reviews.Where(x =>
+                x.ReviewText != null && x.ReviewText.ToLower().Contains(search) ||
+                x.Author.FirstName.ToLower().Contains(search) ||
+                x.Author.LastName.ToLower().Contains(search));
+        }
+
+        if (parameters.Grades.Any() && !parameters.Grades.Contains(ReviewGrade.All))
+        {
+            reviews = reviews.Where(x => parameters.Grades.Contains((ReviewGrade)x.Grade));
+        }
+
+        if (parameters.RecommendationType != RecommendationType.Neutral)
+        {
+            reviews = reviews.Where(x => x.Recommendation == parameters.RecommendationType);
+        }
+
+        return reviews;
+    }
+
     private async Task UpdateBusinessStats(
         int businessId,
         CancellationToken cancellationToken)
     {
-        var business = await context.Businesses.FindAsync(businessId, cancellationToken);
+        var business = await context.Businesses.FindAsync(
+            new object?[] { businessId }, 
+            cancellationToken: cancellationToken);
 
         if (business == null)
         {
@@ -194,12 +208,5 @@ public class ReviewRepository(InterconDbContext context)
         business.Rating = reviewsSum / reviewsCount;
 
         await context.SaveChangesAsync(cancellationToken);
-    }
-
-    public async Task<bool> ReviewExistsAsync(int businessId, int authorId, CancellationToken cancellationToken)
-    {
-        return await context.Reviews.AnyAsync(
-            x => x.BusinessId == businessId && x.AuthorId == authorId, 
-            cancellationToken);
     }
 }

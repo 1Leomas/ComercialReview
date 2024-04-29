@@ -4,6 +4,7 @@ using MailKit.Net.Smtp;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
+#pragma warning disable CA2254
 
 namespace Intercon.Infrastructure.Services;
 
@@ -39,7 +40,7 @@ public class EmailService(
 
         var emailMessage = CreateEmailMessage(_emailSettings.Sender, recipientEmail, recipientName,  subject, message);
 
-        logger.LogInformation($"Sending email to {recipientEmail} with subject {subject}");
+        _logger.LogInformation($"Sending email to {recipientEmail} with subject {subject}");
 
         var response = await client.SendAsync(emailMessage);
 

@@ -4,17 +4,13 @@ using Intercon.Domain.Pagination;
 using Intercon.Infrastructure.Extensions;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+#pragma warning disable CA1862
 
 namespace Intercon.Infrastructure.Repositories;
 
-public class CommentRepository : ICommentRepository
+public class CommentRepository(InterconDbContext context) : ICommentRepository
 {
-    public CommentRepository(InterconDbContext context)
-    {
-        _context = context;
-    }
-
-    private readonly InterconDbContext _context;
+    private readonly InterconDbContext _context = context;
 
     public async Task<Comment?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
@@ -45,7 +41,7 @@ public class CommentRepository : ICommentRepository
             parameters.PageSize);
     }
 
-    private IQueryable<Comment> ApplyFilter(IQueryable<Comment> comments, CommentParameters parameters)
+    private static IQueryable<Comment> ApplyFilter(IQueryable<Comment> comments, CommentParameters parameters)
     {
         if (!string.IsNullOrEmpty(parameters.Search))
         {
@@ -58,7 +54,7 @@ public class CommentRepository : ICommentRepository
         return comments;
     }
 
-    private IQueryable<Comment> ApplySort(
+    private static IQueryable<Comment> ApplySort(
         IQueryable<Comment> comments,
         CommentSortBy sortBy,
         SortingDirection? direction = SortingDirection.Ascending)
@@ -96,8 +92,12 @@ public class CommentRepository : ICommentRepository
 
     public async Task<bool> EditAsync(Comment newCommentData, CancellationToken cancellationToken)
     {
-        var comment = await _context.Comments.FindAsync(newCommentData.Id, cancellationToken);
-        
+#pragma warning disable IDE0300 // Simplify collection initialization
+        var comment = await _context.Comments.FindAsync(
+            new object?[] { newCommentData.Id }, 
+            cancellationToken: cancellationToken);
+#pragma warning restore IDE0300 // Simplify collection initialization
+
         if (comment == null) return false;
 
         comment.Text = newCommentData.Text;
@@ -133,7 +133,11 @@ public class CommentRepository : ICommentRepository
         int reviewAuthorId,
         CancellationToken cancellationToken)
     {
-        var review = await _context.Reviews.FindAsync(businessId, reviewAuthorId, cancellationToken);
+#pragma warning disable IDE0300 // Simplify collection initialization
+        var review = await _context.Reviews.FindAsync(
+            new object?[] { businessId, reviewAuthorId }, 
+            cancellationToken: cancellationToken);
+#pragma warning restore IDE0300 // Simplify collection initialization
 
         if (review == null)
         {

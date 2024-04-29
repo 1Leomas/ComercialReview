@@ -17,9 +17,23 @@ public class AzureBlobStorageService : IBlobStorage
         var storageAccount = _azureBlobStorageSettings.StorageAccount;
         var containerName = _azureBlobStorageSettings.ContainerName;
 
+        string accessKey;
+
+        using (var sr = new StreamReader(_azureBlobStorageSettings.AccessKeyPath))
+        {
+            try
+            {
+                accessKey = sr.ReadToEnd();
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Missing '.secret' file in root folder");
+            }
+        }
+
         var credential = new StorageSharedKeyCredential(
-            storageAccount, 
-            _azureBlobStorageSettings.AccessKey);
+            storageAccount,
+            accessKey);
 
         var blobUri = new Uri($"https://{storageAccount}.blob.core.windows.net");
         _blobServiceClient = new BlobServiceClient(blobUri, credential);

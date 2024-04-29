@@ -27,15 +27,14 @@ public class DataBaseSeeder(InterconDbContext context, UserManager<User> userMan
 
         foreach (var business in businesses)
         {
-            if (business.Reviews.Any())
-            {
-                var reviewsCount = (uint)(business.Reviews.Count());
+            if (business.Reviews.Count == 0) continue;
 
-                double reviewsSum = business.Reviews.Select(x => x.Grade).Sum();
+            var reviewsCount = (uint)(business.Reviews.Count);
 
-                business.ReviewsCount = reviewsCount;
-                business.Rating = (float)Math.Round(reviewsSum / reviewsCount, 1);
-            }
+            double reviewsSum = business.Reviews.Select(x => x.Grade).Sum();
+
+            business.ReviewsCount = reviewsCount;
+            business.Rating = (float)Math.Round(reviewsSum / reviewsCount, 1);
         }
 
         _context.SaveChanges();
@@ -63,12 +62,8 @@ public class DataBaseSeeder(InterconDbContext context, UserManager<User> userMan
 
         var entityType = typeof(InterconDbContext)
             .GetProperties()
-            .FirstOrDefault(p => p.PropertyType == typeof(DbSet<TEntity>));
-
-        if (entityType == null)
-        {
-            throw new ArgumentException($"DbSet<{typeof(TEntity).Name}> not found in InterconDbContext.");
-        }
+            .FirstOrDefault(p => p.PropertyType == typeof(DbSet<TEntity>)) 
+                         ?? throw new ArgumentException($"DbSet<{typeof(TEntity).Name}> not found in InterconDbContext.");
 
         var tableName = entityType.Name;
 
@@ -76,6 +71,7 @@ public class DataBaseSeeder(InterconDbContext context, UserManager<User> userMan
 
         bool hasIdentity = HasIdentity<TEntity>(_context);
 
+#pragma warning disable EF1002
         if (hasIdentity)
         {
             await _context.Database.ExecuteSqlRawAsync($"SET IDENTITY_INSERT {tableName} ON");
@@ -89,20 +85,28 @@ public class DataBaseSeeder(InterconDbContext context, UserManager<User> userMan
         {
             await _context.Database.ExecuteSqlRawAsync($"SET IDENTITY_INSERT {tableName} OFF");
         }
-
+#pragma warning restore EF1002
         await transaction.CommitAsync();
     }
 
-    private bool HasIdentity<TEntity>(InterconDbContext context) where TEntity : class
+    private static bool HasIdentity<TEntity>(InterconDbContext context) where TEntity : class
     {
-        var efEntity = context.Model.FindEntityType(typeof(TEntity));
-        var efProperties = efEntity.GetProperties();
+        try
+        {
+            var efEntity = context.Model.FindEntityType(typeof(TEntity));
+            var efProperties = efEntity!.GetProperties();
 
-        var hasIdentity = efProperties.Any(p => (SqlServerValueGenerationStrategy)
-                                                p.FindAnnotation("SqlServer:ValueGenerationStrategy").Value
-                                                == SqlServerValueGenerationStrategy.IdentityColumn);
+            var hasIdentity = efProperties.Any(p =>
+                (SqlServerValueGenerationStrategy)p.FindAnnotation("SqlServer:ValueGenerationStrategy")!.Value! ==
+                SqlServerValueGenerationStrategy.IdentityColumn);
+            return hasIdentity;
 
-        return hasIdentity;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+
     }
 
 
