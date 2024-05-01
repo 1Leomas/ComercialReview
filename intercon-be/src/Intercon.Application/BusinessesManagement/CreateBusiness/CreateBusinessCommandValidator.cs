@@ -17,7 +17,8 @@ public class CreateBusinessCommandValidator : AbstractValidator<CreateBusinessCo
             });
 
         RuleFor(x => x.UserId)
-            .MustAsync(businessRepository.UserHasBusinessAsync)
+            .MustAsync(async (userId, token) => 
+                !await businessRepository.UserHasBusinessAsync(userId, token))
             .WithMessage("The user already owns a business");
 
         RuleFor(x => x.Data.Title)
@@ -30,9 +31,5 @@ public class CreateBusinessCommandValidator : AbstractValidator<CreateBusinessCo
             .MaximumLength(500)
             .WithName(x => nameof(x.Data.ShortDescription));
 
-        RuleFor(x => x.Data.Address)
-            .NotEmpty()
-            .WithName(x => nameof(x.Data.Address))
-            .WithMessage("The address is required");
     }
 }

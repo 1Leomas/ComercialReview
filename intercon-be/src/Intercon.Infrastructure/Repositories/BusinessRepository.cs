@@ -113,7 +113,7 @@ public class BusinessRepository(InterconDbContext context)
 
     public async Task<bool> UserHasBusinessAsync(int userId, CancellationToken cancellationToken)
     {
-        return await context.Businesses.AllAsync(x => x.OwnerId != userId, cancellationToken);
+        return await context.Businesses.AnyAsync(x => x.OwnerId == userId, cancellationToken);
     }
 
     public async Task<int?> GetBusinessLogoIdAsync(int businessId, CancellationToken cancellationToken)
