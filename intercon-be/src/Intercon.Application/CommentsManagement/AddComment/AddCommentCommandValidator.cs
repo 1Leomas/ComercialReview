@@ -5,7 +5,7 @@ namespace Intercon.Application.CommentsManagement.AddComment;
 
 public class AddCommentCommandValidator : AbstractValidator<AddCommentCommand>
 {
-    public AddCommentCommandValidator(IBusinessRepository businessRepository, IReviewRepository reviewRepository)
+    public AddCommentCommandValidator(IReviewRepository reviewRepository)
     {
         RuleFor(x => x.CommentDto.Text).NotEmpty().MaximumLength(500);
 
