@@ -4,9 +4,9 @@ using Intercon.Domain.Enums;
 
 namespace Intercon.Application.ReviewsManagement.CreateReview;
 
-public sealed class CreateReviewCommandCommandValidator : AbstractValidator<CreateReviewCommand>
+public sealed class CreateReviewCommandValidator : AbstractValidator<CreateReviewCommand>
 {
-    public CreateReviewCommandCommandValidator(
+    public CreateReviewCommandValidator(
         IBusinessRepository businessRepository,
         IUserRepository userRepository,
         IReviewRepository reviewRepository)
@@ -35,7 +35,7 @@ public sealed class CreateReviewCommandCommandValidator : AbstractValidator<Crea
             .MustAsync(async (data, ctx)
                 => !await reviewRepository.ReviewExistsAsync(data.BusinessId, data.UserId, ctx))
             .WithName(x => nameof(x.UserId))
-            .WithMessage("The user already wrote a review");
+            .WithMessage("The user already wrote a review for this business");
 
         RuleFor(x => x.Data.Grade)
             .NotEmpty()
