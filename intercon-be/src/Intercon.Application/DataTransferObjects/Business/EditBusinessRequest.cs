@@ -11,4 +11,5 @@ public record EditBusinessRequest(
     BusinessCategory? Category,
     AddressDto? Address,
     IFormFile? Logo,
-    IEnumerable<IFormFile>? GalleryPhotos);
+    IEnumerable<IFormFile>? GalleryPhotos,
+    int[]? PhotosToDelete);

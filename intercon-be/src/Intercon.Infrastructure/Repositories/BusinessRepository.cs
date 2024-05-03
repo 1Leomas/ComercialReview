@@ -68,6 +68,7 @@ public class BusinessRepository(InterconDbContext context)
     {
         var businessDb = await context.Businesses
             .Include(business => business.Logo)
+            .Include(x => x.GalleryPhotos)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         if (businessDb == null) return null;

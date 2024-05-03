@@ -4,13 +4,13 @@ using Intercon.Application.Exceptions;
 
 namespace Intercon.Application.FilesManagement.DeleteFile;
 
-public sealed record DeleteFileQuery(int Id) : IQuery;
+public sealed record DeleteFileCommand(int Id) : IQuery;
 
-internal sealed class DeleteFileQueryHandler(
+internal sealed class DeleteFileCommandHandler(
     IFileRepository fileRepository,
-    IBlobStorage blobStorage) : IQueryHandler<DeleteFileQuery>
+    IBlobStorage blobStorage) : IQueryHandler<DeleteFileCommand>
 {
-    public async Task Handle(DeleteFileQuery request, CancellationToken cancellationToken)
+    public async Task Handle(DeleteFileCommand request, CancellationToken cancellationToken)
     {
         var file = await fileRepository.GetByIdAsync(request.Id, cancellationToken);
 

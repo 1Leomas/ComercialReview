@@ -4,14 +4,14 @@ using Intercon.Application.Exceptions;
 
 namespace Intercon.Application.BusinessesManagement.DeleteBusinessGalleryPhoto;
 
-public sealed record DeleteGalleryPhotoCommand(int BusinessId, int CurrentUserId, int PhotoId) : ICommand;
+public sealed record DeleteBusinessGalleryPhotoCommand(int BusinessId, int CurrentUserId, int PhotoId) : ICommand;
 
-internal sealed class DeleteGalleryPhotoCommandHandler(
+internal sealed class DeleteBusinessGalleryPhotoCommandHandler(
     IBusinessRepository businessRepository,
     IBlobStorage blobStorage,
-    IFileRepository fileRepository) : ICommandHandler<DeleteGalleryPhotoCommand>
+    IFileRepository fileRepository) : ICommandHandler<DeleteBusinessGalleryPhotoCommand>
 {
-    public async Task Handle(DeleteGalleryPhotoCommand request, CancellationToken cancellationToken)
+    public async Task Handle(DeleteBusinessGalleryPhotoCommand request, CancellationToken cancellationToken)
     {
         var business = await businessRepository.GetBusinessByIdAsync(request.BusinessId, cancellationToken);
 

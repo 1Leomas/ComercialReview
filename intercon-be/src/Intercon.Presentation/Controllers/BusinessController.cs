@@ -107,7 +107,7 @@ public class BusinessController(IMediator mediator) : BaseController
     {
         var currentUserId = HttpContext.User.GetUserId();
 
-        await mediator.Send(new DeleteGalleryPhotoCommand(businessId, currentUserId, imageId), cancellationToken);
+        await mediator.Send(new DeleteBusinessGalleryPhotoCommand(businessId, currentUserId, imageId), cancellationToken);
 
         return NoContent();
     }

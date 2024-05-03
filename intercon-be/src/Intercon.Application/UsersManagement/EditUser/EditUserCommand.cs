@@ -33,7 +33,7 @@ public sealed class EditUserCommandHandler(
 
             if (oldAvatarId is not null)
             {
-                await mediator.Send(new DeleteFileQuery(oldAvatarId.Value), cancellationToken);
+                await mediator.Send(new DeleteFileCommand(oldAvatarId.Value), cancellationToken);
             }
         }
 
