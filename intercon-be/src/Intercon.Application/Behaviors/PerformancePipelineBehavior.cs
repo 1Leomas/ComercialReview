@@ -1,5 +1,6 @@
 ﻿using Intercon.Application.Abstractions;
 using Intercon.Application.PerformanceLogsManagement.Add;
+using Intercon.Application.PerformanceLogsManagement.GetPerformanceLogs;
 using MediatR;
 
 namespace Intercon.Application.Behaviors;
@@ -21,7 +22,8 @@ public class PerformancePipelineBehavior<TRequest, TResponse>
         var result = await next();
         var endTime = DateTime.Now;
 
-        _performanceLogRepository.AddLogAsync(typeof(TRequest).Name, startTime, endTime, CancellationToken.None);
+        if (request is not GetPerformanceLogsQuery)
+            _performanceLogRepository.AddLogAsync(typeof(TRequest).Name, startTime, endTime, CancellationToken.None);
 
         return result;
     }

@@ -9,7 +9,9 @@ public class PerformanceLogRepository(InterconDbContext context) : IPerformanceL
 {
     public async Task<IEnumerable<PerformanceLog>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return await context.PerformanceLogs.ToListAsync(cancellationToken);
+        return await context.PerformanceLogs
+            .OrderByDescending(x => x.Id)
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<bool> AddLogAsync(PerformanceLog log, CancellationToken cancellationToken)
