@@ -15,7 +15,6 @@ public class ReviewConfiguration : IEntityTypeConfiguration<Review>
         builder.Property(r => r.ReviewText).HasMaxLength(1000);
         builder.Property(r => r.Recommendation).HasDefaultValue(RecommendationType.Neutral);
 
-
         builder.HasOne(r => r.Author)
                .WithMany(u => u.Reviews)
                .HasForeignKey(r => r.AuthorId)

@@ -1,4 +1,4 @@
-﻿using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions;
 using Intercon.Infrastructure.Options;
 using Intercon.Infrastructure.Persistence;
 using Intercon.Infrastructure.Persistence.DataSeeder;

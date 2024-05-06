@@ -18,18 +18,11 @@ public class InterconDbContext : IdentityDbContext<User, IdentityRole<int>, int>
 
     public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
     public virtual DbSet<ResetPasswordCode> ResetPasswordCodes { get; set; }
-
     public virtual DbSet<PerformanceLog> PerformanceLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-
-        builder.Entity<IdentityUser>(b =>
-        {
-            b.ToTable("Users");
-        });
-
 
         builder.ApplyConfigurationsFromAssembly(AssemblyReference.Assembly);
     }
