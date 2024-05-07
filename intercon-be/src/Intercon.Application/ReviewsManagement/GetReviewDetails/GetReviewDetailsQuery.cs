@@ -13,12 +13,14 @@ public record ReviewDetailsDto(
     string? ReviewText,
     int RecommendationType,
     uint CommentsCount,
+    int LikesCount,
+    bool CurrentUserLiked,
     DateTime CreatedDate,
     DateTime UpdatedDate,
     bool WasEdited
 );
 
-public sealed record GetReviewDetailsQuery(int BusinessId, int AuthorId) : IQuery<ReviewDetailsDto?>;
+public sealed record GetReviewDetailsQuery(int BusinessId, int AuthorId, int? CurrentUserId) : IQuery<ReviewDetailsDto?>;
 
 internal sealed class GetReviewDetailsHandler
     (IReviewRepository reviewRepository) : IQueryHandler<GetReviewDetailsQuery, ReviewDetailsDto?>
@@ -28,6 +30,6 @@ internal sealed class GetReviewDetailsHandler
         var reviewFromDb =
             await reviewRepository.GetReviewDetailsAsync(request.BusinessId, request.AuthorId, cancellationToken);
 
-        return reviewFromDb?.ToDetailedDto();
+        return reviewFromDb?.ToDetailedDto(request.CurrentUserId);
     }
 }

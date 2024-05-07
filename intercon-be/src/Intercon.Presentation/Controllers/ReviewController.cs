@@ -31,7 +31,9 @@ public class ReviewController(IMediator mediator) : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetReview([FromRoute] int businessId, [FromRoute] int userId, CancellationToken cancellationToken)
     {
-        var review = await mediator.Send(new GetReviewDetailsQuery(businessId, userId), cancellationToken);
+        var currentUserId = HttpContext.User.GetUserIdIfExists();
+
+        var review = await mediator.Send(new GetReviewDetailsQuery(businessId, userId, currentUserId), cancellationToken);
 
         if (review == null)
         {
@@ -50,9 +52,11 @@ public class ReviewController(IMediator mediator) : BaseController
 
     [HttpGet("api/businesses/{businessId}/reviews")]
     [ProducesResponseType(typeof(PaginatedResponse<ReviewDetailsDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetPaginatedBusinesses([FromRoute] int businessId, [FromQuery] ReviewParameters parameters, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetPaginatedBusinessesReviews([FromRoute] int businessId, [FromQuery] ReviewParameters parameters, CancellationToken cancellationToken)
     {
-        return Ok(await mediator.Send(new GetPaginatedBusinessReviewsQuery(businessId, parameters), cancellationToken));
+        var currentUserId = HttpContext.User.GetUserIdIfExists();
+
+        return Ok(await mediator.Send(new GetPaginatedBusinessReviewsQuery(businessId, currentUserId, parameters), cancellationToken));
     }
 
     [Authorize]

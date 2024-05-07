@@ -16,6 +16,17 @@ public static class ClaimsPrincipalExtensions
 
         return int.Parse(authenticatedUserIdClaim);
     }
+    public static int? GetUserIdIfExists(this ClaimsPrincipal claimsPrincipal)
+    {
+        var authenticatedUserIdClaim = claimsPrincipal.FindFirstValue(JwtClaimType.UserId);
+
+        if (authenticatedUserIdClaim is null)
+        {
+            return null;
+        }
+
+        return int.Parse(authenticatedUserIdClaim);
+    }
     public static Role GetUserRole(this ClaimsPrincipal claimsPrincipal)
     {
         var userRoleClaim = claimsPrincipal.FindFirstValue(JwtClaimType.Role);

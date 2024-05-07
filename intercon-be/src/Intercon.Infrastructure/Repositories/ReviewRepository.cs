@@ -20,6 +20,7 @@ public class ReviewRepository(InterconDbContext context)
             .AsNoTracking()
             .Include(review => review.Author)
             .ThenInclude(user => user.Avatar)
+            .Include(r => r.Likes)
             .FirstOrDefaultAsync(x => x.BusinessId == businessId && x.AuthorId == authorId, cancellationToken);
     }
 
@@ -29,6 +30,7 @@ public class ReviewRepository(InterconDbContext context)
             .AsNoTracking()
             .Include(review => review.Author)
             .ThenInclude(user => user.Avatar)
+            .Include(r => r.Likes)
             .Where(x => x.BusinessId == businessId)
             .ToListAsync(cancellationToken);
     }
@@ -39,6 +41,7 @@ public class ReviewRepository(InterconDbContext context)
             .AsNoTracking()
             .Include(review => review.Author)
             .ThenInclude(user => user.Avatar)
+            .Include(r => r.Likes)
             .Where(x => x.BusinessId == businessId)
             .AsQueryable();
 

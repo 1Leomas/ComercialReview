@@ -12,7 +12,7 @@ public static class ReviewMapper
         return new Review();
     }
 
-    public static ReviewDetailsDto ToDetailedDto(this Review review)
+    public static ReviewDetailsDto ToDetailedDto(this Review review, int? currentUserId = null)
     {
         return new ReviewDetailsDto(
             review.BusinessId,
@@ -26,6 +26,8 @@ public static class ReviewMapper
             review.ReviewText,
             (int)review.Recommendation,
             review.CommentsCount,
+            review.Likes.Count,
+            currentUserId is not null && review.Likes.Any(x => x.UserId == currentUserId),
             review.CreatedDate,
             review.UpdatedDate,
             review.WasEdited);

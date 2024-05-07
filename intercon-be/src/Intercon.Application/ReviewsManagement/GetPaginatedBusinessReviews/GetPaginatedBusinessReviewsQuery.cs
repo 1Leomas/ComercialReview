@@ -7,7 +7,7 @@ using MediatR;
 
 namespace Intercon.Application.ReviewsManagement.GetPaginatedBusinessReviews;
 
-public sealed record GetPaginatedBusinessReviewsQuery(int BusinessId, ReviewParameters Parameters) : IRequest<PaginatedResponse<ReviewDetailsDto>>;
+public sealed record GetPaginatedBusinessReviewsQuery(int BusinessId, int? CurrentUserId, ReviewParameters Parameters) : IRequest<PaginatedResponse<ReviewDetailsDto>>;
 
 internal sealed class GetPaginatedBusinessReviewsQueryHandler
     (IReviewRepository reviewRepository) : IRequestHandler<GetPaginatedBusinessReviewsQuery, PaginatedResponse<ReviewDetailsDto>>
@@ -26,7 +26,7 @@ internal sealed class GetPaginatedBusinessReviewsQueryHandler
             TotalCount = reviews.TotalCount,
             HasPrevious = reviews.HasPrevious,
             HasNext = reviews.HasNext,
-            Items = reviews.Select(x => x.ToDetailedDto()).ToList()
+            Items = reviews.Select(x => x.ToDetailedDto(request.CurrentUserId)).ToList()
         };
     }
 }
