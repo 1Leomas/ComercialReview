@@ -34,8 +34,10 @@ public class CommentController : ControllerBase
     [ProducesResponseType(typeof(PaginatedResponse<CommentDetailsDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetPaginatedComments([FromRoute] int businessId, [FromRoute] int reviewAuthorId, [FromQuery] CommentParameters parameters, CancellationToken cancellationToken)
     {
+        var currentUserId = HttpContext.User.GetUserIdIfExists();
+
         var paginatedComments = await _mediator.Send(
-            new GetPaginatedBusinessReviewCommentsQuery(businessId, reviewAuthorId, parameters), 
+            new GetPaginatedBusinessReviewCommentsQuery(businessId, reviewAuthorId, currentUserId, parameters), 
             cancellationToken);
 
         return Ok(paginatedComments);

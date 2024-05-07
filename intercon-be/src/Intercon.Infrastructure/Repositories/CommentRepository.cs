@@ -28,6 +28,7 @@ public class CommentRepository(InterconDbContext context) : ICommentRepository
             .AsNoTracking()
             .Include(x => x.Author)
             .ThenInclude(x => x.Avatar)
+            .Include(x => x.Likes)
             .Where(x => x.BusinessId == businessId && x.ReviewAuthorId == reviewAuthorId)
             .AsQueryable();
 

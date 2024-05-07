@@ -7,7 +7,7 @@ using Intercon.Domain.Pagination;
 
 namespace Intercon.Application.CommentsManagement.GetBusinessReviewComments;
 
-public sealed record GetPaginatedBusinessReviewCommentsQuery(int BusinessId, int ReviewAuthorId, CommentParameters Parameters) : IQuery<PaginatedResponse<CommentDetailsDto>>;
+public sealed record GetPaginatedBusinessReviewCommentsQuery(int BusinessId, int ReviewAuthorId, int? CurrentUserId, CommentParameters Parameters) : IQuery<PaginatedResponse<CommentDetailsDto>>;
 
 internal sealed class GetPaginatedBusinessReviewCommentsQueryHandler 
     : IQueryHandler<GetPaginatedBusinessReviewCommentsQuery, PaginatedResponse<CommentDetailsDto>>
@@ -36,7 +36,7 @@ internal sealed class GetPaginatedBusinessReviewCommentsQueryHandler
             TotalCount = comments.TotalCount,
             HasPrevious = comments.HasPrevious,
             HasNext = comments.HasNext,
-            Items = comments.Select(x => x.ToDetailsDto()).ToList()
+            Items = comments.Select(x => x.ToDetailsDto(request.CurrentUserId)).ToList()
         };
     }
 }

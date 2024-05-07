@@ -6,12 +6,14 @@ namespace Intercon.Application.Extensions.Mappers;
 
 public static class CommentMapper
 {
-    public static CommentDetailsDto ToDetailsDto(this Comment comment)
+    public static CommentDetailsDto ToDetailsDto(this Comment comment, int? currentUserId = null)
     {
         return new CommentDetailsDto
         {
             Id = comment.Id,
             Text = comment.Text,
+            LikesCount = comment.Likes.Count,
+            CurrentUserLiked = currentUserId is not null && comment.Likes.Any(x => x.UserId == currentUserId),
             IsCommentOfBusinessOwner = comment.IsCommentOfBusinessOwner,
 
             AuthorId = comment.AuthorId,
