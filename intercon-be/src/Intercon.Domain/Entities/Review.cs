@@ -18,4 +18,5 @@ public class Review : Entity
     public virtual User Author { get; set; } = null!;
     public virtual Business Business { get; set; } = null!;
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+    public virtual ICollection<ReviewLike> Likes { get; set; } = new List<ReviewLike>();
 }

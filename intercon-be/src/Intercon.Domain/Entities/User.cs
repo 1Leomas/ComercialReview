@@ -23,6 +23,8 @@ public class User : IdentityUser<int>
     public virtual Business Business { get; set; } = null!;
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+    public virtual ICollection<ReviewLike> ReviewLikes { get; set; } = new List<ReviewLike>();
+    public virtual ICollection<CommentLike> CommentLikes { get; set; } = new List<CommentLike>();
 
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }

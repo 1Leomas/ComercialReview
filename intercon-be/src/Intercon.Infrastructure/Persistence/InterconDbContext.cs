@@ -16,10 +16,13 @@ public class InterconDbContext : IdentityDbContext<User, IdentityRole<int>, int>
     public DbSet<Comment> Comments { get; set; }
     public DbSet<FileData> DataFiles { get; set; }
 
+    public DbSet<ReviewLike> ReviewLikes { get; set; }
+    public DbSet<CommentLike> CommentLikes { get; set; }
+
     public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
     public virtual DbSet<ResetPasswordCode> ResetPasswordCodes { get; set; }
     public virtual DbSet<PerformanceLog> PerformanceLogs { get; set; }
-
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
