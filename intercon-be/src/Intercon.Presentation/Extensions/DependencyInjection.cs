@@ -9,7 +9,6 @@ using System.Text.Json.Serialization;
 using Intercon.Application.Options;
 using Intercon.Domain.Enums;
 using Intercon.Infrastructure.Options;
-using Intercon.Presentation.AppSettingsOptions;
 using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Intercon.Presentation.Extensions;
@@ -129,7 +128,6 @@ public static class DependencyInjection
     private static void AddAppSettingsOptions(this IServiceCollection services, IConfiguration cfg)
     {
         services.Configure<JwtTokenSettings>(cfg.GetSection(nameof(JwtTokenSettings)));
-        services.Configure<SiteSettings>(cfg.GetSection(nameof(SiteSettings)));
         services.Configure<EmailSettings>(cfg.GetSection(nameof(EmailSettings)));
         services.Configure<ResetPasswordSettings>(cfg.GetSection(nameof(ResetPasswordSettings)));
     }

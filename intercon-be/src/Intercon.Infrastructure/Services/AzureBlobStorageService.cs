@@ -17,19 +17,7 @@ public class AzureBlobStorageService : IBlobStorage
         var storageAccount = _azureBlobStorageSettings.StorageAccount;
         var containerName = _azureBlobStorageSettings.ContainerName;
 
-        string accessKey;
-
-        using (var sr = new StreamReader(_azureBlobStorageSettings.AccessKeyPath))
-        {
-            try
-            {
-                accessKey = sr.ReadToEnd();
-            }
-            catch (Exception)
-            {
-                throw new ArgumentException("Missing '.secret' file in root folder");
-            }
-        }
+        string accessKey = _azureBlobStorageSettings.AccessKey;
 
         var credential = new StorageSharedKeyCredential(
             storageAccount,
