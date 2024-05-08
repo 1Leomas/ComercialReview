@@ -16,28 +16,10 @@ public static class DependencyInjection
     {
         services.Configure<AzureBlobStorageSettings>(configuration.GetSection(nameof(AzureBlobStorageSettings)));
 
-#if !DEBUG
-        var connectionString = string.Empty;
-
-        using (var sr = new StreamReader("../../.dbConnectionString"))
-        {
-            try
-            {
-                connectionString = sr.ReadToEnd();
-            }
-            catch (Exception)
-            {
-                throw new ArgumentException("Missing '.dbConnectionString' file in root folder");
-            }
-        }
-#endif
         services.AddDbContext<InterconDbContext>(options =>
         {
-#if DEBUG
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-#else
-            options.UseSqlServer(connectionString);
-#endif
+
         });
 
         //services.AddScoped<ITokenService, JwtTokenService>();
