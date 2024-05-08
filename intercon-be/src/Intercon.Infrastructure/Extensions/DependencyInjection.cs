@@ -22,8 +22,6 @@ public static class DependencyInjection
 
         });
 
-        //services.AddScoped<ITokenService, JwtTokenService>();
-
         //add scoped life time for all classes and interfaces from Infrastructure module
         services.Scan(
             selector => selector
