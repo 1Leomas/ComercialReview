@@ -1,12 +1,14 @@
-﻿using Intercon.Application.Abstractions;
+﻿using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.ReviewsManagement.CreateReview;
+using Intercon.Domain.Entities;
+using Intercon.Domain.Enums;
 using NSubstitute;
 
 namespace Intercon.Application.UnitTests.ReviewManagement;
 
 public class CreateReviewCommandHandlerTests
 {
-    private static readonly CreateReviewCommand Command = 
+    private static readonly CreateReviewCommand Command =
         new(1, 1, new CreateReviewDto(5, "Great!", 1));
 
     private readonly CreateReviewCommandHandler _handler;
@@ -22,21 +24,27 @@ public class CreateReviewCommandHandlerTests
     public async Task Handle_WithValidCommand_CreatesReview()
     {
         // Arrange
-        _reviewRepositoryMock.CreateReviewAsync(
-            Command.BusinessId,
-            Command.UserId,
-            Command.Data,
-            Arg.Any<CancellationToken>())
-            .Returns(true);
+        _reviewRepositoryMock.CreateReviewAsync(new Review
+        {
+            BusinessId = Command.BusinessId,
+            AuthorId = Command.UserId,
+            Grade = Command.Data.Grade,
+            ReviewText = Command.Data.ReviewText,
+            Recommendation = (RecommendationType)Command.Data.RecommendationType
+        }, Arg.Any<CancellationToken>())
+        .Returns(true);
 
         // Act
         await _handler.Handle(Command, CancellationToken.None);
 
         // Assert
-        await _reviewRepositoryMock.Received(1).CreateReviewAsync(
-            Command.BusinessId,
-            Command.UserId,
-            Command.Data,
-            Arg.Any<CancellationToken>());
+        await _reviewRepositoryMock.Received(1).CreateReviewAsync(new Review
+        {
+            BusinessId = Command.BusinessId,
+            AuthorId = Command.UserId,
+            Grade = Command.Data.Grade,
+            ReviewText = Command.Data.ReviewText,
+            Recommendation = (RecommendationType)Command.Data.RecommendationType
+        }, Arg.Any<CancellationToken>());
     }
 }

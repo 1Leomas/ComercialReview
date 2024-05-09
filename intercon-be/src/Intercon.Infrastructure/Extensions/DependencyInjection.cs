@@ -1,5 +1,6 @@
 using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.Abstractions.Services;
+using Intercon.Domain.Notifications;
 using Intercon.Infrastructure.Options;
 using Intercon.Infrastructure.Persistence;
 using Intercon.Infrastructure.Persistence.DataSeeder;
@@ -52,6 +53,7 @@ public static class DependencyInjection
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IImageValidator, BytesImageValidator>();
+        services.AddSingleton<IItemQueueService<Notification>, NotificationsQueueService>();
         services.AddScoped<ITokenService, JwtTokenService>();
     }
 }

@@ -1,5 +1,4 @@
-﻿using Intercon.Application.Abstractions;
-using Intercon.Application.ReviewsManagement.CreateReview;
+﻿using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.ReviewsManagement.EditReview;
 using Intercon.Domain.Entities;
 using Intercon.Domain.Enums;
@@ -11,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Intercon.Infrastructure.Repositories;
 
-public class ReviewRepository(InterconDbContext context) 
+public class ReviewRepository(InterconDbContext context)
     : IReviewRepository
 {
     public async Task<Review?> GetReviewDetailsAsync(int businessId, int authorId, CancellationToken cancellationToken)
@@ -50,7 +49,7 @@ public class ReviewRepository(InterconDbContext context)
         reviews = ApplySort(reviews, parameters.SortBy, parameters.SortDirection);
 
         return await PaginatedList<Review>.ToPagedList(
-            reviews, 
+            reviews,
             parameters.PageNumber,
             parameters.PageSize);
     }
@@ -60,42 +59,26 @@ public class ReviewRepository(InterconDbContext context)
         return await context.Reviews.ToListAsync(cancellationToken);
     }
 
-    public async Task<bool> CreateReviewAsync(int businessId, int userId, CreateReviewDto newReview, CancellationToken cancellationToken)
+    public async Task<bool> CreateReviewAsync(Review review, CancellationToken cancellationToken)
     {
-        var date = DateTime.Now;
-
-        var review = new Review
-        {
-            BusinessId = businessId,
-            AuthorId = userId,
-            Grade = newReview.Grade,
-            ReviewText = newReview.ReviewText,
-            Recommendation = (RecommendationType)newReview.RecommendationType,
-            CreatedDate = date,
-            UpdatedDate = date
-        };
-
         await context.Reviews.AddAsync(review, cancellationToken);
         var rows = await context.SaveChangesAsync(cancellationToken);
 
-        if (rows == 0)
-        {
-            return false;
-        }
+        if (rows == 0) return false;
 
-        await UpdateBusinessStats(businessId, cancellationToken);
+        await UpdateBusinessStats(review.BusinessId, cancellationToken);
 
         return true;
     }
 
     public async Task<Review?> UpdateReviewAsync(
-        int businessId, 
-        int authorId, 
-        EditReviewDto newReviewData, 
+        int businessId,
+        int authorId,
+        EditReviewDto newReviewData,
         CancellationToken cancellationToken)
     {
         var reviewDb = await context.Reviews.FindAsync(
-            new object?[] { businessId, authorId }, 
+            new object?[] { businessId, authorId },
             cancellationToken: cancellationToken);
 
         if (reviewDb == null)
@@ -128,17 +111,15 @@ public class ReviewRepository(InterconDbContext context)
     public async Task DeleteReviewAsync(int businessId, int authorId, CancellationToken cancellationToken)
     {
         var reviewDb = await context.Reviews.FindAsync(
-            new object?[] { businessId, authorId }, 
+            new object?[] { businessId, authorId },
             cancellationToken: cancellationToken);
 
         if (reviewDb == null)
         {
             return;
         }
-        
-        await context.Reviews
-            .Where(x => x.BusinessId == businessId && x.AuthorId == authorId)
-            .ExecuteDeleteAsync(cancellationToken);
+
+        context.Reviews.Remove(reviewDb);
 
         await UpdateBusinessStats(businessId, cancellationToken);
     }
@@ -194,7 +175,7 @@ public class ReviewRepository(InterconDbContext context)
         CancellationToken cancellationToken)
     {
         var business = await context.Businesses.FindAsync(
-            new object?[] { businessId }, 
+            new object?[] { businessId },
             cancellationToken: cancellationToken);
 
         if (business == null)

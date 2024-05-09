@@ -1,15 +1,16 @@
+﻿using Intercon.Application.Options;
 using Intercon.Domain.Entities;
+using Intercon.Domain.Enums;
+using Intercon.Infrastructure.Options;
 using Intercon.Infrastructure.Persistence;
+using Intercon.Presentation.Workers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
-using Intercon.Application.Options;
-using Intercon.Domain.Enums;
-using Intercon.Infrastructure.Options;
-using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Intercon.Presentation.Extensions;
 
@@ -26,6 +27,8 @@ public static class DependencyInjection
             // For supporting string to enum conversions
             opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         });
+
+        services.AddHostedService<NotifierWorker>();
 
         services.AddEndpointsApiExplorer();
 

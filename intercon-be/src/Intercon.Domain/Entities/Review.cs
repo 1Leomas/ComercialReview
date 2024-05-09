@@ -1,6 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Intercon.Domain.Abstractions;
+﻿using Intercon.Domain.Abstractions;
 using Intercon.Domain.Enums;
+using Intercon.Domain.Events;
+using System.ComponentModel.DataAnnotations;
 
 namespace Intercon.Domain.Entities;
 
@@ -19,4 +20,25 @@ public class Review : Entity
     public virtual Business Business { get; set; } = null!;
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
     public virtual ICollection<ReviewLike> Likes { get; set; } = new List<ReviewLike>();
+
+    public static Review Create(int businessId, int authorId, int grade, string? reviewText,
+        RecommendationType recommendation)
+    {
+        var date = DateTime.Now;
+
+        var review = new Review
+        {
+            BusinessId = businessId,
+            AuthorId = authorId,
+            Grade = grade,
+            ReviewText = reviewText,
+            Recommendation = recommendation,
+            CreatedDate = date,
+            UpdatedDate = date
+        };
+
+        review.RaiseDomainEvent(new ReviewCreatedDomainEvent(businessId, authorId, date));
+
+        return review;
+    }
 }

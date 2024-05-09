@@ -1,5 +1,6 @@
 using Intercon.Application.Extensions;
 using Intercon.Infrastructure.Extensions;
+using Intercon.Infrastructure.Services;
 using Intercon.Presentation.Extensions;
 using Intercon.Presentation.Middleware;
 
@@ -30,6 +31,8 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.MapHub<NotificationHub>("notifications");
 
 app.MapControllers();
 

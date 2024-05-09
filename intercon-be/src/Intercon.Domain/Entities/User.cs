@@ -1,4 +1,5 @@
 ﻿using Intercon.Domain.Enums;
+using Intercon.Domain.Notifications;
 using Microsoft.AspNetCore.Identity;
 
 namespace Intercon.Domain.Entities;
@@ -25,6 +26,7 @@ public class User : IdentityUser<int>
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
     public virtual ICollection<ReviewLike> ReviewLikes { get; set; } = new List<ReviewLike>();
     public virtual ICollection<CommentLike> CommentLikes { get; set; } = new List<CommentLike>();
+    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
