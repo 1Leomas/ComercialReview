@@ -10,7 +10,7 @@ namespace Intercon.Infrastructure.Persistence;
 
 public class InterconDbContext : IdentityDbContext<User, IdentityRole<int>, int>
 {
-    #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public InterconDbContext(DbContextOptions<InterconDbContext> options, IPublisher publisher) : base(options)
     {
         _publisher = publisher;
@@ -50,9 +50,11 @@ public class InterconDbContext : IdentityDbContext<User, IdentityRole<int>, int>
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
+        var result = await base.SaveChangesAsync(cancellationToken);
+
         await PublishDomainEventsAsync();
 
-        return await base.SaveChangesAsync(cancellationToken);
+        return result;
     }
 
     public async Task PublishDomainEventsAsync()
@@ -62,7 +64,7 @@ public class InterconDbContext : IdentityDbContext<User, IdentityRole<int>, int>
             .SelectMany(e =>
             {
                 var domainEvents = e.Entity.DomainEvents;
-                
+
                 e.Entity.ClearDomainEvents();
 
                 return domainEvents;

@@ -10,7 +10,7 @@ public class NotificationHub : Hub<INotificationHub>
     {
         await Clients
             .Client(Context.ConnectionId)
-            .SendNotificationAsync($"Welcome to the notification hub {Context.User?.Identity?.Name}!");
+            .SendNotificationAsync($"Connected to intercon notification hub {Context.User?.Identity?.Name}!");
 
         await base.OnConnectedAsync();
     }

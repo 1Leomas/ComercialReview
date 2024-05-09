@@ -3,13 +3,16 @@ using Intercon.Application.Abstractions.Services;
 using Intercon.Domain.Events;
 using Intercon.Domain.Notifications;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Intercon.Application.ReviewsManagement.CreateReview;
 
 internal sealed class ReviewCreatedDomainEventHandler(
     IItemQueueService<Notification> queue,
     IBusinessRepository businessRepository,
-    IUserRepository userRepository) : INotificationHandler<ReviewCreatedDomainEvent>
+    IUserRepository userRepository,
+    INotificationRepository notificationRepository,
+    ILogger<ReviewCreatedDomainEventHandler> logger) : INotificationHandler<ReviewCreatedDomainEvent>
 {
     public async Task Handle(ReviewCreatedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
@@ -37,5 +40,12 @@ internal sealed class ReviewCreatedDomainEventHandler(
         };
 
         queue.Enqueue(notification);
+
+        var result = await notificationRepository.AddAsync(notification, cancellationToken);
+
+        if (!result)
+        {
+            logger.LogError("Failed to save notification to the db.");
+        }
     }
 }

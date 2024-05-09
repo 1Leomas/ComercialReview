@@ -20,4 +20,9 @@ public class Notification
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
     public bool IsRead { get; set; }
+
+    public void MarkAsRead()
+    {
+        IsRead = true;
+    }
 }

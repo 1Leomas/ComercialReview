@@ -62,9 +62,8 @@ public class ReviewRepository(InterconDbContext context)
     public async Task<bool> CreateReviewAsync(Review review, CancellationToken cancellationToken)
     {
         await context.Reviews.AddAsync(review, cancellationToken);
-        var rows = await context.SaveChangesAsync(cancellationToken);
 
-        if (rows == 0) return false;
+        await context.SaveChangesAsync(cancellationToken);
 
         await UpdateBusinessStats(review.BusinessId, cancellationToken);
 
