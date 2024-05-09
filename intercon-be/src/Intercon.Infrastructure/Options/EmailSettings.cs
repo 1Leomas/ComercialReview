@@ -1,6 +1,6 @@
 ﻿namespace Intercon.Infrastructure.Options;
 
-public class EmailSettings 
+public class EmailSettings
 {
     public string MailServer { get; set; } = null!;
     public int MailPort { get; set; }

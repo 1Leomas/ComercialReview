@@ -1,5 +1,5 @@
-﻿using Intercon.Application.Abstractions;
-using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.Abstractions.Services;
 using Intercon.Domain.Identity;
 
 namespace Intercon.Application.UsersManagement.RefreshToken;

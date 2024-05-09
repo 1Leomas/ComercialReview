@@ -1,9 +1,7 @@
-﻿using Intercon.Application.Abstractions;
-using Intercon.Application.Abstractions.Messaging;
-using Intercon.Application.DataTransferObjects;
+﻿using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Application.FilesManagement.DeleteFile;
-using Intercon.Application.FilesManagement.UploadFile;
 using MediatR;
 
 namespace Intercon.Application.UsersManagement.EditUser;
@@ -15,9 +13,9 @@ public sealed record EditUser
     public int UserId { get; init; }
     public string? UserName { get; init; }
     public string? Email { get; init; }
-    public string? FirstName  { get; init; }
-    public string? LastName  { get; init; }
-    public int? AvatarId  { get; init; }
+    public string? FirstName { get; init; }
+    public string? LastName { get; init; }
+    public int? AvatarId { get; init; }
 }
 
 public sealed class EditUserCommandHandler(
@@ -59,7 +57,7 @@ public sealed class EditUserCommandHandler(
             Email: userDb.Email!,
             FirstName: userDb.FirstName,
             LastName: userDb.LastName,
-            AvatarPath: userDb.Avatar?.Path 
+            AvatarPath: userDb.Avatar?.Path
         );
     }
 }

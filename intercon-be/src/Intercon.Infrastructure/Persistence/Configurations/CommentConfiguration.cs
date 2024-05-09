@@ -16,7 +16,7 @@ public class CommentConfiguration : IEntityTypeConfiguration<Comment>
 
         builder.HasOne(c => c.Review)
             .WithMany(r => r.Comments)
-            .HasForeignKey(c => new {c.BusinessId, ReviewId = c.ReviewAuthorId})
+            .HasForeignKey(c => new { c.BusinessId, ReviewId = c.ReviewAuthorId })
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(c => c.Author)

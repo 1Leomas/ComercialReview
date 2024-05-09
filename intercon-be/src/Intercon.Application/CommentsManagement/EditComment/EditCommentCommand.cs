@@ -1,5 +1,5 @@
-﻿using Intercon.Application.Abstractions;
-using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.DataTransferObjects.Comment;
 using Intercon.Application.Exceptions;
 using Intercon.Domain.Entities;

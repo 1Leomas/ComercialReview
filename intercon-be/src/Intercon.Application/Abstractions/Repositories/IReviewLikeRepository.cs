@@ -1,4 +1,4 @@
-﻿namespace Intercon.Application.Abstractions;
+﻿namespace Intercon.Application.Abstractions.Repositories;
 
 public interface IReviewLikeRepository
 {

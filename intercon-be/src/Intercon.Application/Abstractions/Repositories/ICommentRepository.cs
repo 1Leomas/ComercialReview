@@ -1,7 +1,7 @@
 ﻿using Intercon.Domain.Entities;
 using Intercon.Domain.Pagination;
 
-namespace Intercon.Application.Abstractions;
+namespace Intercon.Application.Abstractions.Repositories;
 
 public interface ICommentRepository
 {

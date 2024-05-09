@@ -1,14 +1,14 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using Intercon.Application.Abstractions;
+﻿using Intercon.Application.Abstractions.Services;
 using Intercon.Application.Options;
 using Intercon.Domain.Enums;
 using Intercon.Domain.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Intercon.Infrastructure.Services;
 
@@ -60,7 +60,8 @@ public class JwtTokenService(IOptions<JwtTokenSettings> jwtTokenSettings, ILogge
             var claims = new List<Claim>
             {
                 new(JwtClaimType.UserId, userId.ToString()),
-                new(JwtClaimType.Role, userRole.ToString())
+                new(JwtClaimType.Role, userRole.ToString()),
+                new(ClaimTypes.NameIdentifier, userId.ToString())
             };
 
             return claims;
@@ -108,10 +109,10 @@ public class JwtTokenService(IOptions<JwtTokenSettings> jwtTokenSettings, ILogge
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
-        
+
         var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
 
-        if (securityToken is not JwtSecurityToken jwtSecurityToken || 
+        if (securityToken is not JwtSecurityToken jwtSecurityToken ||
             !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
         {
             throw new SecurityTokenException("Invalid token");

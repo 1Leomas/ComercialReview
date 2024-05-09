@@ -17,9 +17,9 @@ public class ReviewLikeController(IMediator mediator) : BaseController
     [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Add(
-        [FromRoute] int businessId,         
-        [FromRoute] int userId, 
-        CancellationToken cancellationToken)     
+        [FromRoute] int businessId,
+        [FromRoute] int userId,
+        CancellationToken cancellationToken)
     {
         var currentUserId = HttpContext.User.GetUserId();
 

@@ -1,12 +1,13 @@
-﻿using Intercon.Application.Abstractions;
-using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.Abstractions.Repositories;
+using Intercon.Application.Abstractions.Services;
 
 namespace Intercon.Application.UsersManagement.DeleteUser;
 
 public sealed record DeleteUserCommand(int Id) : ICommand;
 
 internal sealed class DeleteUserCommandHandler(
-    IUserRepository userRepository, 
+    IUserRepository userRepository,
     IBlobStorage blobStorage,
     IFileRepository fileRepository) : ICommandHandler<DeleteUserCommand>
 {

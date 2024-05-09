@@ -1,4 +1,4 @@
-using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions.Repositories;
 using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -11,8 +11,8 @@ public class ReviewLikeRepository(InterconDbContext dbContext) : IReviewLikeRepo
 
     public async Task<int> GetLikesCount(int businessId, int reviewAuthorId)
     {
-        return await _dbContext.ReviewLikes.CountAsync(rl => 
-            rl.BusinessId == businessId && 
+        return await _dbContext.ReviewLikes.CountAsync(rl =>
+            rl.BusinessId == businessId &&
             rl.ReviewAuthorId == reviewAuthorId);
     }
 
@@ -20,7 +20,7 @@ public class ReviewLikeRepository(InterconDbContext dbContext) : IReviewLikeRepo
     {
         var existingLike = await _dbContext.ReviewLikes.FirstOrDefaultAsync(rl =>
             rl.BusinessId == businessId &&
-            rl.ReviewAuthorId == reviewAuthorId && 
+            rl.ReviewAuthorId == reviewAuthorId &&
             rl.UserId == userId);
 
         if (existingLike != null)
@@ -41,9 +41,9 @@ public class ReviewLikeRepository(InterconDbContext dbContext) : IReviewLikeRepo
 
     public async Task<int> Delete(int businessId, int reviewAuthorId, int userId)
     {
-        var likeToRemove = await _dbContext.ReviewLikes.FirstOrDefaultAsync(rl => 
-            rl.BusinessId == businessId && 
-            rl.ReviewAuthorId == reviewAuthorId && 
+        var likeToRemove = await _dbContext.ReviewLikes.FirstOrDefaultAsync(rl =>
+            rl.BusinessId == businessId &&
+            rl.ReviewAuthorId == reviewAuthorId &&
             rl.UserId == userId);
 
         if (likeToRemove == null)

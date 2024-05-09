@@ -1,5 +1,5 @@
 ﻿using FluentValidation.TestHelper;
-using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.BusinessesManagement.CreateBusiness;
 using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Domain.ComplexTypes;
@@ -35,12 +35,12 @@ public class CreateBusinessCommandValidatorTests
         var command = new CreateBusinessCommand(
             UserId: 0,
             Data: new CreateBusinessDto(
-                "Title", 
-                "ShortDescription", 
-                null, 
-                null, 
-                null, 
-                new Address(), 
+                "Title",
+                "ShortDescription",
+                null,
+                null,
+                null,
+                new Address(),
                 BusinessCategory.Bakery
             )
         );

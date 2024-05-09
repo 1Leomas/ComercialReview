@@ -1,9 +1,8 @@
-﻿using Intercon.Application.Abstractions;
-using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.DataTransferObjects;
 using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Application.DataTransferObjects.Files;
-using Intercon.Application.Extensions.Mappers;
 using Intercon.Application.FilesManagement.UploadBusinessGalleryPhotos;
 using Intercon.Application.FilesManagement.UploadFile;
 using Intercon.Domain.Entities;
@@ -45,7 +44,7 @@ public sealed class CreateBusinessCommandHandler(
         };
 
         var businessId = await businessRepository.CreateBusinessAsync(business, cancellationToken);
-        
+
         var galleryPhotos = new List<BusinessGalleryPhotoDto>();
 
         if (command.Data.GalleryPhotos is not null && command.Data.GalleryPhotos.Any())

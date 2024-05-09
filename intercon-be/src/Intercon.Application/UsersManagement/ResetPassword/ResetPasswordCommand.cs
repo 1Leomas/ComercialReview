@@ -1,10 +1,10 @@
-﻿using System.Data;
-using FluentValidation;
-using Intercon.Application.Abstractions;
+﻿using FluentValidation;
 using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.Abstractions.Services;
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
+using System.Data;
 
 namespace Intercon.Application.UsersManagement.ResetPassword;
 
@@ -40,7 +40,7 @@ $"{user.FirstName} {user.LastName}",
     }
 }
 
-public sealed class ResetPasswordCommandValidator: AbstractValidator<ResetPasswordCommand>
+public sealed class ResetPasswordCommandValidator : AbstractValidator<ResetPasswordCommand>
 {
     public ResetPasswordCommandValidator(UserManager<User> userManager)
     {

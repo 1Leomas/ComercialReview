@@ -1,18 +1,17 @@
 using Intercon.Application.CustomExceptions;
-using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Application.DataTransferObjects;
 using Intercon.Application.ReviewsManagement.CreateReview;
 using Intercon.Application.ReviewsManagement.DeleteReview;
 using Intercon.Application.ReviewsManagement.EditReview;
 using Intercon.Application.ReviewsManagement.GetAllReviews;
 using Intercon.Application.ReviewsManagement.GetBusinessReviews;
+using Intercon.Application.ReviewsManagement.GetPaginatedBusinessReviews;
 using Intercon.Application.ReviewsManagement.GetReviewDetails;
 using Intercon.Domain.Pagination;
 using Intercon.Presentation.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Intercon.Application.ReviewsManagement.GetPaginatedBusinessReviews;
 
 namespace Intercon.Presentation.Controllers;
 

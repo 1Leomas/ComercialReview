@@ -15,7 +15,7 @@ public class ReviewLikeConfiguration : IEntityTypeConfiguration<ReviewLike>
 
         builder.HasOne(rl => rl.Review)
             .WithMany(r => r.Likes)
-            .HasForeignKey(rl => new {rl.BusinessId, rl.ReviewAuthorId})
+            .HasForeignKey(rl => new { rl.BusinessId, rl.ReviewAuthorId })
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(rl => rl.User)

@@ -1,7 +1,9 @@
-using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions.Repositories;
+using Intercon.Application.Abstractions.Services;
 using Intercon.Infrastructure.Options;
 using Intercon.Infrastructure.Persistence;
 using Intercon.Infrastructure.Persistence.DataSeeder;
+using Intercon.Infrastructure.Repositories;
 using Intercon.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,20 +21,37 @@ public static class DependencyInjection
         services.AddDbContext<InterconDbContext>(options =>
         {
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-
         });
 
-        //add scoped life time for all classes and interfaces from Infrastructure module
-        services.Scan(
-            selector => selector
-                .FromAssemblies(AssemblyReference.Assembly)
-                .AddClasses(false)
-                .AsImplementedInterfaces()
-                .WithScopedLifetime()
-        );
+        services.AddRepositories();
+        services.AddServices();
 
         services.AddScoped<DataBaseSeeder>();
 
+        services.AddSignalR();
+
         return services;
+    }
+
+    private static void AddRepositories(this IServiceCollection services)
+    {
+        services.AddScoped<IBusinessRepository, BusinessRepository>();
+        services.AddScoped<ICommentLikeRepository, CommentLikeRepository>();
+        services.AddScoped<ICommentRepository, CommentRepository>();
+        services.AddScoped<IFileRepository, FileRepository>();
+        services.AddScoped<INotificationRepository, NotificationRepository>();
+        services.AddScoped<IPerformanceLogRepository, PerformanceLogRepository>();
+        services.AddScoped<IReviewLikeRepository, ReviewLikeRepository>();
+        services.AddScoped<IReviewRepository, ReviewRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+    }
+
+    private static void AddServices(this IServiceCollection services)
+    {
+        services.AddScoped<IBlobStorage, AzureBlobStorageService>();
+        services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IIdentityService, IdentityService>();
+        services.AddScoped<IImageValidator, BytesImageValidator>();
+        services.AddScoped<ITokenService, JwtTokenService>();
     }
 }

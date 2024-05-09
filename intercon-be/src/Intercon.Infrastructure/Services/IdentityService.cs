@@ -1,4 +1,4 @@
-﻿using Intercon.Application.Abstractions;
+﻿using Intercon.Application.Abstractions.Services;
 using Intercon.Domain.Entities;
 using Intercon.Domain.Enums;
 using Intercon.Domain.Identity;
@@ -68,9 +68,9 @@ public class IdentityService(
         var userId = int.Parse(userIdClaim.Value);
 
         var refreshTokenFromDb = await context.RefreshTokens.FirstOrDefaultAsync(
-            x => x.UserId == userId && 
-                                     x.Token == tokens.RefreshToken && 
-                                     x.IsActive == true, 
+            x => x.UserId == userId &&
+                                     x.Token == tokens.RefreshToken &&
+                                     x.IsActive == true,
             cancellationToken);
 
         if (refreshTokenFromDb == null)
@@ -83,7 +83,7 @@ public class IdentityService(
                            .Select(x => x.Role)
                            .FirstOrDefaultAsync(cancellationToken);
 
-        var newJwtToken = tokenService.CreateTokens(userId, (int)userRole) 
+        var newJwtToken = tokenService.CreateTokens(userId, (int)userRole)
             ?? throw new InvalidOperationException("Invalid attempt to create token");
 
 

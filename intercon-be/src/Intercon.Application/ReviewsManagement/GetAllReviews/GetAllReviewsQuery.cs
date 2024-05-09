@@ -1,6 +1,5 @@
-﻿using Intercon.Application.Abstractions;
+﻿using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.Extensions.Mappers;
-using Intercon.Domain.Enums;
 using MediatR;
 
 namespace Intercon.Application.ReviewsManagement.GetAllReviews;

@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
-using Intercon.Application.Abstractions;
 using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.Abstractions.Repositories;
+using Intercon.Application.Abstractions.Services;
 using Intercon.Application.DataTransferObjects;
 using Intercon.Application.DataTransferObjects.Files;
 using Intercon.Application.Extensions;

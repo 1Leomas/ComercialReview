@@ -1,8 +1,7 @@
-﻿using Intercon.Application.Abstractions;
-using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Application.DataTransferObjects.Files;
-using Intercon.Application.Extensions.Mappers;
 
 namespace Intercon.Application.BusinessesManagement.GetCurrentUserBusiness;
 

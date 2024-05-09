@@ -1,7 +1,7 @@
-﻿using Intercon.Application.Abstractions;
+﻿using FluentValidation.TestHelper;
+using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.ReviewsManagement.CreateReview;
 using NSubstitute;
-using FluentValidation.TestHelper;
 
 namespace Intercon.Application.UnitTests.ReviewManagement;
 
@@ -64,9 +64,9 @@ public class CreateReviewCommandValidatorTests
 
         var command = new CreateReviewCommand
         (
-            BusinessId : 0,
-            UserId : 1,
-            Data : new CreateReviewDto(5, "Review", 1)
+            BusinessId: 0,
+            UserId: 1,
+            Data: new CreateReviewDto(5, "Review", 1)
         );
 
         _businessRepositoryMock.BusinessExistsAsync(1, _ctx).Returns(true);

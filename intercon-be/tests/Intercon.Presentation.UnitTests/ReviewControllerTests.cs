@@ -1,13 +1,13 @@
 using Intercon.Application.ReviewsManagement.CreateReview;
 using Intercon.Application.ReviewsManagement.GetAllReviews;
+using Intercon.Domain.Enums;
 using Intercon.Presentation.Controllers;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using System.Security.Claims;
 using System.Security.Principal;
-using Intercon.Domain.Enums;
-using Microsoft.AspNetCore.Http;
 
 namespace Intercon.Presentation.UnitTests
 {
@@ -20,21 +20,21 @@ namespace Intercon.Presentation.UnitTests
         {
             _mediatorMock = Substitute.For<IMediator>();
             _controller = new ReviewController(_mediatorMock);
-            
+
         }
 
         [Fact]
         public async Task GetAllReviews_ReturnsOkResult()
         {
             // Arrange
-            
+
 
             // Act
             await _controller.GetAllReviews(default);
 
             // Assert
             var result = await _mediatorMock.Received(1).Send(
-                Arg.Any<GetAllReviewsQuery>(), 
+                Arg.Any<GetAllReviewsQuery>(),
                 Arg.Any<CancellationToken>());
 
             Assert.NotNull(result);

@@ -65,25 +65,25 @@ public class ExceptionHandlingMiddleware
                 "Validation error",
                 "One or more validation errors has occurred",
                 validationException.Errors),
-            #if DEBUG
+#if DEBUG
             _ => new ExceptionDetails(
                 StatusCodes.Status500InternalServerError,
                 "ServerError",
                 "Server error",
                 "An unexpected error has occurred",
                 GetAllInheritExceptionsMessages(exception))
-            #else
+#else
             _ => new ExceptionDetails(
                 StatusCodes.Status500InternalServerError,
                 "ServerError",
                 "Server error",
                 "An unexpected error has occured",
                 null)
-            #endif
+#endif
         };
     }
 
-    #if DEBUG
+#if DEBUG
     private static IEnumerable<object> GetAllInheritExceptionsMessages(Exception? exception)
     {
         var messages = new List<object>();
@@ -96,5 +96,5 @@ public class ExceptionHandlingMiddleware
 
         return messages;
     }
-    #endif
+#endif
 }

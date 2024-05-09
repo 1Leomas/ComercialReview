@@ -1,6 +1,6 @@
 ﻿using Azure.Storage;
 using Azure.Storage.Blobs;
-using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions.Services;
 using Intercon.Infrastructure.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;

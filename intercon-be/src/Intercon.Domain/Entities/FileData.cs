@@ -1,6 +1,4 @@
-﻿using Intercon.Domain.Abstractions;
-
-namespace Intercon.Domain.Entities;
+﻿namespace Intercon.Domain.Entities;
 
 public class FileData
 {

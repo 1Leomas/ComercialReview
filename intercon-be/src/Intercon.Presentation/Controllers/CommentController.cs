@@ -37,7 +37,7 @@ public class CommentController : ControllerBase
         var currentUserId = HttpContext.User.GetUserIdIfExists();
 
         var paginatedComments = await _mediator.Send(
-            new GetPaginatedBusinessReviewCommentsQuery(businessId, reviewAuthorId, currentUserId, parameters), 
+            new GetPaginatedBusinessReviewCommentsQuery(businessId, reviewAuthorId, currentUserId, parameters),
             cancellationToken);
 
         return Ok(paginatedComments);

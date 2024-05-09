@@ -1,6 +1,6 @@
 ﻿using Intercon.Domain.Entities;
 
-namespace Intercon.Application.Abstractions;
+namespace Intercon.Application.Abstractions.Repositories;
 
 public interface IPerformanceLogRepository
 {

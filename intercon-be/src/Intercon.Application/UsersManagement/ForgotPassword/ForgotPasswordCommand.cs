@@ -1,6 +1,5 @@
-﻿using System.Text.Encodings.Web;
-using Intercon.Application.Abstractions;
-using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.Abstractions.Services;
 using Intercon.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
@@ -25,8 +24,8 @@ internal sealed class ForgotPasswordCommandHandler(
         var resetPasswordCode = await identityService.GenerateResetPasswordCodeAsync(user.Id);
 
         await emailService.SendEmailAsync(
-            user.Email, 
-            $"{user.FirstName} {user.LastName}", 
+            user.Email,
+            $"{user.FirstName} {user.LastName}",
             "Reset Password",
             $"Your reset password code: {resetPasswordCode}. Use it on reset password page to reset your password.");
     }

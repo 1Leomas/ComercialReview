@@ -1,4 +1,4 @@
-using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.UsersManagement.EditUser;
 using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
@@ -9,7 +9,7 @@ namespace Intercon.Infrastructure.Repositories;
 
 public class UserRepository(
     InterconDbContext context,
-    UserManager<User> userManager) 
+    UserManager<User> userManager)
     : IUserRepository
 {
     public async Task<User?> GetUserByIdAsync(int id, CancellationToken cancellationToken)

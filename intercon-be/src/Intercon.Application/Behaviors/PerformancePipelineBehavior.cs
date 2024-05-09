@@ -1,5 +1,4 @@
-﻿using Intercon.Application.Abstractions;
-using Intercon.Application.PerformanceLogsManagement.Add;
+﻿using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.PerformanceLogsManagement.GetPerformanceLogs;
 using MediatR;
 

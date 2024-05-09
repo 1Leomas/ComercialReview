@@ -1,4 +1,4 @@
-﻿using Intercon.Domain.Entities;
+using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -33,8 +33,8 @@ public static class DependencyInjection
 
         services.AddCors(options =>
         {
-            options.AddPolicy("AllowAll",
-                builder => builder.AllowAnyOrigin()
+            options.AddPolicy("AllowAll", builder => builder
+                    .AllowAnyOrigin()
                     .AllowAnyMethod()
                     .AllowAnyHeader());
         });
@@ -43,6 +43,13 @@ public static class DependencyInjection
         services.AddApiVersioning();
         services.AddRouting(options => options.LowercaseUrls = true);
 
+        services.AddIdentityServices(configuration);
+
+        return services;
+    }
+
+    private static void AddIdentityServices(this IServiceCollection services, IConfiguration configuration)
+    {
         // Specify identity requirements
         // Must be added before .AddAuthentication otherwise a 404 is thrown on authorized endpoints
         services.AddIdentity<User, IdentityRole<int>>(options =>
@@ -65,32 +72,31 @@ public static class DependencyInjection
 
         JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-        services.AddAuthentication(options => {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-        .AddJwtBearer(options =>
-        {
-            options.SaveToken = true;
-            options.IncludeErrorDetails = true;
-            options.TokenValidationParameters = new TokenValidationParameters()
+        services.AddAuthentication(options =>
             {
-                ClockSkew = TimeSpan.Zero,
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = validIssuer,
-                ValidAudience = validAudience,
-                IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(symmetricSecurityKey!)
-                )
-                ,RoleClaimType = JwtClaimType.Role
-            };
-        });
-
-        return services;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.IncludeErrorDetails = true;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ClockSkew = TimeSpan.Zero,
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = validIssuer,
+                    ValidAudience = validAudience,
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(symmetricSecurityKey!)
+                    ),
+                    RoleClaimType = JwtClaimType.Role
+                };
+            });
     }
 
     private static void AddSwaggerConfiguration(this IServiceCollection services)

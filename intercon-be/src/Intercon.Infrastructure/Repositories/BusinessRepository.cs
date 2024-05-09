@@ -1,4 +1,4 @@
-using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Domain.Entities;
 using Intercon.Domain.Enums;
@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Intercon.Infrastructure.Repositories;
 
-public class BusinessRepository(InterconDbContext context) 
+public class BusinessRepository(InterconDbContext context)
     : IBusinessRepository
 {
     public async Task<Business?> GetBusinessByIdAsync(int id, CancellationToken cancellationToken)

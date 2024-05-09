@@ -1,7 +1,6 @@
-﻿using Intercon.Application.Abstractions;
-using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.DataTransferObjects.User;
-using Intercon.Application.FilesManagement.UploadFile;
 using Intercon.Domain.Entities;
 using Intercon.Domain.Enums;
 using MediatR;

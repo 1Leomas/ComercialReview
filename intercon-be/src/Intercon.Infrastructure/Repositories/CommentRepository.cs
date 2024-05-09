@@ -1,4 +1,4 @@
-using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions.Repositories;
 using Intercon.Domain.Entities;
 using Intercon.Domain.Pagination;
 using Intercon.Infrastructure.Extensions;
@@ -14,14 +14,14 @@ public class CommentRepository(InterconDbContext context) : ICommentRepository
 
     public async Task<Comment?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        return await _context.Comments            
+        return await _context.Comments
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
     public async Task<PaginatedList<Comment>> GetPaginatedCommentsByBusinessReviewAsync(
-        int businessId, int reviewAuthorId, 
-        CommentParameters parameters, 
+        int businessId, int reviewAuthorId,
+        CommentParameters parameters,
         CancellationToken cancellationToken)
     {
         var commentsDb = _context.Comments
@@ -37,7 +37,7 @@ public class CommentRepository(InterconDbContext context) : ICommentRepository
         commentsDb = ApplySort(commentsDb, parameters.SortBy, parameters.SortDirection);
 
         return await PaginatedList<Comment>.ToPagedList(
-            commentsDb, 
+            commentsDb,
             parameters.PageNumber,
             parameters.PageSize);
     }
@@ -95,7 +95,7 @@ public class CommentRepository(InterconDbContext context) : ICommentRepository
     {
 #pragma warning disable IDE0300 // Simplify collection initialization
         var comment = await _context.Comments.FindAsync(
-            new object?[] { newCommentData.Id }, 
+            new object?[] { newCommentData.Id },
             cancellationToken: cancellationToken);
 #pragma warning restore IDE0300 // Simplify collection initialization
 
@@ -118,7 +118,7 @@ public class CommentRepository(InterconDbContext context) : ICommentRepository
         {
             return;
         }
-        
+
         _context.Comments.Remove(comment);
 
         await UpdateReviewStats(comment.BusinessId, comment.ReviewAuthorId, cancellationToken);
@@ -136,7 +136,7 @@ public class CommentRepository(InterconDbContext context) : ICommentRepository
     {
 #pragma warning disable IDE0300 // Simplify collection initialization
         var review = await _context.Reviews.FindAsync(
-            new object?[] { businessId, reviewAuthorId }, 
+            new object?[] { businessId, reviewAuthorId },
             cancellationToken: cancellationToken);
 #pragma warning restore IDE0300 // Simplify collection initialization
 

@@ -1,6 +1,4 @@
-﻿using Intercon.Domain.Enums;
-
-namespace Intercon.Application.DataTransferObjects.Business;
+﻿namespace Intercon.Application.DataTransferObjects.Business;
 
 public sealed class EditBusinessDto
 {

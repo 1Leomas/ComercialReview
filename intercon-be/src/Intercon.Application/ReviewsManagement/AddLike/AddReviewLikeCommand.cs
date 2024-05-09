@@ -1,12 +1,12 @@
-﻿using Intercon.Application.Abstractions;
-using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.Abstractions.Repositories;
 
 namespace Intercon.Application.ReviewsManagement.AddLike;
 
-public sealed record AddReviewLikeCommand(int BusinessId, int ReviewAuthorId, int CurrentUserId) 
+public sealed record AddReviewLikeCommand(int BusinessId, int ReviewAuthorId, int CurrentUserId)
     : ICommand<int>;
 
-internal sealed class AddReviewLikeCommandHandler(IReviewLikeRepository reviewLikeRepository) 
+internal sealed class AddReviewLikeCommandHandler(IReviewLikeRepository reviewLikeRepository)
     : ICommandHandler<AddReviewLikeCommand, int>
 {
     public async Task<int> Handle(AddReviewLikeCommand request, CancellationToken cancellationToken)

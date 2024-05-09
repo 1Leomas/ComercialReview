@@ -1,4 +1,4 @@
-using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions.Repositories;
 using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;

@@ -1,5 +1,5 @@
-﻿using Intercon.Application.Abstractions;
-using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.DataTransferObjects;
 using Intercon.Application.DataTransferObjects.Comment;
 using Intercon.Application.Extensions.Mappers;
@@ -9,7 +9,7 @@ namespace Intercon.Application.CommentsManagement.GetBusinessReviewComments;
 
 public sealed record GetPaginatedBusinessReviewCommentsQuery(int BusinessId, int ReviewAuthorId, int? CurrentUserId, CommentParameters Parameters) : IQuery<PaginatedResponse<CommentDetailsDto>>;
 
-internal sealed class GetPaginatedBusinessReviewCommentsQueryHandler 
+internal sealed class GetPaginatedBusinessReviewCommentsQueryHandler
     : IQueryHandler<GetPaginatedBusinessReviewCommentsQuery, PaginatedResponse<CommentDetailsDto>>
 {
     public GetPaginatedBusinessReviewCommentsQueryHandler(ICommentRepository commentRepository)
@@ -23,8 +23,8 @@ internal sealed class GetPaginatedBusinessReviewCommentsQueryHandler
         CancellationToken cancellationToken)
     {
         var comments = await _commentRepository.GetPaginatedCommentsByBusinessReviewAsync(
-            request.BusinessId, 
-            request.ReviewAuthorId, 
+            request.BusinessId,
+            request.ReviewAuthorId,
             request.Parameters,
         cancellationToken);
 

@@ -1,7 +1,7 @@
-﻿using System.Security.Claims;
-using Intercon.Domain.Identity;
+﻿using Intercon.Domain.Identity;
+using System.Security.Claims;
 
-namespace Intercon.Application.Abstractions;
+namespace Intercon.Application.Abstractions.Services;
 
 public interface ITokenService
 {

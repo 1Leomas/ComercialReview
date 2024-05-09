@@ -1,5 +1,6 @@
 ﻿using Intercon.Application.CustomExceptions;
 using Intercon.Application.DataTransferObjects.User;
+using Intercon.Application.FilesManagement.UploadFile;
 using Intercon.Application.UsersManagement.DeleteUser;
 using Intercon.Application.UsersManagement.EditUser;
 using Intercon.Application.UsersManagement.GetUser;
@@ -8,7 +9,6 @@ using Intercon.Presentation.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Intercon.Application.FilesManagement.UploadFile;
 
 namespace Intercon.Presentation.Controllers;
 
@@ -41,11 +41,11 @@ public class UserController(IMediator mediator) : BaseController
     public async Task<IActionResult> EditUser([FromForm] EditUserDto userToEdit, CancellationToken cancellationToken)
     {
         var currentUserId = HttpContext.User.GetUserId();
-        
+
         int? newLogoId = null!;
         if (userToEdit.Avatar is not null)
         {
-            var logoFileData = await mediator.Send(new UploadFileCommand(userToEdit.Avatar), cancellationToken) 
+            var logoFileData = await mediator.Send(new UploadFileCommand(userToEdit.Avatar), cancellationToken)
                                ?? throw new ValidationException("logo", "Can not upload image file");
 
             newLogoId = logoFileData.Id;

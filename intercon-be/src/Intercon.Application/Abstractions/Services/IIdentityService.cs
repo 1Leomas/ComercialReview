@@ -1,7 +1,6 @@
-﻿using Intercon.Domain.Entities;
-using Intercon.Domain.Identity;
+﻿using Intercon.Domain.Identity;
 
-namespace Intercon.Application.Abstractions;
+namespace Intercon.Application.Abstractions.Services;
 
 public interface IIdentityService
 {

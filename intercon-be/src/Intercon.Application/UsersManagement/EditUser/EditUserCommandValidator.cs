@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions.Repositories;
 
 namespace Intercon.Application.UsersManagement.EditUser;
 

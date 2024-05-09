@@ -1,7 +1,6 @@
-﻿using Intercon.Application.Abstractions;
+﻿using Intercon.Application.Abstractions.Repositories;
 using Intercon.Domain.Entities;
 using Intercon.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Intercon.Infrastructure.Repositories;

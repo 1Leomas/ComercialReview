@@ -1,5 +1,5 @@
-﻿using Intercon.Application.Abstractions;
-using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.DataTransferObjects.Comment;
 using Intercon.Domain.Enums;
 
@@ -23,9 +23,9 @@ internal sealed class DeleteCommentCommandHandler : ICommandHandler<DeleteCommen
         if (comment == null) return;
 
         var userId = command.DeleteCommentRequest.CurrentUserId;
-        var userRole =   command.DeleteCommentRequest.CurrentUserRole;
+        var userRole = command.DeleteCommentRequest.CurrentUserRole;
 
-        if (   comment.AuthorId != userId
+        if (comment.AuthorId != userId
             && userRole != Role.SuperAdmin)
         {
             throw new InvalidOperationException("You are not the author of this comment");

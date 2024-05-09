@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions.Repositories;
 
 namespace Intercon.Application.BusinessesManagement.CreateBusiness;
 
@@ -17,7 +17,7 @@ public class CreateBusinessCommandValidator : AbstractValidator<CreateBusinessCo
             });
 
         RuleFor(x => x.UserId)
-            .MustAsync(async (userId, token) => 
+            .MustAsync(async (userId, token) =>
                 !await businessRepository.UserHasBusinessAsync(userId, token))
             .WithMessage("The user already owns a business");
 

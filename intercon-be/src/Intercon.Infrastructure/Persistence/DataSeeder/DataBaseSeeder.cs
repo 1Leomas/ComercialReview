@@ -62,7 +62,7 @@ public class DataBaseSeeder(InterconDbContext context, UserManager<User> userMan
 
         var entityType = typeof(InterconDbContext)
             .GetProperties()
-            .FirstOrDefault(p => p.PropertyType == typeof(DbSet<TEntity>)) 
+            .FirstOrDefault(p => p.PropertyType == typeof(DbSet<TEntity>))
                          ?? throw new ArgumentException($"DbSet<{typeof(TEntity).Name}> not found in InterconDbContext.");
 
         var tableName = entityType.Name;

@@ -1,4 +1,4 @@
-﻿using Intercon.Application.Abstractions;
+﻿using Intercon.Application.Abstractions.Services;
 using Intercon.Domain.Abstractions;
 
 namespace Intercon.Infrastructure.Services;

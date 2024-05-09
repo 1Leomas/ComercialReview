@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Intercon.Domain.Abstractions;
+﻿using Intercon.Domain.Abstractions;
 using Intercon.Domain.ComplexTypes;
 using Intercon.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Intercon.Domain.Entities;
 

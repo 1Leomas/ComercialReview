@@ -1,6 +1,4 @@
-﻿using Intercon.Application.Abstractions.Messaging;
-using Intercon.Application.PerformanceLogsManagement.GetPerformanceLogs;
-using Intercon.Domain.Entities;
+﻿using Intercon.Application.PerformanceLogsManagement.GetPerformanceLogs;
 using MediatR;
 using Microsoft.Extensions.Logging;
 

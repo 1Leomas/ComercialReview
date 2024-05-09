@@ -1,5 +1,6 @@
-﻿using Intercon.Application.Abstractions;
-using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.Abstractions.Repositories;
+using Intercon.Application.Abstractions.Services;
 using Intercon.Application.Exceptions;
 
 namespace Intercon.Application.BusinessesManagement.DeleteBusinessGalleryPhoto;

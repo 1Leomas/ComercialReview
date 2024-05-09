@@ -1,4 +1,4 @@
-﻿using Intercon.Application.Abstractions;
+﻿using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.DataTransferObjects;
 using Intercon.Application.Extensions.Mappers;
 using Intercon.Application.ReviewsManagement.GetReviewDetails;

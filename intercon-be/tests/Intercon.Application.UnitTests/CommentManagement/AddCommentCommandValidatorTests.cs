@@ -1,5 +1,5 @@
 ﻿using FluentValidation.TestHelper;
-using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.CommentsManagement.AddComment;
 using Intercon.Application.DataTransferObjects.Comment;
 using NSubstitute;

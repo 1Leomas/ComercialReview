@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Intercon.Application.Abstractions;
+using Intercon.Application.Abstractions.Repositories;
 using Intercon.Domain.Enums;
 
 namespace Intercon.Application.ReviewsManagement.EditReview;

@@ -1,23 +1,19 @@
-﻿using Intercon.Application.Abstractions;
-using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.BusinessesManagement.DeleteBusinessGalleryPhoto;
-using Intercon.Application.DataTransferObjects;
 using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Application.DataTransferObjects.Files;
-using Intercon.Application.Exceptions;
 using Intercon.Application.FilesManagement.DeleteFile;
 using Intercon.Application.FilesManagement.UploadBusinessGalleryPhotos;
-using Intercon.Application.FilesManagement.UploadFile;
-using Intercon.Domain.Entities;
 using MediatR;
 
 namespace Intercon.Application.BusinessesManagement.EditBusiness;
 
 public sealed record EditBusinessCommand(
-        int CurrentUserId, 
-        int BusinessId, 
-        EditBusinessRequest Data, 
-        int? NewLogoId) 
+        int CurrentUserId,
+        int BusinessId,
+        EditBusinessRequest Data,
+        int? NewLogoId)
     : ICommand<BusinessDetailsDto?>;
 
 public sealed class EditBusinessCommandHandler(
@@ -28,7 +24,7 @@ public sealed class EditBusinessCommandHandler(
     {
         if (command.NewLogoId is not null)
         {
-            var businessOldLogoId = 
+            var businessOldLogoId =
                 await businessRepository.GetBusinessLogoIdAsync(command.BusinessId, cancellationToken);
 
             if (businessOldLogoId is not null)

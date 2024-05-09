@@ -1,4 +1,4 @@
-﻿using Intercon.Application.Abstractions;
+﻿using Intercon.Application.Abstractions.Services;
 using Intercon.Infrastructure.Options;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Logging;
@@ -38,7 +38,7 @@ public class EmailService(
             return;
         }
 
-        var emailMessage = CreateEmailMessage(_emailSettings.Sender, recipientEmail, recipientName,  subject, message);
+        var emailMessage = CreateEmailMessage(_emailSettings.Sender, recipientEmail, recipientName, subject, message);
 
         _logger.LogInformation($"Sending email to {recipientEmail} with subject {subject}");
 

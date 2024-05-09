@@ -1,5 +1,5 @@
-﻿using Intercon.Application.Abstractions;
-using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.DataTransferObjects;
 using Intercon.Application.DataTransferObjects.Business;
 using Intercon.Domain.Pagination;
@@ -14,7 +14,7 @@ internal sealed class GetPaginatedBusinessesQueryHandler(IBusinessRepository bus
     public async Task<PaginatedResponse<BusinessShortDetailsDto>> Handle(
         GetPaginatedBusinessesQuery query, CancellationToken cancellationToken)
     {
-        var businesses = 
+        var businesses =
             await businessRepository.GetPaginatedBusinessesAsync(query.Parameters, cancellationToken);
 
         var businessesDetailsList = new List<BusinessShortDetailsDto>();

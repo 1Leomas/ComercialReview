@@ -1,8 +1,8 @@
-﻿using Intercon.Application.Abstractions;
-using Intercon.Application.Abstractions.Messaging;
+﻿using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.Abstractions.Repositories;
 using Intercon.Application.DataTransferObjects.Business;
 
-namespace Intercon.Application.BusinessesManagement.GetBusinesses;
+namespace Intercon.Application.BusinessesManagement.GetAllBusinesses;
 
 public sealed record GetAllBusinessesQuery : IQuery<IEnumerable<BusinessShortDetailsDto>>;
 

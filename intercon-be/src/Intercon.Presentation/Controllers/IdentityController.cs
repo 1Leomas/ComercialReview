@@ -1,10 +1,14 @@
-﻿using Intercon.Application.DataTransferObjects.User;
+﻿using Intercon.Application.CustomExceptions;
 using Intercon.Application.DataTransferObjects;
+using Intercon.Application.DataTransferObjects.User;
 using Intercon.Application.UsersManagement.ForgotPassword;
 using Intercon.Application.UsersManagement.GetUser;
+using Intercon.Application.UsersManagement.LoginUser;
 using Intercon.Application.UsersManagement.Logout;
 using Intercon.Application.UsersManagement.RefreshToken;
+using Intercon.Application.UsersManagement.RegisterUser;
 using Intercon.Application.UsersManagement.ResetPassword;
+using Intercon.Application.UsersManagement.UserNameUniqueCheck;
 using Intercon.Application.UsersManagement.VerifyPasswordResetCode;
 using Intercon.Domain.Identity;
 using Intercon.Presentation.Extensions;
@@ -13,11 +17,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using Intercon.Application.CustomExceptions;
-using Intercon.Application.UsersManagement.LoginUser;
-using Intercon.Application.UsersManagement.RegisterUser;
 using ResetPasswordRequest = Intercon.Application.DataTransferObjects.User.ResetPasswordRequest;
-using Intercon.Application.UsersManagement.UserNameUniqueCheck;
 
 namespace Intercon.Presentation.Controllers;
 

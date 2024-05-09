@@ -1,8 +1,8 @@
 using Intercon.Application.BusinessesManagement.CreateBusiness;
 using Intercon.Application.BusinessesManagement.DeleteBusinessGalleryPhoto;
 using Intercon.Application.BusinessesManagement.EditBusiness;
+using Intercon.Application.BusinessesManagement.GetAllBusinesses;
 using Intercon.Application.BusinessesManagement.GetBusiness;
-using Intercon.Application.BusinessesManagement.GetBusinesses;
 using Intercon.Application.BusinessesManagement.GetCurrentUserBusiness;
 using Intercon.Application.BusinessesManagement.GetPaginatedBusinesses;
 using Intercon.Application.CustomExceptions;
@@ -68,7 +68,7 @@ public class BusinessController(IMediator mediator) : BaseController
         var currentUserId = HttpContext.User.GetUserId();
 
         var createdBusiness = await mediator.Send(
-            new CreateBusinessCommand(currentUserId, businessToAdd), 
+            new CreateBusinessCommand(currentUserId, businessToAdd),
             cancellationToken);
 
         return Ok(createdBusiness);
@@ -88,11 +88,11 @@ public class BusinessController(IMediator mediator) : BaseController
             var logoFileData = await mediator.Send(new UploadFileCommand(businessToEdit.Logo), cancellationToken);
 
             if (logoFileData is null)
-                throw new ValidationException("logo","Can not upload image file");
+                throw new ValidationException("logo", "Can not upload image file");
 
             newLogoId = logoFileData.Id;
         }
-        
+
         var updatedBusiness = await mediator.Send(new EditBusinessCommand(currentUserId, businessId, businessToEdit, newLogoId), cancellationToken);
 
         return Ok(updatedBusiness);
