@@ -28,11 +28,12 @@ public class PerformancePipelineBehavior<TRequest, TResponse>
                 _performanceLogRepository.AddLogAsync(typeof(TRequest).Name, true, startTime, endTime,
                     CancellationToken.None);
         }
-        catch (Exception)
+        catch (Exception e)
         {
             if (request is not GetPerformanceLogsQuery)
                 _performanceLogRepository.AddLogAsync(typeof(TRequest).Name, false, startTime, DateTime.Now,
                     CancellationToken.None);
+            throw;
         }
 
         return result;
