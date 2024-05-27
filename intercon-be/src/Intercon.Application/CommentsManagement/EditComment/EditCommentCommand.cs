@@ -27,7 +27,7 @@ internal sealed class EditCommentCommandHandler : ICommandHandler<EditCommentCom
         }
 
         comment.Text = request.CommentDto.Text;
-        comment.UpdatedDate = DateTime.Now;
+        comment.UpdatedDate = DateTime.UtcNow;
 
         var result = await _commentRepository.EditAsync(comment, cancellationToken);
 

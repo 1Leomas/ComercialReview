@@ -18,11 +18,11 @@ public class PerformancePipelineBehavior<TRequest, TResponse>
     public async Task<TResponse?> Handle(TRequest request, RequestHandlerDelegate<TResponse?> next, CancellationToken cancellationToken)
     {
         TResponse? result = default;
-        var startTime = DateTime.Now;
+        var startTime = DateTime.UtcNow;
         try
         {
             result = await next();
-            var endTime = DateTime.Now;
+            var endTime = DateTime.UtcNow;
 
             if (request is not GetPerformanceLogsQuery)
                 _performanceLogRepository.AddLogAsync(typeof(TRequest).Name, true, startTime, endTime,
@@ -31,7 +31,7 @@ public class PerformancePipelineBehavior<TRequest, TResponse>
         catch (Exception e)
         {
             if (request is not GetPerformanceLogsQuery)
-                _performanceLogRepository.AddLogAsync(typeof(TRequest).Name, false, startTime, DateTime.Now,
+                _performanceLogRepository.AddLogAsync(typeof(TRequest).Name, false, startTime, DateTime.UtcNow,
                     CancellationToken.None);
             throw;
         }

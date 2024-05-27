@@ -102,7 +102,7 @@ public class CommentRepository(InterconDbContext context) : ICommentRepository
         if (comment == null) return false;
 
         comment.Text = newCommentData.Text;
-        comment.UpdatedDate = DateTime.Now;
+        comment.UpdatedDate = DateTime.UtcNow;
 
         var rows = await _context.SaveChangesAsync(cancellationToken);
 

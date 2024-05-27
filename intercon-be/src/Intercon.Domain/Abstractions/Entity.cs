@@ -4,7 +4,7 @@ public abstract class Entity
 {
     protected Entity()
     {
-        CreatedDate = UpdatedDate = DateTime.Now;
+        CreatedDate = UpdatedDate = DateTime.UtcNow;
     }
 
     public DateTime CreatedDate { get; set; }

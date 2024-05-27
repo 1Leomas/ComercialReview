@@ -100,7 +100,7 @@ public class BusinessRepository(InterconDbContext context)
             businessDb.LogoId = logoId.Value;
         }
 
-        businessDb.UpdatedDate = DateTime.Now;
+        businessDb.UpdatedDate = DateTime.UtcNow;
 
         await context.SaveChangesAsync(cancellationToken);
 

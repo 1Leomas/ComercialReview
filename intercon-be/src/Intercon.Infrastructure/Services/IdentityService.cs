@@ -40,7 +40,7 @@ public class IdentityService(
         {
             userRefreshTokenDb.Token = tokens.RefreshToken;
 
-            userRefreshTokenDb.UpdatedDate = DateTime.Now;
+            userRefreshTokenDb.UpdatedDate = DateTime.UtcNow;
         }
         else
         {
@@ -110,7 +110,7 @@ public class IdentityService(
         {
             UserId = userId,
             Code = resetPasswordCode,
-            ValidUntilDate = DateTime.Now + TimeSpan.FromMinutes(_resetPasswordSettings.CodeExpirationTimeInMinutes)
+            ValidUntilDate = DateTime.UtcNow + TimeSpan.FromMinutes(_resetPasswordSettings.CodeExpirationTimeInMinutes)
         });
 
         await context.SaveChangesAsync();
@@ -123,7 +123,7 @@ public class IdentityService(
         var code = await context.ResetPasswordCodes.FirstOrDefaultAsync(
             x => x.UserId == userId
             && x.Code == resetPasswordCode
-            && x.ValidUntilDate > DateTime.Now);
+            && x.ValidUntilDate > DateTime.UtcNow);
 
         if (code == null) return false;
 
@@ -136,7 +136,7 @@ public class IdentityService(
     {
         var code = await context.ResetPasswordCodes.FirstOrDefaultAsync(
             x => x.Code == resetPasswordCode
-                 && x.ValidUntilDate > DateTime.Now);
+                 && x.ValidUntilDate > DateTime.UtcNow);
 
         return code != null;
     }

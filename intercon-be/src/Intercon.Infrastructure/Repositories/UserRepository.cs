@@ -32,7 +32,7 @@ public class UserRepository(
 
     public async Task<bool> CreateUserAsync(User newUser, string password, CancellationToken cancellationToken)
     {
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
 
         var result = await userManager.CreateAsync(
             new User
@@ -83,7 +83,7 @@ public class UserRepository(
             userDb.AvatarId = newUserData.AvatarId.Value;
         }
 
-        userDb.UpdatedDate = DateTime.Now;
+        userDb.UpdatedDate = DateTime.UtcNow;
 
         await context.SaveChangesAsync(cancellationToken);
 

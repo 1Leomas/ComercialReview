@@ -29,7 +29,7 @@ public sealed class CreateBusinessCommandHandler(
             fileData = await mediator.Send(new UploadFileCommand(command.Data.Logo), cancellationToken);
         }
 
-        var dateNow = DateTime.Now;
+        var dateNow = DateTime.UtcNow;
 
         var business = new Business
         {

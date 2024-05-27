@@ -21,7 +21,7 @@ internal sealed class AddCommentCommandHandler : ICommandHandler<AddCommentComma
 
     public async Task Handle(AddCommentCommand request, CancellationToken cancellationToken)
     {
-        var dateNow = DateTime.Now;
+        var dateNow = DateTime.UtcNow;
 
         var comment = new Comment
         {

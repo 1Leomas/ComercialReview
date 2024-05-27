@@ -62,7 +62,7 @@ public class ReviewRepository(InterconDbContext context)
 
     public async Task<bool> CreateReviewAsync(int businessId, int userId, CreateReviewDto newReview, CancellationToken cancellationToken)
     {
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
 
         var review = new Review
         {
@@ -116,7 +116,7 @@ public class ReviewRepository(InterconDbContext context)
             reviewDb.Recommendation = (RecommendationType)newReviewData.RecommendationType.Value;
         }
 
-        reviewDb.UpdatedDate = DateTime.Now;
+        reviewDb.UpdatedDate = DateTime.UtcNow;
 
         await context.SaveChangesAsync(cancellationToken);
 

@@ -7,7 +7,7 @@ public class User : IdentityUser<int>
 {
     public User()
     {
-        CreatedDate = UpdatedDate = DateTime.Now;
+        CreatedDate = UpdatedDate = DateTime.UtcNow;
     }
 
     public string FirstName { get; set; } = null!;

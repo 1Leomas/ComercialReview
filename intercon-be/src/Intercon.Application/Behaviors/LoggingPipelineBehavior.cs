@@ -28,12 +28,12 @@ public class LoggingPipelineBehavior<TRequest, TResponse>
         }
 
         _logger.LogInformation("Starting request {@RequestName}, {@DataTimeUtc}",
-            typeof(TRequest).Name, DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff"));
+            typeof(TRequest).Name, DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff"));
 
         var result = await next();
 
         _logger.LogInformation("Finished request {@RequestName}, {@DataTimeUtc}",
-            typeof(TRequest).Name, DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff"));
+            typeof(TRequest).Name, DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff"));
 
         return result;
     }
