@@ -1,5 +1,6 @@
 ﻿using Intercon.Application.Abstractions;
 using Intercon.Application.Abstractions.Messaging;
+using Intercon.Application.CustomExceptions;
 using Intercon.Application.DataTransferObjects.User;
 using Intercon.Domain.Identity;
 
@@ -16,7 +17,7 @@ public sealed class LoginUserCommandHandler(IIdentityService identityService, IU
     {
         var userId = await userRepository.GetUserIdByEmailAsync(command.Data.Email, cancellationToken);
 
-        if (userId == 0) throw new InvalidOperationException($"User with email {command.Data.Email} not found");
+        if (userId == 0) throw new ValidationException(new ValidationError[]{new ("Login","Bad credentials")});
 
         var tokens = await identityService.LoginUserAsync(
             command.Data.Email,
