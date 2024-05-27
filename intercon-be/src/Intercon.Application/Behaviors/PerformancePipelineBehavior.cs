@@ -1,5 +1,4 @@
 ﻿using Intercon.Application.Abstractions;
-using Intercon.Application.PerformanceLogsManagement.Add;
 using Intercon.Application.PerformanceLogsManagement.GetPerformanceLogs;
 using MediatR;
 
@@ -18,12 +17,23 @@ public class PerformancePipelineBehavior<TRequest, TResponse>
 
     public async Task<TResponse?> Handle(TRequest request, RequestHandlerDelegate<TResponse?> next, CancellationToken cancellationToken)
     {
+        TResponse? result = default;
         var startTime = DateTime.Now;
-        var result = await next();
-        var endTime = DateTime.Now;
+        try
+        {
+            result = await next();
+            var endTime = DateTime.Now;
 
-        if (request is not GetPerformanceLogsQuery)
-            _performanceLogRepository.AddLogAsync(typeof(TRequest).Name, startTime, endTime, CancellationToken.None);
+            if (request is not GetPerformanceLogsQuery)
+                _performanceLogRepository.AddLogAsync(typeof(TRequest).Name, true, startTime, endTime,
+                    CancellationToken.None);
+        }
+        catch (Exception)
+        {
+            if (request is not GetPerformanceLogsQuery)
+                _performanceLogRepository.AddLogAsync(typeof(TRequest).Name, false, startTime, DateTime.Now,
+                    CancellationToken.None);
+        }
 
         return result;
     }

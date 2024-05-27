@@ -9,7 +9,7 @@ namespace Intercon.Infrastructure.Repositories;
 
 public class PerformanceLogRepository(InterconDbContext context) : IPerformanceLogRepository
 {
-    public async Task<IEnumerable<PerformanceLog>> GetAllAsync(PerformanceLogsParameters parameters, CancellationToken cancellationToken)
+    public async Task<PaginatedList<PerformanceLog>> GetAllAsync(PerformanceLogsParameters parameters, CancellationToken cancellationToken)
     {
         var logs = context.PerformanceLogs
             .AsNoTracking()
@@ -29,11 +29,12 @@ public class PerformanceLogRepository(InterconDbContext context) : IPerformanceL
         return await context.SaveChangesAsync(cancellationToken) > 0;
     }
 
-    public async Task<bool> AddLogAsync(string requestName, DateTime startTime, DateTime endTime, CancellationToken cancellationToken)
+    public async Task<bool> AddLogAsync(string requestName, bool isSuccess, DateTime startTime, DateTime endTime, CancellationToken cancellationToken)
     {
         var log = new PerformanceLog
         {
             RequestName = requestName,
+            IsSuccess = isSuccess,
             StartTime = startTime,
             EndTime = endTime,
             RequestDuration = endTime - startTime,
@@ -51,6 +52,12 @@ public class PerformanceLogRepository(InterconDbContext context) : IPerformanceL
             logs = logs.Where(x =>
                 x.RequestName.ToLower().Contains(search));
         }
+
+        if (parameters.IsSuccess.HasValue)
+        {
+            logs = logs.Where(x => x.IsSuccess == parameters.IsSuccess);
+        }
+
         return logs;
     }
 
