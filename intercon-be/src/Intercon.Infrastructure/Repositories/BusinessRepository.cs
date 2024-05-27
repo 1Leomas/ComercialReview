@@ -52,8 +52,8 @@ public class BusinessRepository(InterconDbContext context)
 
         businesses = ApplySort(businesses, parameters.SortBy, parameters.SortDirection);
 
-        return await PaginatedList<Business>.ToPagedList(businesses, parameters.PageNumber,
-            parameters.PageSize);
+        return await PaginatedList<Business>
+            .ToPagedList(businesses, parameters.PageNumber, parameters.PageSize);
     }
 
     public async Task<int> CreateBusinessAsync(Business newBusiness, CancellationToken cancellationToken)

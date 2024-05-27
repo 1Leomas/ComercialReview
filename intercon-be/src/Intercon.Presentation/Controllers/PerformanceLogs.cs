@@ -1,4 +1,5 @@
 ﻿using Intercon.Application.PerformanceLogsManagement.GetPerformanceLogs;
+using Intercon.Domain.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,9 +12,9 @@ public class PerformanceLogs(IMediator mediator) : BaseController
     private readonly IMediator _mediator = mediator;
 
     [HttpGet]
-    public async Task<IActionResult> GetPerformanceLogs(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetPerformanceLogs(PerformanceLogsParameters parameters, CancellationToken cancellationToken)
     {
-        var performanceLogs = await _mediator.Send(new GetPerformanceLogsQuery(), cancellationToken);
+        var performanceLogs = await _mediator.Send(new GetPerformanceLogsQuery(parameters), cancellationToken);
         return Ok(performanceLogs);
     }
 }
